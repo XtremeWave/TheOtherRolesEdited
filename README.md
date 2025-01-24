@@ -17,7 +17,7 @@
 
 ![eisbison banner](./Images/TORE_logo.png)
 
-<p align="center"><a href="https://github.com/XtremeWave/TheOtherRolesEdited/releases/"><img src="https://badgen.net/github/release/ksduye/the-other-roles-edited"></a></p>
+<p align="center"><a href="https://github.com/XtremeWave/TheOtherRolesEdited/releases/"><img src="https://badgen.net/github/release/XtremeWave/TheOtherRolesEdited"></a></p>
 
 此模组不隶属于 Among Us 或 Innersloth LLC，其包含的内容也未得到 Innersloth LLC 的认可或以其他方式赞助。此处包含的部分材料是 Innersloth LLC 的财产 ©Innersloth LLC.</p>
 <p align="center">
