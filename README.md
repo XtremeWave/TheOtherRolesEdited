@@ -3,13 +3,13 @@
 [![Discord](./Images/TORE_server.png)](https://discord.gg/77RkMJHWsM)
 ![eisbison infographic](./Images/TORE_Roles.png)
 
-# 分支模组:[The Other Roles Edited](https://github.com/ksduye/The-Other-Roles-Edited)
+# 分支模组:[The Other Roles Edited](https://github.com/XtremeWave/TheOtherRolesEdited)
 <details>
   <summary>点我查看TheOtherRolesEdited开发者</summary>
 
-- 本模组由TheOtherRoles v4.5.1版本进行分支十分感谢一些贡献者对我们的帮助！
+- 本模组由TheOtherRoles v4.7.0版本进行分支十分感谢一些贡献者对我们的帮助！
 - 汉化由[毒液](https://github.com/ksduye) & [方块er](https://github.com/farthest001) 
-- 美术编辑:[毒液](https://github.com/ksduye)
+- 美术编辑:[毒液](https://github.com/ksduye) , JMS & 尤路丽丝
 - TORE作者:[毒液](https://github.com/ksduye)& [方块er](https://github.com/farthest001) & [Yu](https://github.com/Night-GUA)
 - 贡献者:[lezaiya](https://github.com/LezaiYa) & [imp11](https://github.com/dabao40) & [水木年华]()
 
@@ -17,7 +17,7 @@
 
 ![eisbison banner](./Images/TORE_logo.png)
 
-<p align="center"><a href="https://github.com/ksduye/The-Other-Roles-Edited/releases/"><img src="https://badgen.net/github/release/ksduye/the-other-roles-edited"></a></p>
+<p align="center"><a href="https://github.com/XtremeWave/TheOtherRolesEdited/releases/"><img src="https://badgen.net/github/release/ksduye/the-other-roles-edited"></a></p>
 
 此模组不隶属于 Among Us 或 Innersloth LLC，其包含的内容也未得到 Innersloth LLC 的认可或以其他方式赞助。此处包含的部分材料是 Innersloth LLC 的财产 ©Innersloth LLC.</p>
 <p align="center">
@@ -27,6 +27,7 @@
 
 # The Other Roles Edited
 **The Other Roles Edited** 是一个为 [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加许多新职业的MOD, **The Other Roles Edited** 为  [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加了新 [Settings](#settings) 和新 [Custom Hats](#custom-hats) .
+本MOD隶属于XtremeWave版权归团队所有
 
 | 内鬼 | 船员 | 中立 | 附加 | 游戏模式 |
 |----------|-------------|-----------------|----------------|----------------|
@@ -55,6 +56,8 @@
 # 下载
 | Among Us - 版本| 模组版本 | 链接 |
 |----------|-------------|-----------------|
+| 2024.11.26s| v1.2.0| [下载](https://github.com/XtremeWave/TheOtherRolesEdited/releases/download/v.1.2.0/TheOtherRolesEdited.zip)
+| 2024.6.4s| v1.1.0| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.1.0)
 | 2024.6.4s| v1.0.6| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.6)
 | 2024.3.28s| v1.0.4| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.4)
 | 2023.11.28s| v1.0.3| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.3)
