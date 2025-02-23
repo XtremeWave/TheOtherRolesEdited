@@ -27,7 +27,6 @@
 
 # The Other Roles Edited
 **The Other Roles Edited** 是一个为 [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加许多新职业的MOD, **The Other Roles Edited** 为  [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加了新 [Settings](#settings) 和新 [Custom Hats](#custom-hats) .
-本MOD隶属于XtremeWave版权归团队所有
 
 | 内鬼 | 船员 | 中立 | 附加 | 游戏模式 |
 |----------|-------------|-----------------|----------------|----------------|
@@ -41,18 +40,15 @@
 | [骗术师](#骗术师) | [医生](#医生) | [起诉人](#起诉人) | [VIP](#vip) |
 | [清理者](#清理者) | [换票师](#换票师) | [窃贼](#窃贼) | [酒鬼](#酒鬼) |
 | [术士](#术士) | [灵媒](#灵媒) |  | [变色龙](#变色龙) |
-| [赏金猎人](#赏金猎人) | [黑客](#黑客) |  | [交换师](#交换师)
-| [女巫](#女巫) | [追踪者](#追踪者) |  |  |
+| [赏金猎人](#赏金猎人) | [黑客](#黑客) |  | [交换师](#交换师) |
+| [女巫](#女巫) | [追踪者](#追踪者) |  | [分散者](#分散者) |
 | [忍者](#忍者) | [告密者](#告密者) |  |  |
 | [爆炸狂](#爆炸狂) | [卧底](#卧底) |  |  |
 | [邪恶的赌怪](#赌怪) | [传送师](#传送师) |  |  |
-|  | [保安](#保安) |  |  |
-|  | [医生](#医生) |  |  |
-|  | [猎人](#猎人) |  |  |
+| [勒索者](#勒索者) | [保安](#保安)  |  |
+| [矿工](#矿工) | [医生](#医生) |  |
+| [悠悠球](#悠悠球) |  [猎人](#猎人) |  |
 |  | [正义的赌怪](#赌怪) |  |  |
-| [悠悠球](#悠悠球) |  |  |[分散者](#分散者)|
-| [勒索者](#勒索者) |
-| [矿工](#矿工) |
 
 [关于模组](#关于模组) 
 
@@ -402,16 +398,15 @@ Crewmates can defuse a bomb depending on the settings.
 | Bomb Defuse Duration | -
 | Bomb Cooldown | -
 | Bomb Is Active After |
-\
-
+-----------------------
 ## 悠悠球
 ### **阵营:内鬼**
-悠悠球可以再地图周围快速瞬移\
-
+悠悠球可以再地图周围快速瞬移
+-----------------------
 ## 矿工
 ### **阵营:内鬼**
-矿工可以在地图任意地点挖管道，新的管道之间互通\
-
+矿工可以在地图任意地点挖管道，新的管道之间互通
+-----------------------
 ## 勒索者
 ### **阵营:内鬼**
 勒索者可以使用勒索技能将玩家禁言，被勒索的玩家无法在会议上发送消息\
@@ -1254,22 +1249,22 @@ The 交换师 is a 附加职业 that can shift with another player. If the other
 Swapping roles with an Impostor or Neutral fails and the 交换师 commits suicide after the next meeting (there won't be a body).\
 The Shift will always be performed at the end of the next meeting right before a player is exiled. The target needs to be chosen during the round.\
 Even if the 交换师 or the target dies before the meeting, the Shift will still be performed.\
-\
+
 **便签:**
 - The 交换师 shift will always be triggered before the Erase (hence either the new role of the 交换师 will be erased or the 交换师 gets the role of their target, depending on whom the 抹除者 erased)
 - One time use abilities (e.g. shielding a player or 工程师 sabotage fix) can only used by one player in the game (i.e. the 交换师
 can only use them, if the previous player did not use them before)
 - The 交换师 button is located in the bottom left corner right next to the garlic button (if the 吸血鬼 is enabled)
 - Only a Crewmate role can have this 附加职业
-\
-
-## 分散者
-可以将玩家分散到地图各处
 
 ### 游戏设置
 | 名字 | 描述
 |----------|:-------------:|
 | 交换师 Spawn Chance | -
+-----------------------
+
+## 分散者
+可以将玩家分散到地图各处
 -----------------------
 
 # 游戏模式s
