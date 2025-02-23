@@ -31,7 +31,7 @@
 
 | 内鬼 | 船员 | 中立 | 附加 | 游戏模式 |
 |----------|-------------|-----------------|----------------|----------------|
-| [黑手党 (黑手党)](#黑手党) | [市长](#市长) | [小丑](#小丑) | [溅血者](#溅血者) | [经典模式](#职业) |
+| [教父 (黑手党)](#黑手党) | [市长](#市长) | [小丑](#小丑) | [溅血者](#溅血者) | [经典模式](#职业) |
 | [小弟 (黑手党)](#黑手党) | [工程师](#工程师) | [纵火犯](#纵火犯) | [厄运儿](#厄运儿) | [赌怪模式](#赌怪模式) |
 | [清理者 (黑手党)](#黑手党) | [警长](#警长) | [豺狼](#豺狼) | [破平者](#破平者) | [捉迷藏模式](#捉迷藏模式) |
 | [化形者](#化形者) | [捕快](#捕快) | [跟班](#跟班) | [诱饵](#诱饵) | [原版躲猫猫模式](https://www.innersloth.com/new-game-mode-捉迷藏模式-is-here-emergency-meeting-35/) |
@@ -50,102 +50,27 @@
 |  | [医生](#医生) |  |  |
 |  | [猎人](#猎人) |  |  |
 |  | [正义的赌怪](#赌怪) |  |  |
+| [悠悠球](#悠悠球) |  |  |[分散者](#分散者)|
+| [勒索者](#勒索者) |
+| [矿工](#矿工) |
 
 [关于模组](#关于模组) 
 
 # 下载
 | Among Us - 版本| 模组版本 | 链接 |
 |----------|-------------|-----------------|
+| 2024.11.26s| v1.2.1| [下载](https://github.com/XtremeWave/TheOtherRolesEdited/releases/download/v.1.2.1/TheOtherRolesEdited.zip)
 | 2024.11.26s| v1.2.0| [下载](https://github.com/XtremeWave/TheOtherRolesEdited/releases/download/v.1.2.0/TheOtherRolesEdited.zip)
 | 2024.6.4s| v1.1.0| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.1.0)
-| 2024.6.4s| v1.0.6| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.6)
-| 2024.3.28s| v1.0.4| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.4)
-| 2023.11.28s| v1.0.3| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.3)
 
 <details>
   <summary>点我查看旧版本</summary>
   
 | Among Us - 版本| 模组版本 | 链接 |
 |----------|-------------|-----------------|
-| 2023.11.28s| v1.0.2| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.2)
-| 2023.11.28s| v1.0.1| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.1.1)
-| 2023.11.28s| v1.0.0| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.1)
-| 2023.11.28s| v4.5.1| [下载](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.5.1/TheOtherRoles.zip)
-| 2023.11.28s| v4.5.0| [下载](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.5.0/TheOtherRoles.zip)
-| 2023.07.12s| v4.4.2| [下载](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.2/TheOtherRoles.zip)
-| 2023.07.12s| v4.4.1| [下载](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.1/TheOtherRoles.zip)
-| 2023.07.12s| v4.4.0| [下载](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.0/TheOtherRoles.zip)
-| 2023.07.12s| v4.3.4| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.4/TheOtherRoles.zip)
-| 2023.07.12s| v4.3.3| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.3/TheOtherRoles.zip)
-| 2023.03.28s| v4.3.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.2/TheOtherRoles.zip)
-| 2023.03.28s| v4.3.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.1/TheOtherRoles.zip)
-| 2023.02.28s| v4.3.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.0/TheOtherRoles.zip)
-| 2022.12.14s| v4.2.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.2.1/TheOtherRoles.zip)
-| 2022.10.25s| v4.2.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.2.0/TheOtherRoles.zip)
-| 2022.9.20s| v4.1.7| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.7/TheOtherRoles.zip)
-| 2022.6.21s| v4.1.6| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.6/TheOtherRoles.zip)
-| 2022.6.21s| v4.1.5| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.5/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.4| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.4/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.3| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.3/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.2/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.1/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.0/TheOtherRoles.zip)
-| 2022.3.29s| v4.0.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.0.0/TheOtherRoles.zip)
-| 2022.3.29s| v3.4.5| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.5/TheOtherRoles.zip)
-| 2022.2.23s| v3.4.4| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.4/TheOtherRoles.zip)
-| 2021.12.15s| v3.4.3| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.3/TheOtherRoles.zip)
-| 2021.12.15s| v3.4.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.2/TheOtherRoles.zip)
-| 2021.12.15s| v3.4.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.1/TheOtherRoles.zip)
-| 2021.12.15s| v3.4.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.0/TheOtherRoles.zip)
-| 2021.12.15s| v3.3.3| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.3/TheOtherRoles.zip)
-| 2021.12.15s| v3.3.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.2/TheOtherRoles.zip)
-| 2021.12.14s| v3.3.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/Download/v3.3.1/TheOtherRoles.zip)
-| 2021.12.14s| v3.3.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/Download/v3.3.0/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.4| [下载](https://github.com/Eisbison/TheOtherRoles/releases/Download/v3.2.4/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.3| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.3/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.2/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.1/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.0/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.1.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.1.2/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.1.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.1.1/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.1.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.1.0/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.0.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.0.0/TheOtherRoles.zip)
-| 2021.6.30s| v2.9.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.9.2/TheOtherRoles.zip)
-| 2021.6.30s| v2.9.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.9.1/TheOtherRoles.zip)
-| 2021.6.30s| v2.9.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.9.0/TheOtherRoles.zip)
-| 2021.6.30s| v2.8.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.8.1/TheOtherRoles.zip)
-| 2021.6.30s| v2.8.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.8.0/TheOtherRoles.zip)
-| 2021.6.30s| v2.7.3| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.7.3/TheOtherRoles.zip)
-| 2021.6.15s| v2.7.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.7.1/TheOtherRoles.zip)
-| 2021.6.15s| v2.7.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.7.0/TheOtherRoles.zip)
-| 2021.5.25.2s| v2.6.7| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.7/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.6| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.6/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.5| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.5/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.4| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.4/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.3| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.3/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.2/TheOtherRoles.zip)
-| 2021.4.14s| v2.6.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.1/TheOtherRoles.zip)
-| 2021.4.14s| v2.6.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.0/TheOtherRoles.zip)
-| 2021.4.14s| v2.5.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.5.1/TheOtherRoles.zip)
-| 2021.4.14s| v2.5.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.5.0/TheOtherRoles.zip)
-| 2021.4.14s| v2.4.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.4.0/TheOtherRoles.zip)
-| 2021.4.14s| v2.3.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.3.0/TheOtherRoles.zip)
-| 2021.4.14s| v2.2.2| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.2.2/TheOtherRoles.zip)
-| 2021.4.12s| v2.2.1| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.2.1/TheOtherRoles.zip)
-| 2021.4.12s| v2.2.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.2.0/TheOtherRoles.zip)
-| 2021.3.31.3s| v2.1.0| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.1.0/TheOtherRoles.zip)
-| 2021.3.31.3s| v2.0.1 beta| [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.0.1/TheOtherRoles.zip)
-| 2021.3.31.3s | v2.0.0 beta | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.0.0/TheOtherRoles.zip)
-| 2021.3.5s | v1.8.2 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.8.2/TheOtherRoles.zip)
-| 2021.3.5s | v1.8.1 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.8.1/TheOtherRoles.zip)
-| 2021.3.5s | v1.8 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.8/TheOtherRoles.zip)
-| 2021.3.5s | v1.7 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.7/TheOtherRoles.zip)
-| 2021.3.5s | v1.6 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.6/TheOtherRoles.zip)
-| 2021.3.5s | v1.5 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.5/TheOtherRoles.zip)
-| 2021.3.5s | v1.4 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.4/TheOtherRoles.zip)
-| 2021.3.5s | v1.3 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.3/TheOtherRoles.zip)
-| 2020.12.19s | v1.1 | [下载](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.1/TheOtherRoles.zip)
-| 2020.12.19s | v1.0 | [下载](https://github.com/Eisbison/TheOtherRoles/files/6097191/TheOtherRoles.zip)
+| 2024.6.4s| v1.0.6| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.6)
+| 2024.3.28s| v1.0.4| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.4)
+| 2023.11.28s| v1.0.3| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.0.3)
 </details>
 
 # 设置
@@ -477,6 +402,19 @@ Crewmates can defuse a bomb depending on the settings.
 | Bomb Defuse Duration | -
 | Bomb Cooldown | -
 | Bomb Is Active After |
+\
+
+## 悠悠球
+### **阵营:内鬼**
+悠悠球可以再地图周围快速瞬移\
+
+## 矿工
+### **阵营:内鬼**
+矿工可以在地图任意地点挖管道，新的管道之间互通\
+
+## 勒索者
+### **阵营:内鬼**
+勒索者可以使用勒索技能将玩家禁言，被勒索的玩家无法在会议上发送消息\
 -----------------------
 
 ## 赌怪
@@ -1323,6 +1261,10 @@ Even if the 交换师 or the target dies before the meeting, the Shift will stil
 can only use them, if the previous player did not use them before)
 - The 交换师 button is located in the bottom left corner right next to the garlic button (if the 吸血鬼 is enabled)
 - Only a Crewmate role can have this 附加职业
+\
+
+## 分散者
+可以将玩家分散到地图各处
 
 ### 游戏设置
 | 名字 | 描述
