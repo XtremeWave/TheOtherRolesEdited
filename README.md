@@ -26,7 +26,7 @@
 [![QQ](./Images/TORE_QQ.png)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=1YPTXe2Sh93pAUXv1mwv4unI6J_G1FYK&authKey=%2BPzdgfi%2FpbaxyPTVU1Lx8xU69Zo1X4%2FCih0lTozAbZ0%2FsCiO%2FGe8sQ97p6jxEFlV&noverify=0&group_code=647668527)
 
 # The Other Roles Edited
-**The Other Roles Edited** 是一个为 [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加许多新职业的MOD, **The Other Roles Edited** 为  [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加了新 [Settings](#settings) 和新 [Custom Hats](#custom-hats) .
+**The Other Roles** 是一个为 [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加许多新职业的MOD, **The Other Roles** 为  [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加了新 [Settings](#settings) 和新 [Custom Hats](#custom-hats) .
 
 | 内鬼 | 船员 | 中立 | 附加 | 游戏模式 |
 |----------|-------------|-----------------|----------------|----------------|
