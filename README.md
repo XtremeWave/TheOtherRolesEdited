@@ -55,8 +55,8 @@
 # 下载
 | Among Us - 版本| 模组版本 | 链接 |
 |----------|-------------|-----------------|
-| 2024.11.26s| v1.2.1| [下载](https://github.com/XtremeWave/TheOtherRolesEdited/releases/download/v.1.2.1/TheOtherRolesEdited.zip)
-| 2024.11.26s| v1.2.0| [下载](https://github.com/XtremeWave/TheOtherRolesEdited/releases/download/v.1.2.0/TheOtherRolesEdited.zip)
+| 2024.11.26s| v1.2.1| [下载](https://github.com/XtremeWave/TheOtherRolesEdited/releases/download/v1.2.1/TheOtherRolesEdited.zip)
+| 2024.11.26s| v1.2.0| [下载](https://github.com/XtremeWave/TheOtherRolesEdited/releases/download/v1.2.0/TheOtherRolesEdited.zip)
 | 2024.6.4s| v1.1.0| [下载](https://github.com/ksduye/The-Other-Roles-Edited/releases/v1.1.0)
 
 <details>
