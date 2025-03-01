@@ -56,10 +56,11 @@ namespace TheOtherRolesEdited
         public CustomOptionType type;
         public Action onChange = null;
         public string heading = "";
+        public bool invertedParent;
 
         // Option creation
 
-        public CustomOption(int id, CustomOptionType type, string name, System.Object[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, Action onChange = null, string heading = "")
+        public CustomOption(int id, CustomOptionType type, string name, System.Object[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, Action onChange = null, string heading = "", bool invertedParent = false)
         {
             this.id = id;
             this.name = parent == null ? name : "- " + name;
@@ -71,6 +72,7 @@ namespace TheOtherRolesEdited
             this.type = type;
             this.onChange = onChange;
             this.heading = heading;
+            this.invertedParent = invertedParent;
             selection = 0;
             if (id != 0)
             {
@@ -80,24 +82,23 @@ namespace TheOtherRolesEdited
             options.Add(this);
         }
 
-        public static CustomOption Create(int id, CustomOptionType type, string name, string[] selections, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "")
+        public static CustomOption Create(int id, CustomOptionType type, string name, string[] selections, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "", bool invertedParent = false)
         {
-            return new CustomOption(id, type, name, selections, "", parent, isHeader, onChange, heading);
+            return new CustomOption(id, type, name, selections, "", parent, isHeader, onChange, heading, invertedParent);
         }
 
-        public static CustomOption Create(int id, CustomOptionType type, string name, float defaultValue, float min, float max, float step, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "")
+        public static CustomOption Create(int id, CustomOptionType type, string name, float defaultValue, float min, float max, float step, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "", bool invertedParent = false)
         {
             List<object> selections = new();
             for (float s = min; s <= max; s += step)
                 selections.Add(s);
-            return new CustomOption(id, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange, heading);
+            return new CustomOption(id, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange, heading, invertedParent);
         }
 
-        public static CustomOption Create(int id, CustomOptionType type, string name, bool defaultValue, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "")
+        public static CustomOption Create(int id, CustomOptionType type, string name, bool defaultValue, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "", bool invertedParent = false)
         {
-            return new CustomOption(id, type, name, new string[] { "关闭", "开启" }, defaultValue ? "开启" : "关闭", parent, isHeader, onChange, heading);
+            return new CustomOption(id, type, name, new string[] { "关闭", "开启" }, defaultValue ? "开启" : "关闭", parent, isHeader, onChange, heading, invertedParent);
         }
-
         // Static behaviour
 
         public static void switchPreset(int newPreset)
@@ -1523,8 +1524,59 @@ namespace TheOtherRolesEdited
             else OpenSettings(__instance);
         }
 
+
+        [HarmonyPrefix]
+        public static void Prefix3(HudManager __instance)
+        {
+            if (!summaryTMP) return;
+            summaryTMP.text = Helpers.previousEndGameSummary;
+
+            summaryTMP.transform.localPosition = new Vector3(-3 * 1.2f, 2.2f, -500f);
+
+        }
+
+        private static TMPro.TextMeshPro summaryTMP = null;
+        private static GameObject summaryBackground;
+        public static void OpenSummary(HudManager __instance)
+        {
+            if (__instance.FullScreen == null || MapBehaviour.Instance && MapBehaviour.Instance.IsOpen || Helpers.previousEndGameSummary.IsNullOrWhiteSpace()) return;
+            if (settingsTMPs[0])
+            {
+                CloseSettings();
+            }
+            summaryBackground = GameObject.Instantiate(__instance.FullScreen.gameObject, __instance.transform);
+            summaryBackground.SetActive(true);
+            var renderer = summaryBackground.GetComponent<SpriteRenderer>();
+            renderer.color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
+            renderer.enabled = true;
+
+
+            summaryTMP = GameObject.Instantiate(__instance.KillButton.cooldownTimerText, __instance.transform);
+            summaryTMP.alignment = TMPro.TextAlignmentOptions.TopLeft;
+            summaryTMP.enableWordWrapping = false;
+            summaryTMP.transform.localScale = Vector3.one * 0.3f;
+            summaryTMP.gameObject.SetActive(true);
+
+        }
+
+        public static void CloseSummary()
+        {
+            summaryTMP?.gameObject.Destroy();
+            summaryTMP = null;
+            if (summaryBackground) summaryBackground.Destroy();
+        }
+
+        public static void ToggleSummary(HudManager __instance)
+        {
+            if (summaryTMP) CloseSummary();
+            else OpenSummary(__instance);
+        }
+
         static PassiveButton toggleSettingsButton;
         static GameObject toggleSettingsButtonObject;
+
+        static PassiveButton toggleSummaryButton;
+        static GameObject toggleSummaryButtonObject;
 
         static GameObject toggleZoomButtonObject;
         static PassiveButton toggleZoomButton;
@@ -1574,6 +1626,38 @@ namespace TheOtherRolesEdited
             toggleZoomButtonObject.SetActive(zoomButtonActive);
             var posOffset = Helpers.zoomOutStatus ? new Vector3(-1.27f, -7.92f, -52f) : new Vector3(0, -1.6f, -52f);
             toggleZoomButtonObject.transform.localPosition = HudManager.Instance.MapButton.transform.localPosition + posOffset;
+        }
+        [HarmonyPostfix]
+        public static void Postfix2(HudManager __instance)
+        {
+            if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started)
+            {
+                if (toggleSummaryButtonObject != null)
+                {
+                    toggleSummaryButtonObject.SetActive(false);
+                    toggleSummaryButtonObject.Destroy();
+                    toggleSummaryButton.Destroy();
+                }
+                return;
+            }
+            if (!toggleSummaryButton || !toggleSummaryButtonObject)
+            {
+                // add a special button for settings viewing:
+                toggleSummaryButtonObject = GameObject.Instantiate(__instance.MapButton.gameObject, __instance.MapButton.transform.parent);
+                toggleSummaryButtonObject.transform.localPosition = __instance.MapButton.transform.localPosition + new Vector3(0, -1.25f, -500f);
+                toggleSummaryButtonObject.name = "TOGGLESUMMARYSBUTTON";
+                SpriteRenderer renderer = toggleSummaryButtonObject.transform.Find("Inactive").GetComponent<SpriteRenderer>();
+                SpriteRenderer rendererActive = toggleSummaryButtonObject.transform.Find("Active").GetComponent<SpriteRenderer>();
+                toggleSummaryButtonObject.transform.Find("Background").localPosition = Vector3.zero;
+                renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.Endscreen.png", 100f);
+                rendererActive.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.EndscreenActive.png", 100f);
+                toggleSummaryButton = toggleSummaryButtonObject.GetComponent<PassiveButton>();
+                toggleSummaryButton.OnClick.RemoveAllListeners();
+                toggleSummaryButton.OnClick.AddListener((Action)(() => ToggleSummary(__instance)));
+            }
+            toggleSummaryButtonObject.SetActive(__instance.SettingsButton.gameObject.active && LobbyBehaviour.Instance && !Helpers.previousEndGameSummary.IsNullOrWhiteSpace() && GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.HideNSeek
+                && AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started);
+            toggleSummaryButtonObject.transform.localPosition = __instance.SettingsButton.transform.localPosition + new Vector3(-1.45f, 0.03f, -500f);
         }
     }
 }

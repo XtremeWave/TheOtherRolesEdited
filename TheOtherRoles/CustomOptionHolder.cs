@@ -23,6 +23,9 @@ namespace TheOtherRolesEdited {
 
         public static CustomOption anyPlayerCanStopStart;
         public static CustomOption enableEventMode;
+        public static CustomOption eventReallyNoMini;
+        public static CustomOption eventKicksPerRound;
+        public static CustomOption eventHeavyAge;
         public static CustomOption deadImpsBlockSabotage;
 
         public static CustomOption mafiaSpawnRate;
@@ -415,6 +418,14 @@ namespace TheOtherRolesEdited {
         public static CustomOption propHuntAdminCooldown;
         public static CustomOption propHuntFindCooldown;
         public static CustomOption propHuntFindDuration;
+        
+        //轮抽选职
+        public static CustomOption isDraftMode;
+        public static CustomOption draftModeAmountOfChoices;
+        public static CustomOption draftModeTimeToChoose;
+        public static CustomOption draftModeShowRoles;
+        public static CustomOption draftModeHideImpRoles;
+        public static CustomOption draftModeHideNeutralRoles;
 
         internal static Dictionary<byte, byte[]> blockedRolePairings = new Dictionary<byte, byte[]>();
 
@@ -439,7 +450,13 @@ namespace TheOtherRolesEdited {
             activateRoles = CustomOption.Create(1, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "启用模组角色并禁止使用原版角色"), true, null, true, heading: "模组选项");
 
             if (Utilities.EventUtility.canBeEnabled) enableEventMode = CustomOption.Create(10423, Types.General, cs(Color.green, "启用特别模式"), true, null, true, heading: "特别模式");
-            CustomOption.vanillaSettings = TheOtherRolesEditedPlugin.Instance.Config.Bind("预设0", "模组选项", "");
+
+            isDraftMode = CustomOption.Create(600, Types.General, cs(Color.yellow, "启用轮抽选职模式"), false, null, true, null, "轮抽选职");
+            draftModeAmountOfChoices = CustomOption.Create(601, Types.General, cs(Color.yellow, "最大可选职业数量"), 5f, 2f, 15f, 1f, isDraftMode, false);
+            draftModeTimeToChoose = CustomOption.Create(602, Types.General, cs(Color.yellow, "单人选择时常"), 5f, 3f, 20f, 1f, isDraftMode, false);
+            draftModeShowRoles = CustomOption.Create(603, Types.General, cs(Color.yellow, "显示已选择过的职业"), false, isDraftMode, false);
+            draftModeHideImpRoles = CustomOption.Create(604, Types.General, cs(Color.yellow, "隐藏内鬼职业"), false, draftModeShowRoles, false);
+            draftModeHideNeutralRoles = CustomOption.Create(605, Types.General, cs(Color.yellow, "隐藏中立职业"), false, draftModeShowRoles, false);
 
             // Using new id's for the options to not break compatibilty with older versions
             crewmateRolesCountMin = CustomOption.Create(300, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "最少船员职业"), 15f, 0f, 15f, 1f, null, true, heading: "职业大小数量设置");
@@ -732,7 +749,12 @@ namespace TheOtherRolesEdited {
             modifierMini = CustomOption.Create(1061, Types.Modifier, cs(Mini.color, "迷你船员"), rates, null, true);
             modifierMiniGrowingUpDuration = CustomOption.Create(1062, Types.Modifier, "迷你船员成长时间", 400f, 100f, 1500f, 100f, modifierMini);
             modifierMiniGrowingUpInMeeting = CustomOption.Create(1063, Types.Modifier, "迷你船员在会议中成长", true, modifierMini);
-
+            if (Utilities.EventUtility.canBeEnabled || Utilities.EventUtility.isEnabled)
+            {
+                eventKicksPerRound = CustomOption.Create(10424, Types.Modifier, cs(Color.green, "迷你船员最大可承受踢出次数"), 4f, 0f, 14f, 1f, modifierMini);
+                eventHeavyAge = CustomOption.Create(10425, Types.Modifier, cs(Color.green, "迷你船员成年年龄"), 12f, 6f, 18f, 0.5f, modifierMini);
+                eventReallyNoMini = CustomOption.Create(10426, Types.Modifier, cs(Color.green, "不是真的迷你船员:("), false, modifierMini, invertedParent: true);
+            }
             modifierVip = CustomOption.Create(1070, Types.Modifier, cs(Vip.color, "VIP"), rates, null, true);
             modifierVipQuantity = CustomOption.Create(1071, Types.Modifier,"VIP数量", ratesModifier, modifierVip);
             modifierVipShowColor = CustomOption.Create(1072, Types.Modifier, "显示团队颜色", true, modifierVip);

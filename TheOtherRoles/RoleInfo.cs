@@ -20,7 +20,8 @@ namespace TheOtherRolesEdited
         public RoleId roleId;
         public bool isNeutral;
         public bool isModifier;
-
+        public bool isImpostor => color == Palette.ImpostorRed && !(roleId == RoleId.Spy);
+        public static Dictionary<RoleId, RoleInfo> roleInfoById = new();
         public RoleInfo(string name, Color color, string introDescription, string shortDescription, RoleId roleId, bool isNeutral = false, bool isModifier = false) {
             this.color = color;
             this.name = name;

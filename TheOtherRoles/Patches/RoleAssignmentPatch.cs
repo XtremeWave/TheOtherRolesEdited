@@ -9,6 +9,7 @@ using AmongUs.GameOptions;
 using TheOtherRolesEdited.Utilities;
 using static TheOtherRolesEdited.TheOtherRolesEdited;
 using TheOtherRolesEdited.CustomGameModes;
+using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches {
     [HarmonyPatch(typeof(RoleOptionsCollectionV08), nameof(RoleOptionsCollectionV08.GetNumPerGame))]
@@ -51,7 +52,8 @@ namespace TheOtherRolesEdited.Patches {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.Reliable, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.resetVariables();
-            if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek || TORMapOptions.gameMode == CustomGamemodes.PropHunt || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return; // Don't assign Roles in Hide N Seek
+            if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek || TORMapOptions.gameMode == CustomGamemodes.PropHunt || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek
+                || RoleDraft.isEnabled) return; // Don't assign Roles in Hide N Seek
             assignRoles();
         }
 
@@ -385,27 +387,37 @@ namespace TheOtherRolesEdited.Patches {
             }
         }
 
-        private static void assignRoleTargets(RoleAssignmentData data) {
+        public static void assignRoleTargets(RoleAssignmentData data)
+        {
             // Set Lawyer or Prosecutor Target
-            if (Lawyer.lawyer != null) {
+            if (Lawyer.lawyer != null)
+            {
                 var possibleTargets = new List<PlayerControl>();
-                if (!Lawyer.isProsecutor) { // Lawyer
-                    foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                if (!Lawyer.isProsecutor)
+                { // Lawyer
+                    foreach (PlayerControl p in PlayerControl.AllPlayerControls)
+                    {
                         if (!p.Data.IsDead && !p.Data.Disconnected && p != Lovers.lover1 && p != Lovers.lover2 && (p.Data.Role.IsImpostor || p == Jackal.jackal || (Lawyer.targetCanBeJester && p == Jester.jester)))
                             possibleTargets.Add(p);
                     }
-                } else { // Prosecutor
-                    foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                }
+                else
+                { // Prosecutor
+                    foreach (PlayerControl p in PlayerControl.AllPlayerControls)
+                    {
                         if (!p.Data.IsDead && !p.Data.Disconnected && p != Lovers.lover1 && p != Lovers.lover2 && p != Mini.mini && !p.Data.Role.IsImpostor && !Helpers.isNeutral(p) && p != Swapper.swapper)
                             possibleTargets.Add(p);
                     }
                 }
-                
-                if (possibleTargets.Count == 0) {
+
+                if (possibleTargets.Count == 0)
+                {
                     MessageWriter w = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(w);
                     RPCProcedure.lawyerPromotesToPursuer();
-                } else {
+                }
+                else
+                {
                     var target = possibleTargets[TheOtherRolesEdited.rnd.Next(0, possibleTargets.Count)];
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.LawyerSetTarget, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
@@ -415,7 +427,8 @@ namespace TheOtherRolesEdited.Patches {
             }
         }
 
-        private static void assignModifiers() {
+        public static void assignModifiers()
+        {
             var modifierMin = CustomOptionHolder.modifiersCountMin.getSelection();
             var modifierMax = CustomOptionHolder.modifiersCountMax.getSelection();
             if (modifierMin > modifierMax) modifierMin = modifierMax;
@@ -441,11 +454,11 @@ namespace TheOtherRolesEdited.Patches {
                 RoleId.Invert,
                 RoleId.Chameleon,
                 RoleId.Armored,
-                RoleId.Disperser,
                 RoleId.Shifter
             });
 
-            if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10) { // Assign lover
+            if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10)
+            { // Assign lover
                 bool isEvilLover = rnd.Next(1, 101) <= CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10;
                 byte firstLoverId;
                 List<PlayerControl> impPlayer = new List<PlayerControl>(players);
@@ -461,7 +474,8 @@ namespace TheOtherRolesEdited.Patches {
                 modifierCount--;
             }
 
-            foreach (RoleId m in allModifiers) {
+            foreach (RoleId m in allModifiers)
+            {
                 if (getSelectionForRoleId(m) == 10) ensuredModifiers.AddRange(Enumerable.Repeat(m, getSelectionForRoleId(m, true) / 10));
                 else chanceModifiers.AddRange(Enumerable.Repeat(m, getSelectionForRoleId(m, true)));
             }
@@ -472,13 +486,15 @@ namespace TheOtherRolesEdited.Patches {
             if (modifierCount <= 0) return;
             int chanceModifierCount = Mathf.Min(modifierCount, chanceModifiers.Count);
             List<RoleId> chanceModifierToAssign = new List<RoleId>();
-            while (chanceModifierCount > 0 && chanceModifiers.Count > 0) {
+            while (chanceModifierCount > 0 && chanceModifiers.Count > 0)
+            {
                 var index = rnd.Next(0, chanceModifiers.Count);
                 RoleId modifierId = chanceModifiers[index];
                 chanceModifierToAssign.Add(modifierId);
 
                 int modifierSelection = getSelectionForRoleId(modifierId);
-                while (modifierSelection > 0) {
+                while (modifierSelection > 0)
+                {
                     chanceModifiers.Remove(modifierId);
                     modifierSelection--;
                 }
@@ -488,7 +504,8 @@ namespace TheOtherRolesEdited.Patches {
             assignModifiersToPlayers(chanceModifierToAssign, players, modifierCount); // Assign chance modifier
         }
 
-        private static void assignGuesserGamemode() {
+        public static void assignGuesserGamemode()
+        {
             List<PlayerControl> impPlayer = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
             List<PlayerControl> neutralPlayer = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
             List<PlayerControl> crewPlayer = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
@@ -500,15 +517,19 @@ namespace TheOtherRolesEdited.Patches {
             assignGuesserGamemodeToPlayers(impPlayer, Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeImpNumber.getFloat()));
         }
 
-        private static void assignGuesserGamemodeToPlayers(List<PlayerControl> playerList, int count, bool forceJackal = false, bool forceThief = false) {
-            for (int i = 0; i < count && playerList.Count > 0; i++) {
+        private static void assignGuesserGamemodeToPlayers(List<PlayerControl> playerList, int count, bool forceJackal = false, bool forceThief = false)
+        {
+            for (int i = 0; i < count && playerList.Count > 0; i++)
+            {
                 var index = rnd.Next(0, playerList.Count);
-                if (forceThief && !forceJackal) {
+                if (forceThief && !forceJackal)
+                {
                     if (Thief.thief != null)
                         index = playerList.FindIndex(x => x == Thief.thief);
                     forceThief = false;
                 }
-                if (forceJackal) {
+                if (forceJackal)
+                {
                     if (Jackal.jackal != null)
                         index = playerList.FindIndex(x => x == Jackal.jackal);
                     forceJackal = false;

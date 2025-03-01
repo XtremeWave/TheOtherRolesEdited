@@ -18,6 +18,7 @@ using AmongUs.GameOptions;
 using Assets.CoreScripts;
 using Reactor.Utilities.Extensions;
 using TheOtherRolesEdited.Players;
+using TheOtherRolesEdited.Modules;
 namespace TheOtherRolesEdited
 {
     public enum RoleId {
@@ -168,12 +169,14 @@ namespace TheOtherRolesEdited
         PropHuntStartTimer,
         PropHuntSetInvis,
         PropHuntSetSpeedboost,
-
+        DraftModePickOrder,
+        DraftModePick,
         // Other functionality
         ShareTimer,
         ShareGhostInfo,
         BlackmailPlayer,
         UnblackmailPlayer,
+        EventKick,
     }
 
     public static class RPCProcedure {
@@ -1931,15 +1934,24 @@ namespace TheOtherRolesEdited
                 case (byte)CustomRPC.PropHuntSetSpeedboost:
                     RPCProcedure.propHuntSetSpeedboost(reader.ReadByte());
                     break;
+                case (byte)CustomRPC.DraftModePickOrder:
+                    RoleDraft.receivePickOrder(reader.ReadByte(), reader);
+                    break;
+                case (byte)CustomRPC.DraftModePick:
+                    RoleDraft.receivePick(reader.ReadByte(), reader.ReadByte());
+                    break;
                 case (byte)CustomRPC.ShareGhostInfo:
                     RPCProcedure.receiveGhostInfo(reader.ReadByte(), reader);
                     break;
-
-
                 case (byte)CustomRPC.ShareRoom:
                     byte roomPlayer = reader.ReadByte();
                     byte roomId = reader.ReadByte();
                     RPCProcedure.shareRoom(roomPlayer, roomId);
+                    break;
+                case (byte)CustomRPC.EventKick:
+                    byte kickSource = reader.ReadByte();
+                    byte kickTarget = reader.ReadByte();
+                    EventUtility.handleKick(Helpers.playerById(kickSource), Helpers.playerById(kickTarget), reader.ReadSingle());
                     break;
             }
         }

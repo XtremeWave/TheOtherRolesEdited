@@ -99,6 +99,7 @@ namespace TheOtherRolesEdited {
     }
     public static class Helpers
     {
+        public static string previousEndGameSummary = "";
         public static Dictionary<string, Sprite> CachedSprites = new();
 
         public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit, bool cache=true) {

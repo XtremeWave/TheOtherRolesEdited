@@ -21,11 +21,14 @@ namespace TheOtherRolesEdited.Patches
             new("幽灵可以看到附加职业", () => TORMapOptions.ghostsSeeModifier = TheOtherRolesEditedPlugin.GhostsSeeModifier.Value = !TheOtherRolesEditedPlugin.GhostsSeeModifier.Value, TheOtherRolesEditedPlugin.GhostsSeeModifier.Value,0),
             new("显示角色摘要", () => TORMapOptions.showRoleSummary = TheOtherRolesEditedPlugin.ShowRoleSummary.Value = !TheOtherRolesEditedPlugin.ShowRoleSummary.Value, TheOtherRolesEditedPlugin.ShowRoleSummary.Value,0),
             new("显示颜色类型亮/暗", () => TORMapOptions.showLighterDarker = TheOtherRolesEditedPlugin.ShowLighterDarker.Value = !TheOtherRolesEditedPlugin.ShowLighterDarker.Value, TheOtherRolesEditedPlugin.ShowLighterDarker.Value,0),
-            new("启用模组音效", () => TORMapOptions.enableSoundEffects = TheOtherRolesEditedPlugin.EnableSoundEffects.Value = !TheOtherRolesEditedPlugin.EnableSoundEffects.Value, TheOtherRolesEditedPlugin.EnableSoundEffects.Value,0),
             new("在地图上显示通风口", () => TORMapOptions.ShowVentsOnMap = TheOtherRolesEditedPlugin.ShowVentsOnMap.Value = !TheOtherRolesEditedPlugin.ShowVentsOnMap.Value, TheOtherRolesEditedPlugin.ShowVentsOnMap.Value,0),
             new("显示聊天通知", () => TORMapOptions.ShowChatNotifications = TheOtherRolesEditedPlugin.ShowChatNotifications.Value = !TheOtherRolesEditedPlugin.ShowChatNotifications.Value, TheOtherRolesEditedPlugin.ShowChatNotifications.Value,0),
             new("启用模组光标", () => TORMapOptions.toggleCursor = TheOtherRolesEditedPlugin.ToggleCursor.Value = !TheOtherRolesEditedPlugin.ToggleCursor.Value, TheOtherRolesEditedPlugin.ToggleCursor.Value,1),
-
+              new("启用模组音效", () =>  {
+                TORMapOptions.enableSoundEffects = TheOtherRolesEditedPlugin.EnableSoundEffects.Value = !TheOtherRolesEditedPlugin.EnableSoundEffects.Value;
+                if (!TORMapOptions.enableSoundEffects) SoundEffectsManager.stopAll();
+                 return TORMapOptions.enableSoundEffects;
+                }, TheOtherRolesEditedPlugin.EnableSoundEffects.Value,0),
         };
 
         private static GameObject popUp;

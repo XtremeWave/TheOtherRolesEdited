@@ -16,8 +16,10 @@ namespace TheOtherRolesEdited.Modules {
         //private static Sprite horseModeOffSprite = null;
         //private static Sprite horseModeOnSprite = null;
         private static AnnouncementPopUp popUp;
-
+        
         private static void Prefix(MainMenuManager __instance) {
+            SoundEffectsManager.Load();
+
             var template = GameObject.Find("ExitGameButton");
 
             var buttonQQ = UnityEngine.Object.Instantiate(template, template.transform.parent);

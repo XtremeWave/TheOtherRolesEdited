@@ -76,6 +76,7 @@ namespace TheOtherRolesEdited
         private static CustomButton propHuntSpeedboostButton;
         public static CustomButton propHuntAdminButton;
         public static CustomButton propHuntFindButton;
+        public static CustomButton eventKickButton;
 
         public static Dictionary<byte, List<CustomButton>> deputyHandcuffedButtons = null;
         public static PoolablePlayer targetDisplay;
@@ -2026,7 +2027,7 @@ namespace TheOtherRolesEdited
             trapperChargesText.transform.localScale = Vector3.one * 0.5f;
             trapperChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
-
+            
             // Yoyo button
             yoyoButton = new CustomButton(
                 () => {
@@ -2490,6 +2491,26 @@ namespace TheOtherRolesEdited
                 },
                 buttonText: "Ñ°ÕÒ"
                 );
+
+            eventKickButton = new CustomButton(
+              () => {
+                  EventUtility.kickTarget();
+              },
+              () => { return EventUtility.isEnabled && Mini.mini != null && !Mini.mini.Data.IsDead && PlayerControl.LocalPlayer != Mini.mini; },
+              () => { return EventUtility.currentTarget != null; },
+              () => { },
+              EventUtility.getKickButtonSprite(),
+              CustomButton.ButtonPositions.highRowRight,
+              __instance,
+              KeyCode.K,
+              true,
+              3f,
+              () => {
+                  // onEffectEnds
+                  eventKickButton.Timer = 69;
+              },
+              buttonText: "Ìß³ö"
+              );
 
             // Set the default (or settings from the previous game) timers / durations when spawning the buttons
             initialized = true;

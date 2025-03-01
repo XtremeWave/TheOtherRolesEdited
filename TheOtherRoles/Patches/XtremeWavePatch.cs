@@ -48,8 +48,6 @@ public class XtremeWavePatchs
   - {host.PlayerName}
 <B>·</B>房间号:
   - {InnerNet.GameCode.IntToGameName(AmongUsClient.Instance.GameId)} 
-<B>·</B>ping:
-  - {AmongUsClient.Instance.Ping}
 
 ";
         }

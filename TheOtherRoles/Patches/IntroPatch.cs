@@ -8,6 +8,7 @@ using Hazel;
 
 using TheOtherRolesEdited.Utilities;
 using TheOtherRolesEdited.CustomGameModes;
+using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches {
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
@@ -174,9 +175,16 @@ namespace TheOtherRolesEdited.Patches {
         public static void setupIntroTeam(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
             List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
             RoleInfo roleInfo = infos.Where(info => !info.isModifier).FirstOrDefault();
-            if (roleInfo == null) return;
-            if (roleInfo.isNeutral) {
-                var neutralColor = new Color32(76, 84, 78, 255);
+            var neutralColor = new Color32(76, 84, 78, 255);
+            if (roleInfo == null || roleInfo == RoleInfo.crewmate)
+            {
+                if (RoleDraft.isEnabled && CustomOptionHolder.neutralRolesCountMax.getSelection() > 0)
+                {
+                    __instance.TeamTitle.text = "<size=60%>船员" + Helpers.cs(Color.white, " / ") + Helpers.cs(neutralColor, "中立") + "</size>";
+                }
+                return;
+            }
+                if (roleInfo.isNeutral) {
                 __instance.BackgroundBar.material.color = neutralColor;
                 __instance.TeamTitle.text = "中立";
                 __instance.TeamTitle.color = neutralColor;

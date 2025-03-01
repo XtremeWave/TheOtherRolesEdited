@@ -45,6 +45,26 @@ public class ModNewsHistory
         // 创建新公告时，不能删除旧公告   
         {
             {
+                // TORE v1.2.2
+                var news = new ModNews
+                {
+                    Number = 100003,
+                    Title = $"TheOtherRolesEdited  v1.2.2",
+                    SubTitle = "求善待！(真是没想到我做到了周更:)",
+                    ShortTitle = $"★TORE",
+                    Text = "<size=100%>欢迎来到 TORE v1.2.2.适配Among us v2024.11.26s</size>\n"
+                        + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
+                        + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
+                        + "\n<b>澄清</b>\n · 上个版本说的话当我没说(主要是没想到TOR会更新480)"
+                        + "\n<b>修改</b>\n · 修复了变形躲猫猫中玩家无法转化为道具的错误"
+                        + "\n<b>新增</b>\n · 轮抽选角(by:TOR)\n ·更改的Ping延迟文字在会议中的位置"
+                        + "\n<b>温馨提示</b>\n · 在轮抽选职模式中如果想听音乐应调节AU原版的音量大小:>"
+                        + "\n<b>huh</b>\n · Have a great time！",
+                    Date = "2025-3-1T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
+            {
                 // TORE v1.2.1
                 var news = new ModNews
                 {
