@@ -20,7 +20,7 @@ namespace TheOtherRolesEdited.Patches {
     }
 
     [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.GetAdjustedNumImpostors))]
-    class GameOptionsDataGetAdjustedNumImpostorsPatch {
+    class LegacyGameOptionsGetAdjustedNumImpostorsPatch {
         public static void Postfix(ref int __result) {
             if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek || TORMapOptions.gameMode == CustomGamemodes.PropHunt) {
                 int impCount = TORMapOptions.gameMode == CustomGamemodes.HideNSeek ? Mathf.RoundToInt(CustomOptionHolder.hideNSeekHunterCount.getFloat()) : CustomOptionHolder.propHuntNumberOfHunters.getQuantity();
@@ -31,9 +31,9 @@ namespace TheOtherRolesEdited.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.Validate))]
-    class GameOptionsDataValidatePatch {
-        public static void Postfix(GameOptionsData __instance) {
+    [HarmonyPatch(typeof(LegacyGameOptions), nameof(LegacyGameOptions.Validate))]
+    class LegacyGameOptionsValidatePatch {
+        public static void Postfix(LegacyGameOptions __instance) {
             if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek || GameOptionsManager.Instance.CurrentGameOptions.GameMode != GameModes.Normal) return;
             if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
                 __instance.NumImpostors = CustomOptionHolder.propHuntNumberOfHunters.getQuantity();

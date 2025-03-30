@@ -16,15 +16,14 @@ public static class MainMenuManagerPatch
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.LateUpdate)), HarmonyPostfix]
     public static void StartPostfix(MainMenuManager __instance)
     {
-
-    __instance.screenTint.gameObject.transform.localPosition += new Vector3(1000f, 0f);
-    __instance.screenTint.enabled = false;
-    __instance.rightPanelMask.SetActive(true);
-    // The background texture (large sprite asset)
-    __instance.mainMenuUI.FindChild<SpriteRenderer>("BackgroundTexture").transform.gameObject.SetActive(false);
+        __instance.screenTint.gameObject.transform.localPosition += new Vector3(1000f, 0f);
+        __instance.screenTint.enabled = false;
+        __instance.rightPanelMask.SetActive(true);
+        // The background texture (large sprite asset)
+        GameObject.Find("BackgroundTexture")?.SetActive(false);
         // The glint on the Among Us Menu
-        __instance.mainMenuUI.FindChild<SpriteRenderer>("WindowShine").transform.gameObject.SetActive(false);
-        __instance.mainMenuUI.FindChild<Transform>("ScreenCover").gameObject.SetActive(false);
+        GameObject.Find("WindowShine")?.SetActive(false);
+        GameObject.Find("ScreenCover")?.SetActive(false);
 
         GameObject leftPanel = __instance.mainMenuUI.FindChild<Transform>("LeftPanel").gameObject;
         GameObject rightPanel = __instance.mainMenuUI.FindChild<Transform>("RightPanel").gameObject;
@@ -34,12 +33,12 @@ public static class MainMenuManagerPatch
         //maskedBlackScreen.transform.localPosition = new Vector3(-3.345f, -2.05f); //= new Vector3(0f, 0f);
         //maskedBlackScreen.transform.localScale = new (7.35f, 4.5f, 4f);
 
-        __instance.mainMenuUI.gameObject.transform.position += new Vector3(-0.2f, 0f);
+        //__instance.mainMenuUI.gameObject.transform.position += new Vector3(-0.2f, 0f);
 
-       leftPanel.gameObject.GetComponent<SpriteRenderer>().enabled = false;
-       leftPanel.gameObject.FindChild<SpriteRenderer>("Divider").enabled = false;
-       leftPanel.GetComponentsInChildren<SpriteRenderer>(true).Where(r => r.name == "Shine").ToList().ForEach(r => r.enabled = false);
-      
+        leftPanel.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        leftPanel.gameObject.FindChild<SpriteRenderer>("Divider").enabled = false;
+        leftPanel.GetComponentsInChildren<SpriteRenderer>(true).Where(r => r.name == "Shine").ToList().ForEach(r => r.enabled = false);
+
 
 
         /*  var howToPlayButton = __instance.howToPlayButton;

@@ -65,10 +65,10 @@ namespace TheOtherRolesEdited.Patches {
 
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameEnd))]
     public static class OnGameEndPatch {
-        public static GameOverReason gameOverReason = GameOverReason.HumansByTask;
+        public static GameOverReason gameOverReason = GameOverReason.CrewmatesByTask;
         public static void Prefix(AmongUsClient __instance, [HarmonyArgument(0)]ref EndGameResult endGameResult) {
             gameOverReason = endGameResult.GameOverReason;
-            if ((int)endGameResult.GameOverReason >= 10) endGameResult.GameOverReason = GameOverReason.ImpostorByKill;
+            if ((int)endGameResult.GameOverReason >= 10) endGameResult.GameOverReason = GameOverReason.ImpostorsByKill;
 
             // Reset zoomed out ghosts
             Helpers.toggleZoom(reset: true);
@@ -322,27 +322,27 @@ namespace TheOtherRolesEdited.Patches {
                         textRenderer.text = "最后一名船员断开连接";
                         textRenderer.color = Color.red;
                         break;
-                    case GameOverReason.ImpostorByKill:
+                    case GameOverReason.ImpostorsByKill:
                         textRenderer.text = "内鬼胜利 - 杀光光";
                         textRenderer.color = Color.red;
                         break;
-                    case GameOverReason.ImpostorBySabotage:
+                    case GameOverReason.ImpostorsBySabotage:
                         textRenderer.text = "内鬼胜利 - 破坏飞船";
                         textRenderer.color = Color.red;
                         break;
-                    case GameOverReason.ImpostorByVote:
+                    case GameOverReason.ImpostorsByVote:
                         textRenderer.text = "内鬼胜利 - 通过投票，猜测或玩家断连";
                         textRenderer.color = Color.red;
                         break;
-                    case GameOverReason.HumansByTask:
+                    case GameOverReason.CrewmatesByTask:
                         textRenderer.text = "船员胜利 - 任务全部完成";
                         textRenderer.color = Color.white;
                         break;
-                    case GameOverReason.HumansDisconnect:
+                    case GameOverReason.CrewmateDisconnect:
                         textRenderer.text = "船员胜利 - 没有内鬼(和带刀中立)了!";
                         textRenderer.color = Color.white;
                         break;
-                    case GameOverReason.HumansByVote:
+                    case GameOverReason.CrewmatesByVote:
                         textRenderer.text = "船员胜利 - 内鬼(和带刀中立)被投完了！";
                         textRenderer.color = Color.white;
                         break;
@@ -480,7 +480,7 @@ namespace TheOtherRolesEdited.Patches {
             if (HideNSeek.isHideNSeekGM && !HideNSeek.taskWinPossible || PropHunt.isPropHuntGM) return false;
             if (GameData.Instance.TotalTasks > 0 && GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks) {
                 //__instance.enabled = false;
-                GameManager.Instance.RpcEndGame(GameOverReason.HumansByTask, false);
+                GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByTask, false);
                 return true;
             }
             return false;
@@ -522,13 +522,13 @@ namespace TheOtherRolesEdited.Patches {
                 GameOverReason endReason;
                 switch (GameData.LastDeathReason) {
                     case DeathReason.Exile:
-                        endReason = GameOverReason.ImpostorByVote;
+                        endReason = GameOverReason.ImpostorsByVote;
                         break;
                     case DeathReason.Kill:
-                        endReason = GameOverReason.ImpostorByKill;
+                        endReason = GameOverReason.ImpostorsByKill;
                         break;
                     default:
-                        endReason = GameOverReason.ImpostorByVote;
+                        endReason = GameOverReason.ImpostorsByVote;
                         break;
                 }
                 GameManager.Instance.RpcEndGame(endReason, false);
@@ -540,16 +540,16 @@ namespace TheOtherRolesEdited.Patches {
         private static bool CheckAndEndGameForCrewmateWin(ShipStatus __instance, PlayerStatistics statistics) {
             if (HideNSeek.isHideNSeekGM && HideNSeek.timer <= 0 && !HideNSeek.isWaitingTimer) {
                 //__instance.enabled = false;
-                GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
+                GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByVote, false);
                 return true;
             }
             if (PropHunt.isPropHuntGM && PropHunt.timer <= 0 && PropHunt.timerRunning) {
-                GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
+                GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByVote, false);
                 return true;
             }
             if (statistics.TeamImpostorsAlive == 0 && statistics.TeamJackalAlive == 0) {
                 //__instance.enabled = false;
-                GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
+                GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByVote, false);
                 return true;
             }
             return false;
@@ -557,7 +557,7 @@ namespace TheOtherRolesEdited.Patches {
 
         private static void EndGameForSabotage(ShipStatus __instance) {
             //__instance.enabled = false;
-            GameManager.Instance.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
+            GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsBySabotage, false);
             return;
         }
 

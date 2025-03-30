@@ -5,15 +5,8 @@ using UnityEngine;
 using System.IO;
 using System.Reflection;
 using TMPro;
-using InnerNet;
-using Rewired.Utils.Platforms.Windows;
-using static TheOtherRolesEdited.Patches.GameStartManagerPatch;
-using LibCpp2IL.Elf;
-using TheOtherRolesEdited.Modules;
-using AmongUs.Data;
 using Object = UnityEngine.Object;
 using Assets.InnerNet;
-using System.Runtime.CompilerServices;
 
 namespace TheOtherRolesEdited;
 
@@ -133,17 +126,6 @@ internal class TitleLogoPatch
 #if DEBUG
         __instance.text.text = $"v{Application.version}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString} - (DebugMode)";
 #endif
-    }
-    [HarmonyPatch(typeof(ModManager), nameof(ModManager.LateUpdate))]
-    class ModManagerLateUpdatePatch
-    {
-        public static void Postfix(ModManager __instance)
-        {
-            var offset_y = HudManager.InstanceExists ? 1.8f : 0.9f;
-            __instance.ModStamp.transform.position = AspectPosition.ComputeWorldPosition(
-            __instance.localCamera, AspectPosition.EdgeAlignments.RightTop,
-            new Vector3(0.3f, offset_y, __instance.localCamera.nearClipPlane + 0.1f));
-        }
     }
     static Sprite XtremeWaveSprite = LoadSprite("TheOtherRolesEdited.Resources.XtremeWave.png", 1000f);
 

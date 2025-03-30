@@ -444,6 +444,7 @@ namespace TheOtherRolesEdited {
 
         public static void Load()
         {
+            CustomOption.vanillaSettings = TheOtherRolesEditedPlugin.Instance.Config.Bind("Preset0", "VanillaOptions", "");
 
             // Role Options
             presetSelection = CustomOption.Create(0, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Ô¤Éè"), presets, null, true, heading: "ÓÎÏ·Ô¤Éè");

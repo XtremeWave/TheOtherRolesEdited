@@ -3,6 +3,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Version>1.2.2</Version>
         <Description>TheOtherRolesEdited</Description>
+		<DebugType>embedded</DebugType>
         <Authors>XtremeWave</Authors>
 		<LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -17,7 +18,7 @@
     </ItemGroup>
    
 	<ItemGroup>
-		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2024.10.29" />
+		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2025.3.25" />
 		<PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" />
 		<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.697" />
         <PackageReference Include="Reactor" Version="2.3.1" />
