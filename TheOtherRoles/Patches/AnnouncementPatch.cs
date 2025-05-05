@@ -45,6 +45,24 @@ public class ModNewsHistory
         // 创建新公告时，不能删除旧公告   
         {
             {
+                // TORE v1.2.4
+                var news = new ModNews
+                {
+                    Number = 100005,
+                    Title = $"TheOtherRolesEdited  v1.2.4",
+                    SubTitle = "劳动节快乐哈！",
+                    ShortTitle = $"★TORE",
+                    Text = "<size=100%>欢迎来到 TORE v1.2.4.适配Among us v2025.3.31s</size>\n"
+                        + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
+                        + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
+                        + "\n<b>UI更新</b>\n · 等候大厅UI全新更新重新排版!\n ·创建游戏界面UI更新(by方块)"
+                        + "\n<b>轮抽选角</b>\n · 增加聊天功能\n ·增加隐藏船员"
+                        + "\n<b>huh</b>\n · 我还更新了版本号",
+                    Date = "2025-5-5T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
+            {
                 // TORE v1.2.3
                 var news = new ModNews
                 {
