@@ -32,9 +32,7 @@ public static class MainMenuManagerPatch
         maskedBlackScreen.GetComponent<SpriteRenderer>().enabled = false;
         //maskedBlackScreen.transform.localPosition = new Vector3(-3.345f, -2.05f); //= new Vector3(0f, 0f);
         //maskedBlackScreen.transform.localScale = new (7.35f, 4.5f, 4f);
-
         //__instance.mainMenuUI.gameObject.transform.position += new Vector3(-0.2f, 0f);
-
         leftPanel.gameObject.GetComponent<SpriteRenderer>().enabled = false;
         leftPanel.gameObject.FindChild<SpriteRenderer>("Divider").enabled = false;
         leftPanel.GetComponentsInChildren<SpriteRenderer>(true).Where(r => r.name == "Shine").ToList().ForEach(r => r.enabled = false);

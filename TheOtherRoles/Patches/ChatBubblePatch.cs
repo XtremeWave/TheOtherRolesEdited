@@ -81,7 +81,7 @@ public static class ChatBubblePatch
            chatText.Contains("rnm") ||
            chatText.Contains("吊") ||
            chatText.Contains("jb") ||
-          //chatText.Contains("http") ||
+           chatText.Contains("骚逼") ||
            chatText.Contains("贱") ||
            chatText.Contains("鸡巴") ||
            chatText.Contains("机霸") ||

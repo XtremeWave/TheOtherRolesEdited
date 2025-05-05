@@ -10,6 +10,9 @@ using TheOtherRolesEdited.Patches;
 using static TheOtherRolesEdited.TheOtherRolesEdited;
 using UnityEngine.UI;
 using Reactor.Utilities.Extensions;
+using TMPro;
+using TheOtherRolesEdited.Utilities;
+using Object = UnityEngine.Object;
 
 namespace TheOtherRolesEdited.Modules
 {
@@ -25,8 +28,12 @@ namespace TheOtherRolesEdited.Modules
         private static List<ActionButton> buttons = new List<ActionButton>();
         private static TMPro.TextMeshPro feedText;
         public static List<byte> alreadyPicked = new();
+        public static TextMeshPro buttonText;
         public static IEnumerator CoSelectRoles(IntroCutscene __instance)
         {
+            if (CustomOptionHolder.draftModeCanChat.getBool())
+                FastDestroyableSingleton <HudManager>.Instance.Chat.SetVisible(true);
+
             isRunning = true;
             SoundEffectsManager.play("draft", volume: 1f, true, true);
             alreadyPicked.Clear();
@@ -42,6 +49,13 @@ namespace TheOtherRolesEdited.Modules
             feedText.autoSizeTextContainer = true;
             feedText.fontSize = 3f;
             feedText.enableAutoSizing = false;
+            var scroller = feedText.gameObject.AddComponent<Scroller>();
+            scroller.allowX = false;
+            scroller.allowY = true;
+            scroller.active = true;
+            scroller.velocity = new Vector2(0, 0);
+            scroller.ContentYBounds = new FloatRange(0, (feedText.text.Count() - 12) * (0.25f));
+            scroller.enabled = true;
             __instance.TeamTitle.transform.localPosition = __instance.TeamTitle.transform.localPosition + new Vector3(1f, 0f);
             __instance.TeamTitle.text = "当前选择:";
             __instance.BackgroundBar.enabled = false;
@@ -52,6 +66,7 @@ namespace TheOtherRolesEdited.Modules
             __instance.TeamTitle.alignment = TMPro.TextAlignmentOptions.Top;
             __instance.ImpostorText.gameObject.SetActive(false);
             GameObject.Find("BackgroundLayer")?.SetActive(false);
+
             foreach (var player in UnityEngine.Object.FindObjectsOfType<PoolablePlayer>())
             {
                 if (player.name.Contains("Dummy"))
@@ -230,22 +245,24 @@ namespace TheOtherRolesEdited.Modules
                             }
                         }
 
-                        if (timer >= maxTimer) {
+                        if (timer >= maxTimer)
                             sendPick((byte)originalAvailable.OrderBy(_ => Guid.NewGuid()).First().roleId);
-                        }
 
 
-                        if (GameObject.Find("RoleButton") == null) {
+                        if (GameObject.Find("RoleButton") == null)
+                        {
                             SoundEffectsManager.play("timemasterShield");
                             int i = 0;
                             int buttonsPerRow = 4;
                             int lastRow = availableRoles.Count / buttonsPerRow;
                             int buttonsInLastRow = availableRoles.Count % buttonsPerRow;
 
-                            foreach (RoleInfo roleInfo in availableRoles) {
+                            foreach (RoleInfo roleInfo in availableRoles)
+                            {
                                 float row = i / buttonsPerRow;
                                 float col = i % buttonsPerRow;
-                                if (buttonsInLastRow != 0 && row == lastRow) {
+                                if (buttonsInLastRow != 0 && row == lastRow)
+                                {
                                     col += (buttonsPerRow - buttonsInLastRow) / 2f;
                                 }
                                 // planned rows: maximum of 4, hence the following calculation for rows as well:
@@ -258,34 +275,37 @@ namespace TheOtherRolesEdited.Modules
                                 actionButton.transform.localScale = new Vector3(2f, 2f);
                                 actionButton.SetCoolDown(0, 0);
                                 GameObject textHolder = new GameObject("textHolder");
-                                var text = textHolder.AddComponent<TMPro.TextMeshPro>();
-                                text.text = roleInfo.name.Replace(" ", "\n");
-                                text.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
-                                text.fontSize = 5;
+                                var ButtonText = textHolder.AddComponent<TMPro.TextMeshPro>();
+                                ButtonText.text = roleInfo.name.Replace(" ", "\n");
+                                ButtonText.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
+                                ButtonText.fontSize = 5;
                                 textHolder.layer = actionButton.gameObject.layer;
-                                text.outlineWidth = 0.1f;
-                                text.outlineColor = Color.white;
-                                text.color = roleInfo.color;
+                                ButtonText.outlineWidth = 0.1f;
+                                ButtonText.outlineColor = Color.white;
+                                ButtonText.color = roleInfo.color;
                                 textHolder.transform.SetParent(actionButton.transform, false);
-                                textHolder.transform.localPosition = new Vector3(0, text.text.Contains("\n") ? -1.975f : -2.2f, -1);
+                                textHolder.transform.localPosition = new Vector3(0, ButtonText.text.Contains("\n") ? -1.975f : -2.2f, -1);
                                 GameObject actionButtonGameObject = actionButton.gameObject;
                                 SpriteRenderer actionButtonRenderer = actionButton.graphic;
                                 Material actionButtonMat = actionButtonRenderer.material;
 
                                 PassiveButton button = actionButton.GetComponent<PassiveButton>();
                                 button.OnClick = new Button.ButtonClickedEvent();
-                                button.OnClick.AddListener((Action)(() => {
+                                button.OnClick.AddListener((Action)(() =>
+                                {
                                     sendPick((byte)roleInfo.roleId);
                                 }));
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) =>
+                                {
                                     actionButton.OverrideText("");
                                 })));
                                 buttons.Add(actionButton);
                                 i++;
+                               }
                             }
-                        }
-
-                    } else {
+                        } 
+                      else 
+                   {
                         int currentPick = PlayerControl.AllPlayerControls.Count - pickOrder.Count + 1;
                         playerText = $"匿名玩家 {currentPick}";
                         HudManager.Instance.FullScreen.color = Color.black;
@@ -294,7 +314,7 @@ namespace TheOtherRolesEdited.Modules
                     int waitMore = pickOrder.IndexOf(PlayerControl.LocalPlayer.PlayerId);
                     string waitMoreText = "";
                     if (waitMore > 0) {
-                        waitMoreText = $" (当前回合 {waitMore} 直到你的回合)";
+                        waitMoreText = $" (再等回合 {waitMore} 到你的回合)";
                     }
                     __instance.TeamTitle.text += $"\n\n{waitMoreText}\n正在选择... {(int)(maxTimer + 1 - timer)}\n {(SoundManager.MusicVolume > -80 ? "♫ 音乐: Ultimate Superhero 3 - Kenët & Rez ♫" : "")}";
                     yield return null;
@@ -320,6 +340,8 @@ namespace TheOtherRolesEdited.Modules
             }
 
             SoundEffectsManager.stop("draft");
+            if (CustomOptionHolder.draftModeCanChat.getBool())
+                FastDestroyableSingleton<HudManager>.Instance.Chat.SetVisible(false);
             isRunning = false;
             yield break;
         }
@@ -340,15 +362,19 @@ namespace TheOtherRolesEdited.Modules
                 if (!CustomOptionHolder.draftModeShowRoles.getBool() && !(playerId == PlayerControl.LocalPlayer.PlayerId)) {
                     roleString = "未知职业";
                     roleLength = roleString.Length;
-                }                   
+                }
                 else if (CustomOptionHolder.draftModeHideImpRoles.getBool() && roleInfo.isImpostor && !(playerId == PlayerControl.LocalPlayer.PlayerId)) {
                     roleString = Helpers.cs(Palette.ImpostorRed, "内鬼职业");
                     roleLength = "内鬼职业".Length;
-                }                    
+                }
                 else if (CustomOptionHolder.draftModeHideNeutralRoles.getBool() && roleInfo.isNeutral && !(playerId == PlayerControl.LocalPlayer.PlayerId)) {
                     roleString = Helpers.cs(Palette.Blue, "中立职业");
                     roleLength = "中立职业".Length;
-                }                    
+                }
+                else if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && roleInfo.isNeutral && roleInfo.isImpostor && !(playerId == PlayerControl.LocalPlayer.PlayerId)) { 
+                    roleString = Helpers.cs(Palette.Blue, "船员职业");
+                    roleLength = "船员职业".Length;
+                }
                 string line = $"{(playerId == PlayerControl.LocalPlayer.PlayerId ? "你" : alreadyPicked.Count)}:";
                 line = line + string.Concat(Enumerable.Repeat(" ", 6 - line.Length)) + roleString;
                 feedText.text += line + "\n";

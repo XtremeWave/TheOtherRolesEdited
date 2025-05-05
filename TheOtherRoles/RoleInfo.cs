@@ -20,15 +20,17 @@ namespace TheOtherRolesEdited
         public RoleId roleId;
         public bool isNeutral;
         public bool isModifier;
+        public bool isCrewmate;
         public bool isImpostor => color == Palette.ImpostorRed && !(roleId == RoleId.Spy);
         public static Dictionary<RoleId, RoleInfo> roleInfoById = new();
-        public RoleInfo(string name, Color color, string introDescription, string shortDescription, RoleId roleId, bool isNeutral = false, bool isModifier = false) {
+        public RoleInfo(string name, Color color, string introDescription, string shortDescription, RoleId roleId, bool isNeutral = false, bool isModifier = false, bool isCrewmate = false) {
             this.color = color;
             this.name = name;
             this.introDescription = introDescription;
             this.shortDescription = shortDescription;
             this.roleId = roleId;
             this.isNeutral = isNeutral;
+            this.isCrewmate = isCrewmate;
             this.isModifier = isModifier;
         }
 
@@ -258,7 +260,7 @@ namespace TheOtherRolesEdited
             roleName = String.Join(" ", getRoleInfoForPlayer(p, showModifier).Select(x => useColors ? Helpers.cs(x.color, x.name) : x.name).ToArray());
             if (Lawyer.target != null && p.PlayerId == Lawyer.target.PlayerId && CachedPlayer.LocalPlayer.PlayerControl != Lawyer.target)
                 roleName += (useColors ? Helpers.cs(Pursuer.color, " §") : " §");
-            if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId)) roleName += " (赌杀)";
+            if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId)) roleName += " (赌怪)";
 
             if (!suppressGhostInfo && p != null)
             {

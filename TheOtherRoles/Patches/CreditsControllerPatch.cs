@@ -15,7 +15,8 @@ public class CreditsControllerPatch
 
                 $"slok",
                 $"喜",
-                $"㍿",
+                $"方块",
+                $"{TheOtherRolesEditedPlugin.Dev}",
                 $"Zxylem",
                 $"照路行不行",
                 $"一念旧情丶",
@@ -33,7 +34,6 @@ public class CreditsControllerPatch
                 $"ZEYAN",
                 $"白糖咖啡",
                 $"崩pz衫",
-                $"{TheOtherRolesEditedPlugin.Dev}",
 
             };
 
@@ -69,7 +69,7 @@ public class CreditsControllerPatch
             };
 
         var credits = new List<CreditsController.CreditStruct>();
-        AddTitleToCredits($"<color=#FF0000>Team</color> - <size=130%><color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>");
+        AddTitleToCredits($" <size=500%><color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color> </size>");
         AddPersonToCredits(TeamList);
         AddSpcaeToCredits();
 

@@ -1,4 +1,3 @@
-
 using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +6,7 @@ using System.Reflection;
 using TMPro;
 using Object = UnityEngine.Object;
 using Assets.InnerNet;
+using AmongUs.GameOptions;
 
 namespace TheOtherRolesEdited;
 
@@ -22,20 +22,6 @@ internal class TitleLogoPatch
     private static TextMeshPro welcomeText;
     public static GameObject Starfield;
 
-    public static void showPopup(string text)
-    {
-        var popup = GameObject.Instantiate(DiscordManager.Instance.discordPopup, Camera.main!.transform);
-
-        var background = popup.transform.Find("Background").GetComponent<SpriteRenderer>();
-        var size = background.size;
-        size.x *= 2.5f;
-        background.size = size;
-        background.sprite = LoadSprite("TheOtherRolesEdited.Resources.Background.png", 150f);
-        background.transform.localScale = new Vector3(0.6145f, 1.0618f, 1f);
-        popup.TextAreaTMP.fontSizeMin = 2;
-        popup.Show(text);
-    }
-
     private static void Postfix(MainMenuManager __instance)
     {
         Background = new GameObject("TORE Background");
@@ -50,12 +36,11 @@ internal class TitleLogoPatch
         Starfield.transform.SetParent(Background.transform);
         Object.Destroy(Ambience);
 
-
         if (!(ModStamp = GameObject.Find("ModStamp"))) return;
-        ModStamp.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
-
+        ModStamp.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         if (!(ModStamp = GameObject.Find("ModStamp"))) return;
         var ModStapRenderer = ModStamp.GetComponent<SpriteRenderer>();
+
         ModStapRenderer.sprite = LoadSprite("TheOtherRolesEdited.Resources.ModStamp.png", 150f);
 
         if (!(AmongUsLogo = GameObject.Find("AmongUsLogo"))) return;
@@ -65,20 +50,18 @@ internal class TitleLogoPatch
         if (!(AULogo = GameObject.Find("LOGO-AU"))) return;
         var logoRenderer = AULogo.GetComponent<SpriteRenderer>();
         logoRenderer.sprite = LoadSprite("TheOtherRolesEdited.Resources.TORE.png", 150f);
-        AULogo.transform.localPosition += new Vector3(0f, 0f, 0);
+        AULogo.transform.localPosition += new Vector3(-0.4f, 0.15f, 0);
+        AULogo.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
 
         if (!(BottomButtonBounds = GameObject.Find("BottomButtonBounds"))) return;
-        BottomButtonBounds.transform.localPosition += new Vector3(0f, 0.3f, 0);
-        __instance.playButton.transform.localPosition += new Vector3(-0.3f, 0.3f, 0);
-        __instance.inventoryButton.transform.localPosition += new Vector3(-0.3f, 0.3f, 0);
-        __instance.shopButton.transform.localPosition += new Vector3(-0.3f, 0.3f, 0);
-        __instance.myAccountButton.transform.localPosition += new Vector3(-0.3f, 0.3f, 0);
-        __instance.newsButton.transform.localPosition += new Vector3(-0.3f, 0.3f, 0);
-        __instance.settingsButton.transform.localPosition += new Vector3(-0.3f, 0.3f, 0);
+        BottomButtonBounds.transform.localPosition += new Vector3(-0.3f, 0.6f, 0);
+        __instance.playButton.transform.localPosition += new Vector3(-0.3f, 0.6f, 0);
+        __instance.inventoryButton.transform.localPosition += new Vector3(-0.3f, 0.6f, 0);
+        __instance.shopButton.transform.localPosition += new Vector3(-0.3f, 0.6f, 0);
+        __instance.myAccountButton.transform.localPosition += new Vector3(-0.3f, 0.6f, 0);
+        __instance.newsButton.transform.localPosition += new Vector3(-0.3f, 0.6f, 0);
+        __instance.settingsButton.transform.localPosition += new Vector3(-0.3f, 0.6f, 0);
 
-#if DEBUG
-        showPopup($"公告\n\n<color=#FF0000>Debug开发者测试版本,禁止外传！");
-#endif
     }
 
     public static Dictionary<string, Sprite> CachedSprites = new();
@@ -118,14 +101,8 @@ internal class TitleLogoPatch
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
     public static void Postfix(VersionShower __instance)
     {
-        __instance.transform.localPosition = new Vector3(8.4182f, 0.0267f, 0f);
-#if RELEASE
+        __instance.text.alignment = TextAlignmentOptions.Left;
         __instance.text.text = $"v{Application.version}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString} ";
-#endif
-
-#if DEBUG
-        __instance.text.text = $"v{Application.version}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString} - (DebugMode)";
-#endif
     }
     static Sprite XtremeWaveSprite = LoadSprite("TheOtherRolesEdited.Resources.XtremeWave.png", 1000f);
 
@@ -165,5 +142,45 @@ internal class TitleLogoPatch
         welcomeText.outlineWidth = 0.30f;
         welcomeText.transform.localPosition += new Vector3(-0.55f, -0.25f, 0f);
         welcomeText.transform.localScale = new(0.7f, 0.7f, 1f);
+    }
+    [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
+    public static class GameStartManagePatch
+    {
+        public static void Postfix(GameStartManager __instance)
+        {
+            var AspectSize = GameObject.Find("AspectSize");
+            AspectSize.transform.FindChild("Divider").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            GameObject mapImage = AspectSize.FindChild<Transform>("MapImage").gameObject;
+            mapImage.transform.localPosition = new Vector3(-16.8918f, -8.483f, -2f);
+            GameObject sb = AspectSize.FindChild<Transform>("ModeLabel").gameObject;
+            sb.transform.localPosition = new Vector3(1111f, -8.483f, -2f);
+            GameObject sp = AspectSize.FindChild<Transform>("PrivacyLabel").gameObject;
+            sp.transform.localPosition = new Vector3(1111f, -8.483f, -2f);
+            GameObject sc = AspectSize.FindChild<Transform>("CapacityLabel").gameObject;
+            sc.transform.localPosition = new Vector3(1111f, -8.483f, -2f);
+            GameObject sd = AspectSize.FindChild<Transform>("Background").gameObject;
+            sd.transform.localPosition = new Vector3(-1.0986f, -4.7321f, 0f);
+            sd.transform.localScale = new Vector3(0.7009f, 0.6009f, 0f);
+            sd.GetComponent<SpriteRenderer>().color = new(0f, 0f, 1f);
+
+            if (__instance == null) return;
+
+            TextMeshPro temp = __instance.PlayerCounter;
+
+
+            if (AmongUsClient.Instance.AmHost)
+            {
+                __instance.EditButton.transform.localPosition = new Vector3(-0.4815f, -0.11f, -1f);
+                __instance.EditButton.transform.localScale = new Vector3(1.24f, 0.8f, 0f);
+
+                __instance.HostViewButton.transform.localPosition = new Vector3(-0.4815f, 0.52f, -1f);
+                __instance.HostViewButton.transform.localScale = new Vector3(1.24f, 0.8f, 0f);
+            }
+            else
+            {
+                __instance.ClientViewButton.transform.localPosition = new Vector3(0.7823f, 0.5357f, 0f);
+                __instance.ClientViewButton.transform.localScale = new Vector3(0.592f, 0.6f, 0f);
+            }
+        }
     }
 }

@@ -19,17 +19,45 @@ namespace TheOtherRolesEdited.Modules {
         
         private static void Prefix(MainMenuManager __instance) {
             SoundEffectsManager.Load();
-
             var template = GameObject.Find("ExitGameButton");
-
             var buttonQQ = UnityEngine.Object.Instantiate(template, template.transform.parent);
-
             var buttonBG = UnityEngine.Object.Instantiate(template, template.transform.parent);
-
+            var buttonFK = UnityEngine.Object.Instantiate(template, template.transform.parent);
+            var buttonGH = UnityEngine.Object.Instantiate(template, template.transform.parent);
             buttonQQ.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.43f);
-
-            buttonBG.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.368f, 0.389f);
-
+            buttonBG.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.389f, 0.30f);
+            buttonFK.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.36f);
+            buttonGH.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.36f);
+           
+            //FK button
+            var textFK = buttonFK.transform.GetComponentInChildren<TMPro.TMP_Text>();
+            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
+                textFK.SetText("方块の小站");
+            })));
+            PassiveButton passiveButtonFK = buttonFK.GetComponent<PassiveButton>();
+            passiveButtonFK.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
+            passiveButtonFK.OnClick = new Button.ButtonClickedEvent();
+            passiveButtonFK.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://fungle.icu")));
+            passiveButtonFK.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0.191f, 255f);
+            passiveButtonFK.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 255f);
+            Color originalColorpassiveButtonFK = passiveButtonFK.inactiveSprites.GetComponent<SpriteRenderer>().color;
+            passiveButtonFK.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonFK * 0.6f;
+           
+            //Github button
+            var textGH = buttonGH.transform.GetComponentInChildren<TMPro.TMP_Text>();
+            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
+                textGH.SetText("Github");
+            })));
+            PassiveButton passiveButtonGH = buttonGH.GetComponent<PassiveButton>();
+            passiveButtonGH.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
+            passiveButtonGH.OnClick = new Button.ButtonClickedEvent();
+            passiveButtonGH.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://github.com/XtremeWave/TheOtherRolesEdited")));
+            passiveButtonGH.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0.191f, 255f);
+            passiveButtonGH.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 255f);
+            Color originalColorpassiveButtonGH = passiveButtonGH.inactiveSprites.GetComponent<SpriteRenderer>().color;
+            passiveButtonGH.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonGH * 0.6f;
+            
+            //QQ button
             var textQQ = buttonQQ.transform.GetComponentInChildren<TMPro.TMP_Text>();
             __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
                 textQQ.SetText("QQ频道");
@@ -43,10 +71,11 @@ namespace TheOtherRolesEdited.Modules {
             Color originalColorpassiveButtonQQ = passiveButtonQQ.inactiveSprites.GetComponent<SpriteRenderer>().color;
             passiveButtonQQ.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonQQ * 0.6f;
             buttonQQ.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.43f);
-
+            
+            //Bg Button
             var textBG = buttonBG.transform.GetComponentInChildren<TMPro.TMP_Text>();
             __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
-                textBG.SetText($"<b>© AiGe</B>");
+                textBG.SetText($"<b>Background © AiGe</B>");
             })));
             textBG.outlineColor = Color.black;
             textBG.outlineWidth = 0.18f;
@@ -207,9 +236,9 @@ TheEpicRoles - Idea for the first kill shield (partly) and the tabbed option men
                 }));
 
                 template.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) => {
-                    guesserButtonText.SetText("TORE赌怪模式");
-                    HideNSeekButtonText.SetText("TORE捉迷藏模式");
-                    PropHuntButtonText.SetText("TORE变形躲猫猫模式");
+                    guesserButtonText.SetText("赌怪模式");
+                    HideNSeekButtonText.SetText("捉迷藏模式");
+                    PropHuntButtonText.SetText("变形躲猫猫模式");
                 })));
             }));
         }

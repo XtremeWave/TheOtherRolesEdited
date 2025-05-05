@@ -204,7 +204,7 @@ namespace TheOtherRolesEdited.Modules
             
             var BGLogo = new GameObject("Update_TORE");
             BGLogo.transform.SetParent(GameObject.Find("RightPanel").transform, false);
-            BGLogo.transform.localPosition = new Vector3(1.1986f, -2.0005f, 4.8782f);
+            BGLogo.transform.localPosition = new Vector3(0.9605f, -2.0005f, 4.8782f);
             BGLogo.transform.localScale = new Vector3(0.3964f,0.3964f,1f);
             ModUpdateBG = BGLogo.AddComponent<SpriteRenderer>();
             ModUpdateBG.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.Update.png", 100f);

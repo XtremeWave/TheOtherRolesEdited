@@ -21,7 +21,7 @@ public static class CustomHatManager
         get
         {
             var (owner, repository) = Repository;
-            return $"https://dl.fangkuai.fun/ModFiles/TheOtherRoles-GM-Haoming/TheOtherHats";
+            return $"https://dl.fungle.icu/ModFiles/TheOtherRoles/TheOtherHats";
         }
     }
 

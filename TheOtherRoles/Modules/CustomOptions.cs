@@ -1310,8 +1310,7 @@ namespace TheOtherRolesEdited
                         break;
                 }
             }
-
-            if (!hideExtras || counter != 0) hudString += $"\n 使用TAB键或数字键查看更多... ({counter + 1}/{maxPage})";
+            if (!hideExtras || counter != 0) hudString += $"\n 使用左Shift键或数字键查看更多... ({counter + 1}/{maxPage})";
             return hudString;
         }
 
@@ -1415,7 +1414,7 @@ namespace TheOtherRolesEdited
         public static void addKillDistance()
         {
             LegacyGameOptions.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
-            LegacyGameOptions.KillDistanceStrings = new(new string[] { "很短", "Short", "Medium", "Long" });
+            LegacyGameOptions.KillDistanceStrings = new(new string[] { "很短", "短", "中", "长" });
         }
 
         [HarmonyPatch(typeof(StringGameSetting), nameof(StringGameSetting.GetValueString))]
@@ -1434,7 +1433,7 @@ namespace TheOtherRolesEdited
         public static void Postfix(KeyboardJoystick __instance)
         {
             int page = TheOtherRolesEditedPlugin.optionsPage;
-            if (Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 TheOtherRolesEditedPlugin.optionsPage = (TheOtherRolesEditedPlugin.optionsPage + 1) % 7;
             }
@@ -1522,7 +1521,7 @@ namespace TheOtherRolesEdited
             Scroller.ContentYBounds = new FloatRange(MinY, maxY);
 
             // Prevent scrolling when the player is interacting with a menu
-            if (CachedPlayer.LocalPlayer?.PlayerControl.CanMove != true)
+            if (PlayerControl.LocalPlayer.CanMove != true)
             {
                 GameSettings.transform.localPosition = LastPosition;
 
@@ -1601,11 +1600,11 @@ namespace TheOtherRolesEdited
         private static GameObject settingsBackground;
         public static void OpenSettings(HudManager __instance)
         {
+            if (__instance.FullScreen == null || MapBehaviour.Instance && MapBehaviour.Instance.IsOpen) return;
             if (summaryTMP)
             {
                 CloseSummary();
             }
-            if (__instance.FullScreen == null || MapBehaviour.Instance && MapBehaviour.Instance.IsOpen) return;
             settingsBackground = GameObject.Instantiate(__instance.FullScreen.gameObject, __instance.transform);
             settingsBackground.SetActive(true);
             var renderer = settingsBackground.GetComponent<SpriteRenderer>();
@@ -1635,7 +1634,6 @@ namespace TheOtherRolesEdited
             if (settingsTMPs[0]) CloseSettings();
             else OpenSettings(__instance);
         }
-
 
         [HarmonyPrefix]
         public static void Prefix3(HudManager __instance)
@@ -1692,7 +1690,7 @@ namespace TheOtherRolesEdited
 
         static GameObject toggleZoomButtonObject;
         static PassiveButton toggleZoomButton;
-        
+
         [HarmonyPostfix]
         public static void Postfix(HudManager __instance)
         {
@@ -1715,7 +1713,6 @@ namespace TheOtherRolesEdited
             toggleSettingsButtonObject.SetActive(__instance.MapButton.gameObject.active && !(MapBehaviour.Instance && MapBehaviour.Instance.IsOpen) && GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.HideNSeek);
             toggleSettingsButtonObject.transform.localPosition = __instance.MapButton.transform.localPosition + new Vector3(0, -0.8f, -500f);
 
-
             if (!toggleZoomButton || !toggleZoomButtonObject)
             {
                 // add a special button for settings viewing:
@@ -1731,14 +1728,15 @@ namespace TheOtherRolesEdited
                 toggleZoomButton.OnClick.RemoveAllListeners();
                 toggleZoomButton.OnClick.AddListener((Action)(() => Helpers.toggleZoom()));
             }
-            var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
+            var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerControl.LocalPlayer.Data);
             int numberOfLeftTasks = playerTotal - playerCompleted;
-            bool zoomButtonActive = !(CachedPlayer.LocalPlayer.PlayerControl == null || !CachedPlayer.LocalPlayer.Data.IsDead || (CachedPlayer.LocalPlayer.Data.Role.IsImpostor && !CustomOptionHolder.deadImpsBlockSabotage.getBool()));
+            bool zoomButtonActive = !(PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead || (PlayerControl.LocalPlayer.Data.Role.IsImpostor && !CustomOptionHolder.deadImpsBlockSabotage.getBool()) || MeetingHud.Instance);
             zoomButtonActive &= numberOfLeftTasks <= 0 || !CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.getBool();
             toggleZoomButtonObject.SetActive(zoomButtonActive);
             var posOffset = Helpers.zoomOutStatus ? new Vector3(-1.27f, -7.92f, -52f) : new Vector3(0, -1.6f, -52f);
             toggleZoomButtonObject.transform.localPosition = HudManager.Instance.MapButton.transform.localPosition + posOffset;
         }
+
         [HarmonyPostfix]
         public static void Postfix2(HudManager __instance)
         {

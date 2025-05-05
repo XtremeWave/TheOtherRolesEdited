@@ -43,8 +43,8 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 else if (ping < 50) PingTextColor = ("<color=#00ffff>");
                 else if (ping < 100) PingTextColor = ("<color=#00ec00>");
                 else if (ping < 200) PingTextColor = ("<color=#ff44ff>");
-                else if (ping < 300) PingTextColor = ("<color=#8600ff>" );
-                else if (ping < 400) PingTextColor = ("<color=#ff0000>" );
+                else if (ping < 300) PingTextColor = ("<color=#8600ff>");
+                else if (ping < 400) PingTextColor = ("<color=#ff0000>");
                 else if (ping > 700) PingTextColor = ("<color=#ff0000>");
 
                 deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
@@ -61,17 +61,11 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                     else if (HandleGuesser.isGuesserGm) gameModeText = $"赌怪模式";
                     else if (PropHunt.isPropHuntGM) gameModeText = $"变形躲猫猫模式";
                     if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText) + "\n";
-#if DEBUG
-                    __instance.text.alignment = AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started ? TextAlignmentOptions.Top : TextAlignmentOptions.TopRight;
-                    __instance.text.text = $"<size=130%>{Helpers.GradientColorText("00FFFF", "0000FF", $"TheOtherRolesEdited")}</size> v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}\n<size=80%>By:<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>\n{PingTextColor}Ping: {AmongUsClient.Instance.Ping} ms</color> <color=#01A4F4>fps:{fps}</color> \n(DebugMode)\n{gameModeText}";
-#endif
-#if RELEASE
                     __instance.text.alignment = TextAlignmentOptions.TopRight;
-                    __instance.text.text = $"<size=130%>{Helpers.GradientColorText("00FFFF", "0000FF", $"TheOtherRolesEdited")}</size> v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}\n<size=100%>By:<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>\n{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>   <color=#01A4F4>{fps}<size=40%>fps</size></color>\n{gameModeText}";
+                    __instance.text.text = $"<size=130%>{Helpers.GradientColorText("00FFFF", "0000FF", $"TheOtherRolesEdited")}</size> v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}\n<size=100%>By:<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>\n{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>       <color=#01A4F4>{fps}<size=40%>fps</size></color>\n{gameModeText}";
                     __instance.text.outlineColor = Color.black;
                     __instance.text.outlineWidth = 0.25f;
-#endif
-                    position.DistanceFromEdge = new Vector3(3.1f, 0.11f, 0);
+                    position.DistanceFromEdge = new Vector3(2.7f, 0.11f, 0);
                 }
                 else
                 {
@@ -81,7 +75,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                     else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt) gameModeText = $"变形躲猫猫模式";
                     if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText) + "\n";
 
-                    __instance.text.text = $"{fullCredentialsVersion}\n{gameModeText + fullCredentials}\n" + $"{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>   <color=#01A4F4>{fps}<size=40%>fps</size></color>" + 
+                    __instance.text.text = $"{fullCredentialsVersion}\n{gameModeText + fullCredentials}\n" + $"{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>        <color=#01A4F4>{fps}<size=40%>fps</size></color>" +
                         $"\n  <size=80%><color=#FFDCB1>◈" + $"{XtremeGameData.GameStates.GetRegionName()}</color></size>";
                     __instance.text.outlineColor = Color.black;
                     __instance.text.outlineWidth = 0.25f;
@@ -108,22 +102,23 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             public static Sprite horseBannerSprite;
             public static Sprite banner2Sprite;
             private static PingTracker instance;
-
             public static GameObject motdObject;
             public static TextMeshPro motdText;
-
-            public static void updateSprite()
+     
+                public static void updateSprite()
             {
                 //      loadSprites();
                 if (renderer != null)
                 {
                     float fadeDuration = 1f;
-                    instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>((p) => {
+                    instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>((p) =>
+                    {
                         renderer.color = new Color(1, 1, 1, 1 - p);
                         if (p == 1)
                         {
                             renderer.sprite = TORMapOptions.enableHorseMode ? horseBannerSprite : bannerSprite;
-                            instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>((p) => {
+                            instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>((p) =>
+                            {
                                 renderer.color = new Color(1, 1, 1, p);
                             })));
                         }

@@ -222,8 +222,7 @@ namespace TheOtherRolesEdited.Objects {
                 actionButtonMat.SetFloat(Desat, 1f);
             }
 
-            if (Timer >= 0 && !RoleDraft.isRunning)
-            {  // Make sure role draft has finished or isnt running
+            if (Timer >= 0 && !RoleDraft.isRunning){  // Make sure role draft has finished or isnt running
                 if (HasEffect && isEffectActive)
                     Timer -= Time.deltaTime;
                 else if (!localPlayer.inVent && moveable)

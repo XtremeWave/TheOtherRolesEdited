@@ -426,6 +426,8 @@ namespace TheOtherRolesEdited {
         public static CustomOption draftModeShowRoles;
         public static CustomOption draftModeHideImpRoles;
         public static CustomOption draftModeHideNeutralRoles;
+        public static CustomOption draftModeHideCrewRoles;
+        public static CustomOption draftModeCanChat;
 
         internal static Dictionary<byte, byte[]> blockedRolePairings = new Dictionary<byte, byte[]>();
 
@@ -455,9 +457,11 @@ namespace TheOtherRolesEdited {
             isDraftMode = CustomOption.Create(600, Types.General, cs(Color.yellow, "启用轮抽选职模式"), false, null, true, null, "轮抽选职");
             draftModeAmountOfChoices = CustomOption.Create(601, Types.General, cs(Color.yellow, "最大可选职业数量"), 5f, 2f, 15f, 1f, isDraftMode, false);
             draftModeTimeToChoose = CustomOption.Create(602, Types.General, cs(Color.yellow, "单人选择时常"), 5f, 3f, 20f, 1f, isDraftMode, false);
+            draftModeCanChat = CustomOption.Create(606, Types.General, cs(Color.yellow, "轮抽选职时可以聊天"), false, isDraftMode, false);
             draftModeShowRoles = CustomOption.Create(603, Types.General, cs(Color.yellow, "显示已选择过的职业"), false, isDraftMode, false);
             draftModeHideImpRoles = CustomOption.Create(604, Types.General, cs(Color.yellow, "隐藏内鬼职业"), false, draftModeShowRoles, false);
             draftModeHideNeutralRoles = CustomOption.Create(605, Types.General, cs(Color.yellow, "隐藏中立职业"), false, draftModeShowRoles, false);
+            draftModeHideCrewRoles = CustomOption.Create(607, Types.General, cs(Color.yellow, "隐藏船员职业"), false, draftModeShowRoles, false);
 
             // Using new id's for the options to not break compatibilty with older versions
             crewmateRolesCountMin = CustomOption.Create(300, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "最少船员职业"), 15f, 0f, 15f, 1f, null, true, heading: "职业大小数量设置");
@@ -469,7 +473,6 @@ namespace TheOtherRolesEdited {
             modifiersCountMin = CustomOption.Create(306, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "最少附加职业"), 15f, 0f, 15f, 1f);
             modifiersCountMax = CustomOption.Create(307, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "最多附加职业"), 15f, 0f, 15f, 1f);
             crewmateRolesFill = CustomOption.Create(308, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "所有船员职业(忽略最少/最多值)"), false);
-
             mafiaSpawnRate = CustomOption.Create(18, Types.Impostor, cs(Janitor.color, "黑手党"), rates, null, true);
             janitorCooldown = CustomOption.Create(19, Types.Impostor, "清洁工技能冷却时间", 30f, 10f, 60f, 2.5f, mafiaSpawnRate);
 

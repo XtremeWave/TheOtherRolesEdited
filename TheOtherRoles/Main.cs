@@ -22,6 +22,8 @@ using AmongUs.Data;
 using TheOtherRolesEdited.Modules.CustomHats;
 using static TheOtherRolesEdited.Modules.ModUpdater;
 using AmongUs.Data.Player;
+using AmongUs.GameOptions;
+using Rewired.Utils.Platforms.Windows;
 
 namespace TheOtherRolesEdited
 {
@@ -34,7 +36,7 @@ namespace TheOtherRolesEdited
     {
         public const string Id = "TheOtherRolesEdited";
         public const string Name = "TORE";
-        public const string VersionString = "1.2.2";
+        public const string VersionString = "1.2.4";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";
@@ -66,7 +68,6 @@ namespace TheOtherRolesEdited
         public static ConfigEntry<bool> ToggleCursor { get; set; }
         public static Sprite ModStamp;
         public static IRegionInfo[] defaultRegions;
-
         // This is part of the Mini.RegionInstaller, Licensed under GPLv3
         // file="RegionInstallPlugin.cs" company="miniduikboot">
         public static void UpdateRegions() {
@@ -75,9 +76,8 @@ namespace TheOtherRolesEdited
             {
                 new StaticHttpRegionInfo("<color=#76BAF6>Niko233(AS_CN2)</color>", StringNames.NoTranslation, "https://aucn2.niko233.me", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Niko233(AS_CN)", "https://aucn2.niko233.me", 443, false) })).CastFast<IRegionInfo>(),
                 new StaticHttpRegionInfo("<color=#D2A2EE>Niko233(NA_US2)</color>", StringNames.NoTranslation, "https://au-us2.niko233.me", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Niko233(NA_US2)", "https://au-us2.niko233.me", 443, false) })).CastFast<IRegionInfo>(),
-                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "http://sq.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "http://sq.fangkuai.fun", 22020, false) })).CastFast<IRegionInfo>(),
-                //new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("方块服 [宿迁]", "https://player.fangkuai.fun", 443, false) })).CastFast<IRegionInfo>(),
-                new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, Ip.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", Ip.Value, Port.Value, false) })).CastFast<IRegionInfo>()         
+                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://newplayer.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "http://sq.fangkuai.fun", 22020, false) })).CastFast<IRegionInfo>(),
+                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://newauhk.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("方块服 [宿迁]", "https://player.fangkuai.fun", 443, false) })).CastFast<IRegionInfo>(),      
             };            
             IRegionInfo currentRegion = serverManager.CurrentRegion;
             Logger.LogInfo($"Adding {regions.Length} regions");
@@ -101,7 +101,7 @@ namespace TheOtherRolesEdited
         public override void Load() {
             Logger = Log;
             Instance = this;
-  
+        
             _ = Helpers.checkBeta(); // Exit if running an expired beta
             _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
 

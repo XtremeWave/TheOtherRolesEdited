@@ -170,9 +170,15 @@ namespace TheOtherRolesEdited.Patches {
                 }
                 yourTeam = fakeImpostorTeam;
             }
-        }
-
-        public static void setupIntroTeam(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
+        
+            // Role draft: If spy is enabled, don't show the team
+            if (CustomOptionHolder.spySpawnRate.getSelection() > 0 && PlayerControl.AllPlayerControls.ToArray().ToList().Where(x => x.Data.Role.IsImpostor).Count() > 1) {
+                var fakeImpostorTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>(); // The local player always has to be the first one in the list (to be displayed in the center)
+        fakeImpostorTeam.Add(PlayerControl.LocalPlayer);
+                yourTeam = fakeImpostorTeam;
+            }
+     }
+public static void setupIntroTeam(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
             List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
             RoleInfo roleInfo = infos.Where(info => !info.isModifier).FirstOrDefault();
             var neutralColor = new Color32(76, 84, 78, 255);
@@ -184,7 +190,8 @@ namespace TheOtherRolesEdited.Patches {
                 }
                 return;
             }
-                if (roleInfo.isNeutral) {
+            if (roleInfo.isNeutral)
+            {
                 __instance.BackgroundBar.material.color = neutralColor;
                 __instance.TeamTitle.text = "中立";
                 __instance.TeamTitle.color = neutralColor;
