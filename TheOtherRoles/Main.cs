@@ -46,7 +46,6 @@ namespace TheOtherRolesEdited
 
         public static Version Version = Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
-         
         public Harmony Harmony { get; } = new Harmony(Id);
         public static TheOtherRolesEditedPlugin Instance;
 
@@ -101,7 +100,7 @@ namespace TheOtherRolesEdited
         public override void Load() {
             Logger = Log;
             Instance = this;
-        
+
             _ = Helpers.checkBeta(); // Exit if running an expired beta
             _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
 

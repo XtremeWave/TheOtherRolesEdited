@@ -104,8 +104,28 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             private static PingTracker instance;
             public static GameObject motdObject;
             public static TextMeshPro motdText;
-     
-                public static void updateSprite()
+            static void Postfix(PingTracker __instance)
+            {
+                var torLogo = new GameObject("bannerLogo_TOR");
+                motdObject = new GameObject("torMOTD");
+                motdText = motdObject.AddComponent<TextMeshPro>();
+                motdText.alignment = TMPro.TextAlignmentOptions.Center;
+                motdText.fontSize *= 0.04f;
+
+                motdText.transform.SetParent(torLogo.transform);
+                motdText.enableWordWrapping = true;
+                var rect = motdText.gameObject.GetComponent<RectTransform>();
+                rect.sizeDelta = new Vector2(5.2f, 0.25f);
+
+                motdText.transform.localPosition = Vector3.down * 2.7f;
+                motdText.color = new Color(1, 53f / 255, 31f / 255);
+                Material mat = motdText.fontSharedMaterial;
+                mat.shaderKeywords = new string[] { "OUTLINE_ON" };
+                motdText.SetOutlineColor(Color.white);
+                motdText.SetOutlineThickness(0.025f);
+            }
+
+            public static void updateSprite()
             {
                 //      loadSprites();
                 if (renderer != null)
@@ -160,14 +180,12 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
 
             public static async Task loadMOTDs()
             {
-                HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync("");
+                var client = new HttpClient();
+                var response =
+                    await client.GetAsync("http://api.fangkuai.fun:22022/XtremeWave/MOTD/main/motd.txt");
                 response.EnsureSuccessStatusCode();
-                string motds = await response.Content.ReadAsStringAsync();
-                foreach (string line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries))
-                {
-                    MOTD.motds.Add(line);
-                }
+                var motds = await response.Content.ReadAsStringAsync();
+                foreach (var line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries)) MOTD.motds.Add(line);
             }
         }
     }
