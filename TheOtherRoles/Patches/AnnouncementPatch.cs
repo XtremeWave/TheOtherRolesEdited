@@ -45,6 +45,22 @@ public class ModNewsHistory
         // 创建新公告时，不能删除旧公告   
         {
             {
+                // TORE v1.2.5
+                var news = new ModNews
+                {
+                    Number = 100005,
+                    Title = $"TheOtherRolesEdited  v1.2.5",
+                    SubTitle = "最勤奋的一集(端午节&儿童节快乐!)",
+                    ShortTitle = $"★TORE",
+                    Text = "<size=100%>欢迎来到 TORE v1.2.5.适配Among us v2025.3.31s</size>\n"
+                        + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
+                        + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
+                        + "\n<b>新增</b>\n ·切换地图皮肤样式(仅限骷髅舰)\n ·轮抽选职增加随机职业按钮\n ·MOTD大厅提示语(方块服务器)\n ·测试模式\n · <s>我还更新了版本号</s>",
+                    Date = "2025-6-1T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
+            {
                 // TORE v1.2.4
                 var news = new ModNews
                 {

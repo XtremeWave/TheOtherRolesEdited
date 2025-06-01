@@ -20,13 +20,15 @@ namespace TheOtherRolesEdited {
         public static CustomOption impostorRolesCountMax;
         public static CustomOption modifiersCountMin;
         public static CustomOption modifiersCountMax;
-
         public static CustomOption anyPlayerCanStopStart;
         public static CustomOption enableEventMode;
         public static CustomOption eventReallyNoMini;
         public static CustomOption eventKicksPerRound;
         public static CustomOption eventHeavyAge;
         public static CustomOption deadImpsBlockSabotage;
+        public static CustomOption CanUseSwitchShipCostumeButton;
+        public static CustomOption debugMode;
+        public static CustomOption disableGameEnd;
 
         public static CustomOption mafiaSpawnRate;
         public static CustomOption janitorCooldown;
@@ -857,6 +859,9 @@ namespace TheOtherRolesEdited {
 
 
             // Other options
+            CanUseSwitchShipCostumeButton = CustomOption.Create(14, Types.General, "切换地图皮肤(仅支持骷髅舰)", false, null, true, heading: "切换地图皮肤");
+            debugMode = CustomOption.Create(9, Types.General, "测试模式", false, null, true, heading:"测试模式");
+            disableGameEnd = CustomOption.Create(951, Types.General, "游戏不结束", false, debugMode);
             maxNumberOfMeetings = CustomOption.Create(3, Types.General, "会议总次数 (不计入市长)", 10, 0, 15, 1, null, true, heading: "游戏设定");
             anyPlayerCanStopStart = CustomOption.Create(2, Types.General, "所有玩家都可以暂停开始游戏", false, null, false);
             blockSkippingInEmergencyMeetings = CustomOption.Create(4, Types.General, "禁用会议中弃票", false);

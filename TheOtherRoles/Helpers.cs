@@ -97,8 +97,7 @@ namespace TheOtherRolesEdited {
         HideNSeek,
         PropHunt
     }
-    public static class Helpers
-    {
+    public static class Helpers {  
         public static string previousEndGameSummary = "";
         public static Dictionary<string, Sprite> CachedSprites = new();
 

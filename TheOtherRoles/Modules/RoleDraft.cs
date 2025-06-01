@@ -252,59 +252,92 @@ namespace TheOtherRolesEdited.Modules
                         if (GameObject.Find("RoleButton") == null)
                         {
                             SoundEffectsManager.play("timemasterShield");
-                            int i = 0;
-                            int buttonsPerRow = 4;
-                            int lastRow = availableRoles.Count / buttonsPerRow;
-                            int buttonsInLastRow = availableRoles.Count % buttonsPerRow;
+                            var i = 0;
+                            var buttonsPerRow = 4;
+                            var lastRow = availableRoles.Count / buttonsPerRow;
+                            var buttonsInLastRow = availableRoles.Count % buttonsPerRow;
 
-                            foreach (RoleInfo roleInfo in availableRoles)
+                            foreach (var roleInfo in availableRoles)
                             {
                                 float row = i / buttonsPerRow;
                                 float col = i % buttonsPerRow;
-                                if (buttonsInLastRow != 0 && row == lastRow)
-                                {
-                                    col += (buttonsPerRow - buttonsInLastRow) / 2f;
-                                }
+                                if (buttonsInLastRow != 0 && row == lastRow) col += (buttonsPerRow - buttonsInLastRow) / 2f;
                                 // planned rows: maximum of 4, hence the following calculation for rows as well:
                                 row += (4 - lastRow - 1) / 2f;
 
-                                ActionButton actionButton = UnityEngine.Object.Instantiate(HudManager.Instance.KillButton, __instance.TeamTitle.transform);
+                                ActionButton actionButton = Object.Instantiate(HudManager.Instance.KillButton,
+                                    __instance.TeamTitle.transform);
                                 actionButton.gameObject.SetActive(true);
                                 actionButton.gameObject.name = "RoleButton";
                                 actionButton.transform.localPosition = new Vector3(-8.4f + col * 5.5f, -10 - row * 3f);
                                 actionButton.transform.localScale = new Vector3(2f, 2f);
                                 actionButton.SetCoolDown(0, 0);
-                                GameObject textHolder = new GameObject("textHolder");
-                                var ButtonText = textHolder.AddComponent<TMPro.TextMeshPro>();
-                                ButtonText.text = roleInfo.name.Replace(" ", "\n");
-                                ButtonText.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
-                                ButtonText.fontSize = 5;
+                                var textHolder = new GameObject("textHolder");
+                                buttonText = textHolder.AddComponent<TextMeshPro>();
+                                buttonText.text = roleInfo.name.Replace(" ", "\n");
+                                buttonText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                                buttonText.fontSize = 5;
                                 textHolder.layer = actionButton.gameObject.layer;
-                                ButtonText.outlineWidth = 0.1f;
-                                ButtonText.outlineColor = Color.white;
-                                ButtonText.color = roleInfo.color;
+                                buttonText.color = roleInfo.color;
                                 textHolder.transform.SetParent(actionButton.transform, false);
-                                textHolder.transform.localPosition = new Vector3(0, ButtonText.text.Contains("\n") ? -1.975f : -2.2f, -1);
-                                GameObject actionButtonGameObject = actionButton.gameObject;
-                                SpriteRenderer actionButtonRenderer = actionButton.graphic;
-                                Material actionButtonMat = actionButtonRenderer.material;
+                                textHolder.transform.localPosition =
+                                    new Vector3(0, buttonText.text.Contains("\n") ? -1.975f : -2.2f, -1);
+                                var actionButtonGameObject = actionButton.gameObject;
+                                var actionButtonRenderer = actionButton.graphic;
+                                var actionButtonMat = actionButtonRenderer.material;
 
-                                PassiveButton button = actionButton.GetComponent<PassiveButton>();
+                                var button = actionButton.GetComponent<PassiveButton>();
                                 button.OnClick = new Button.ButtonClickedEvent();
-                                button.OnClick.AddListener((Action)(() =>
-                                {
-                                    sendPick((byte)roleInfo.roleId);
-                                }));
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) =>
-                                {
-                                    actionButton.OverrideText("");
-                                })));
+                                button.OnClick.AddListener((Action)(() => { sendPick((byte)roleInfo.roleId); }));
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f,
+                                    new Action<float>(p => { actionButton.OverrideText(""); })));
                                 buttons.Add(actionButton);
                                 i++;
-                               }
                             }
-                        } 
-                      else 
+
+                            if (GameObject.Find("RandomButton") == null && availableRoles.Count > 1)
+                            {
+                                float row = (availableRoles.Count + 1) / buttonsPerRow;
+                                float col = (availableRoles.Count + 1) % buttonsPerRow;
+                                if (buttonsInLastRow != 0 && row == lastRow) col += (buttonsPerRow - buttonsInLastRow) / 2f;
+                                row += (4 - lastRow - 1) / 2f;
+
+                                ActionButton randomButton = Object.Instantiate(HudManager.Instance.KillButton,
+                                    __instance.TeamTitle.transform);
+                                randomButton.gameObject.SetActive(true);
+                                randomButton.gameObject.name = "RandomButton";
+                                randomButton.transform.localPosition = new Vector3(-8.4f + col * 5.5f, -10 - row * 3f);
+                                randomButton.transform.localScale = new Vector3(2f, 2f);
+                                randomButton.SetCoolDown(0, 0);
+                                randomButton.buttonLabelText.gameObject.SetActive(false);
+
+                                var randomTextHolder = new GameObject("randomTextHolder");
+                                var randomText = randomTextHolder.AddComponent<TextMeshPro>();
+                                randomText.text = $"随机";
+                                randomText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                                randomText.fontSize = 5;
+                                randomTextHolder.layer = randomButton.gameObject.layer;
+                                randomText.color = Color.green;
+                                randomTextHolder.transform.SetParent(randomButton.transform, false);
+                                randomTextHolder.transform.localPosition = new Vector3(0, buttonText.text.Contains("\n") ? -1.975f : -2.2f, -1);
+
+                                var randomPassiveButton = randomButton.GetComponent<PassiveButton>();
+                                randomPassiveButton.OnClick = new Button.ButtonClickedEvent();
+                                randomPassiveButton.OnClick.AddListener((Action)(() => {
+                                    var randomRole = availableRoles.OrderBy(_ => Guid.NewGuid()).First();
+                                    sendPick((byte)randomRole.roleId);
+                                }));
+
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f,
+                                    new Action<float>(p => {
+                                        randomButton.graphic.material.SetFloat("_Desat", p % 0.5f * 2f);
+                                    })));
+
+                                buttons.Add(randomButton);
+                            }
+                        }
+                    }
+                    else 
                    {
                         int currentPick = PlayerControl.AllPlayerControls.Count - pickOrder.Count + 1;
                         playerText = $"匿名玩家 {currentPick}";

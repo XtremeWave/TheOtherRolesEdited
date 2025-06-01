@@ -57,15 +57,18 @@ public class SwitchShipCostumeButtonPatch
                 SwitchShipCostumeButton = null;
                 return;
             }
+            if (CustomOptionHolder.CanUseSwitchShipCostumeButton.getBool())
             if (SwitchShipCostumeButton == null)
             {
                 var template = __instance.EmergencyButton.gameObject;
                 SwitchShipCostumeButton = Object.Instantiate(template, template.transform.parent);
                 SwitchShipCostumeButton.name = "Switch Ship Costume Button";
                 SwitchShipCostumeButton.transform.localScale = new Vector3(0.65f, 0.65f, 1f);
-                SwitchShipCostumeButton.transform.localPosition = new Vector3(-9.57f, -5.36f, -10f);
+                SwitchShipCostumeButton.transform.localPosition = new Vector3(-9.57f, -5.31f, -10f);
+                SpriteRenderer renderer = SwitchShipCostumeButton.GetComponent<SpriteRenderer>();
+                renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.Change.png", 700f);
                 var console = SwitchShipCostumeButton.GetComponent<SystemConsole>();
-                console.Image.color = new Color32(252, 216, 8, byte.MaxValue);
+                //console.Image.color = new Color32(252, 216, 8, byte.MaxValue);
                 console.usableDistance /= 2;
                 console.name = "Switch Ship Costume Console";
         }
@@ -75,14 +78,12 @@ public class SwitchShipCostumeButtonPatch
         {
             if (__instance.name != "Switch Ship Costume Console") return true;
             Costume++;
-            if (Costume > 2)
+            if (Costume > 1)
                 Costume = 0;
-            ShipStatus.Instance.gameObject.transform.FindChild("Helloween")?.gameObject.SetActive(Costume == 1);
-            ShipStatus.Instance.gameObject.transform.FindChild("BirthdayDecorSkeld")?.gameObject.SetActive(Costume == 2);
+            ShipStatus.Instance.gameObject.transform.FindChild("BirthdayDecorSkeld")?.gameObject.SetActive(Costume == 1);
             var sounds = Sounds.TaskComplete;
             if (Costume == 0) sounds = Sounds.KillSound;
             if (Costume == 1) sounds = Sounds.ImpTransform;
-            if (Costume == 2) sounds = Sounds.TaskUpdateSound;
             SoundManager.PlaySound(PlayerControl.LocalPlayer.PlayerId, sounds);
             return false;
         }

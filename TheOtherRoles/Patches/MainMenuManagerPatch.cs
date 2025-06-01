@@ -37,8 +37,6 @@ public static class MainMenuManagerPatch
         leftPanel.gameObject.FindChild<SpriteRenderer>("Divider").enabled = false;
         leftPanel.GetComponentsInChildren<SpriteRenderer>(true).Where(r => r.name == "Shine").ToList().ForEach(r => r.enabled = false);
 
-
-
         /*  var howToPlayButton = __instance.howToPlayButton;
           var freeplayButton = howToPlayButton.transform.parent.Find("FreePlayButton");
           if (freeplayButton != null) freeplayButton.gameObject.SetActive(false);
@@ -56,7 +54,6 @@ public static class MainMenuManagerPatch
         __instance.myAccountButton.buttonText.color = Color.white;
         __instance.settingsButton.buttonText.color = Color.white;
         __instance.howToPlayButton.buttonText.color = Color.white;
-        __instance.accountCTAButton.buttonText.color = Color.white;
         __instance.freePlayButton.buttonText.color = Color.white;
 
         __instance.freePlayButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0.191f, 255f);
@@ -65,13 +62,6 @@ public static class MainMenuManagerPatch
         __instance.freePlayButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorfreePlayButton * 0.6f;
         __instance.freePlayButton.activeTextColor = Color.white;
         __instance.freePlayButton.inactiveTextColor = Color.white;
-
-        __instance.accountCTAButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0.191f, 255f);
-        __instance.accountCTAButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 255f);
-        Color originalColoraccountCTAButton = __instance.accountCTAButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
-        __instance.accountCTAButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColoraccountCTAButton * 0.6f;
-        __instance.accountCTAButton.activeTextColor = Color.white;
-        __instance.accountCTAButton.inactiveTextColor = Color.white;
 
         __instance.howToPlayButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0.191f, 255f);
         __instance.howToPlayButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 255f);

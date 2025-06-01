@@ -21,7 +21,6 @@ internal class TitleLogoPatch
     public static GameObject Ambience;
     private static TextMeshPro welcomeText;
     public static GameObject Starfield;
-
     private static void Postfix(MainMenuManager __instance)
     {
         Background = new GameObject("TORE Background");
@@ -40,7 +39,6 @@ internal class TitleLogoPatch
         ModStamp.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         if (!(ModStamp = GameObject.Find("ModStamp"))) return;
         var ModStapRenderer = ModStamp.GetComponent<SpriteRenderer>();
-
         ModStapRenderer.sprite = LoadSprite("TheOtherRolesEdited.Resources.ModStamp.png", 150f);
 
         if (!(AmongUsLogo = GameObject.Find("AmongUsLogo"))) return;
@@ -101,7 +99,8 @@ internal class TitleLogoPatch
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
     public static void Postfix(VersionShower __instance)
     {
-        __instance.text.alignment = TextAlignmentOptions.Left;
+        __instance.text.alignment = TextAlignmentOptions.BottomLeft;
+        __instance.text.fontSize = 1.85f;
         __instance.text.text = $"v{Application.version}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString} ";
     }
     static Sprite XtremeWaveSprite = LoadSprite("TheOtherRolesEdited.Resources.XtremeWave.png", 1000f);

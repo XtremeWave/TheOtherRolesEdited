@@ -3,6 +3,7 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -35,9 +36,21 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             private static string PingTextColor;
             private static float deltaTime;
             public static string ServerName = "";
+            private static Sprite commsdown;
 
             static void Postfix(PingTracker __instance)
             {
+                if (!__instance.GetComponentInChildren<SpriteRenderer>())
+                {
+                    var spriteObject = new GameObject("WIFI Sprite");
+                    spriteObject.AddComponent<SpriteRenderer>().sprite = commsdown;
+                    spriteObject.transform.parent = __instance.transform;
+                    spriteObject.transform.localPosition = new Vector3(-2.3f, -0.9f, -1);
+                    spriteObject.transform.localScale *= 0.72f;
+                    var TORE = spriteObject.GetComponent<SpriteRenderer>();
+                    TORE.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.TORE - Photo.png", 450f);
+
+                }
                 var ping = AmongUsClient.Instance.Ping;
                 if (ping < 10) PingTextColor = ("<color=#ff0000>");
                 else if (ping < 50) PingTextColor = ("<color=#00ffff>");
@@ -61,6 +74,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                     else if (HandleGuesser.isGuesserGm) gameModeText = $"赌怪模式";
                     else if (PropHunt.isPropHuntGM) gameModeText = $"变形躲猫猫模式";
                     if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText) + "\n";
+                    if (ModOption.DebugMode) gameModeText += "<color=#FF0000>(Debug Mode)</color>\n";
                     __instance.text.alignment = TextAlignmentOptions.TopRight;
                     __instance.text.text = $"<size=130%>{Helpers.GradientColorText("00FFFF", "0000FF", $"TheOtherRolesEdited")}</size> v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}\n<size=100%>By:<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>\n{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>       <color=#01A4F4>{fps}<size=40%>fps</size></color>\n{gameModeText}";
                     __instance.text.outlineColor = Color.black;
@@ -74,7 +88,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                     else if (TORMapOptions.gameMode == CustomGamemodes.Guesser) gameModeText = $"赌怪模式";
                     else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt) gameModeText = $"变形躲猫猫模式";
                     if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText) + "\n";
-
+                    if (ModOption.DebugMode) gameModeText += "<color=#FF0000>(Debug Mode)</color>\n";
                     __instance.text.text = $"{fullCredentialsVersion}\n{gameModeText + fullCredentials}\n" + $"{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>        <color=#01A4F4>{fps}<size=40%>fps</size></color>" +
                         $"\n  <size=80%><color=#FFDCB1>◈" + $"{XtremeGameData.GameStates.GetRegionName()}</color></size>";
                     __instance.text.outlineColor = Color.black;
@@ -110,7 +124,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 motdObject = new GameObject("torMOTD");
                 motdText = motdObject.AddComponent<TextMeshPro>();
                 motdText.alignment = TMPro.TextAlignmentOptions.Center;
-                motdText.fontSize *= 0.04f;
+                motdText.fontSize *= 0.045f;
 
                 motdText.transform.SetParent(torLogo.transform);
                 motdText.enableWordWrapping = true;
@@ -122,7 +136,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 Material mat = motdText.fontSharedMaterial;
                 mat.shaderKeywords = new string[] { "OUTLINE_ON" };
                 motdText.SetOutlineColor(Color.white);
-                motdText.SetOutlineThickness(0.025f);
+                motdText.SetOutlineThickness(0.095f);
             }
 
             public static void updateSprite()

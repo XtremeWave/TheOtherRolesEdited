@@ -60,12 +60,12 @@ public sealed class LobbyJoinBind
                 var code = GameCode.IntToGameName(GameId);
                 if (code != "")
                 {
-                    code = DataManager.Settings.Gameplay.StreamerMode ? "****" : code;
-                    LobbyText.GetComponent<TextMeshPro>().text = $"上一个房间: {code}   [LShift]";
+                    code = DataManager.Settings.Gameplay.StreamerMode ? "<color=#F64343>****</color>" : code;
+                    LobbyText.GetComponent<TextMeshPro>().text = $"上一个房间: <color=#3ED1FE>{code}</color>   [LShift]";
                 }
             }
 
-            if (code2 != "") LobbyText.GetComponent<TextMeshPro>().text += $"\n粘贴板: {code2Disp}  [RShift]";
+            if (code2 != "") LobbyText.GetComponent<TextMeshPro>().text += $"\n粘贴板: <color=#FEC73E>{code2Disp}</color>  [RShift]";
         }
     }
 }
