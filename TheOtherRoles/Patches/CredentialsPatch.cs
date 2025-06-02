@@ -45,7 +45,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                     var spriteObject = new GameObject("WIFI Sprite");
                     spriteObject.AddComponent<SpriteRenderer>().sprite = commsdown;
                     spriteObject.transform.parent = __instance.transform;
-                    spriteObject.transform.localPosition = new Vector3(-2.3f, -0.9f, -1);
+                    spriteObject.transform.localPosition = new Vector3(3.5958f, -3.2061f, -1);
                     spriteObject.transform.localScale *= 0.72f;
                     var TORE = spriteObject.GetComponent<SpriteRenderer>();
                     TORE.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.TORE - Photo.png", 450f);
@@ -194,12 +194,15 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
 
             public static async Task loadMOTDs()
             {
-                var client = new HttpClient();
-                var response =
-                    await client.GetAsync("http://api.fangkuai.fun:22022/XtremeWave/MOTD/main/motd.txt");
+                HttpClient client = new HttpClient();
+                HttpResponseMessage response = await client.GetAsync("http://api.fangkuai.fun:22022/XtremeWave/MOTD/main/motd.txt");
                 response.EnsureSuccessStatusCode();
-                var motds = await response.Content.ReadAsStringAsync();
-                foreach (var line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries)) MOTD.motds.Add(line);
+                string motds = await response.Content.ReadAsStringAsync();
+                foreach (string line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries))
+                {
+                    MOTD.motds.Add(line);
+                }
+
             }
         }
     }

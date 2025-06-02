@@ -1366,6 +1366,7 @@ namespace TheOtherRolesEdited
             }
             if (target == Ninja.ninja) Ninja.ninja = thief;
             if (target == Bomber.bomber) Bomber.bomber = thief;
+            if (target == Miner.miner) Miner.miner = thief;
             if (target == Yoyo.yoyo) {
                 Yoyo.yoyo = thief;
                 Yoyo.markedLocation = null;
@@ -1947,6 +1948,13 @@ namespace TheOtherRolesEdited
                     byte roomPlayer = reader.ReadByte();
                     byte roomId = reader.ReadByte();
                     RPCProcedure.shareRoom(roomPlayer, roomId);
+                    break;
+                case (byte)CustomRPC.Mine:
+                    var newVentId = reader.ReadInt32();
+                    var role = Helpers.playerById(reader.ReadByte());
+                    var pos = reader.ReadBytesAndSize();
+                    var zAxis = reader.ReadSingle();
+                    RPCProcedure.Mine(newVentId, role, pos, zAxis);
                     break;
                 case (byte)CustomRPC.EventKick:
                     byte kickSource = reader.ReadByte();

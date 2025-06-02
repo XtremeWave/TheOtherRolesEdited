@@ -36,7 +36,7 @@ namespace TheOtherRolesEdited
     {
         public const string Id = "TheOtherRolesEdited";
         public const string Name = "TORE";
-        public const string VersionString = "1.2.5";
+        public const string VersionString = "1.2.5.1";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";

@@ -49,13 +49,6 @@ namespace TheOtherRolesEdited.Modules
             feedText.autoSizeTextContainer = true;
             feedText.fontSize = 3f;
             feedText.enableAutoSizing = false;
-            var scroller = feedText.gameObject.AddComponent<Scroller>();
-            scroller.allowX = false;
-            scroller.allowY = true;
-            scroller.active = true;
-            scroller.velocity = new Vector2(0, 0);
-            scroller.ContentYBounds = new FloatRange(0, (feedText.text.Count() - 12) * (0.25f));
-            scroller.enabled = true;
             __instance.TeamTitle.transform.localPosition = __instance.TeamTitle.transform.localPosition + new Vector3(1f, 0f);
             __instance.TeamTitle.text = "当前选择:";
             __instance.BackgroundBar.enabled = false;
@@ -65,8 +58,14 @@ namespace TheOtherRolesEdited.Modules
             __instance.TeamTitle.fontSize = 5;
             __instance.TeamTitle.alignment = TMPro.TextAlignmentOptions.Top;
             __instance.ImpostorText.gameObject.SetActive(false);
+            var scroller = feedText.gameObject.AddComponent<Scroller>();
+            scroller.allowX = false;
+            scroller.allowY = true;
+            scroller.active = true;
+            scroller.velocity = new Vector2(0, 0);
+            scroller.ContentYBounds = new FloatRange(0, (feedText.text.Count() - 12) * (0.25f));
+            scroller.enabled = true;
             GameObject.Find("BackgroundLayer")?.SetActive(false);
-
             foreach (var player in UnityEngine.Object.FindObjectsOfType<PoolablePlayer>())
             {
                 if (player.name.Contains("Dummy"))
@@ -86,31 +85,39 @@ namespace TheOtherRolesEdited.Modules
                 yield return null;
             }
 
-            while (pickOrder.Count > 0) {
+            while (pickOrder.Count > 0)
+            {
                 picked = false;
                 timer = 0;
                 float maxTimer = CustomOptionHolder.draftModeTimeToChoose.getFloat();
                 string playerText = "";
-                while (timer < maxTimer || !picked) {
+                while (timer < maxTimer || !picked)
+                {
                     if (pickOrder.Count == 0)
                         break;
                     // wait for pick
                     timer += Time.deltaTime;
-                    if (PlayerControl.LocalPlayer.PlayerId == pickOrder[0]) {
-                        if (!playedAlert) {
+                    if (PlayerControl.LocalPlayer.PlayerId == pickOrder[0])
+                    {
+                        if (!playedAlert)
+                        {
                             playedAlert = true;
                             SoundManager.Instance.PlaySound(ShipStatus.Instance.SabotageSound, false, 1f, null);
                         }
                         // Animate beginning of choice, by changing background color
                         float min = 50 / 255f;
                         Color backGroundColor = new Color(min, min, min, 1);
-                        if (timer < 1) {
+                        if (timer < 1)
+                        {
                             float max = 230 / 255f;
-                            if (timer < 0.5f) { // White flash                              
+                            if (timer < 0.5f)
+                            { // White flash                              
                                 float p = timer / 0.5f;
                                 float value = (float)Math.Pow(p, 2f) * max;
                                 backGroundColor = new Color(value, value, value, 1);
-                            } else {
+                            }
+                            else
+                            {
                                 float p = (1 - timer) / 0.5f;
                                 float value = (float)Math.Pow(p, 2f) * max + (1 - (float)Math.Pow(p, 2f)) * min;
                                 backGroundColor = new Color(value, value, value, 1);
@@ -125,7 +132,8 @@ namespace TheOtherRolesEdited.Modules
                         playerText = Helpers.cs(youColor, "你!");
                         // Available Roles:
                         List<RoleInfo> availableRoles = new();
-                        foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
+                        foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos)
+                        {
                             int impostorCount = PlayerControl.AllPlayerControls.ToArray().ToList().Where(x => x.Data.Role.IsImpostor).Count();
                             if (roleInfo.isModifier) continue;
                             // Remove Impostor Roles
@@ -153,7 +161,8 @@ namespace TheOtherRolesEdited.Modules
                             int impsPicked = alreadyPicked.Where(x => RoleInfo.roleInfoById[(RoleId)x].isImpostor).Count();
 
                             // Hanlde forcing of 100% roles for impostors
-                            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+                            {
                                 int impsMax = CustomOptionHolder.impostorRolesCountMax.getSelection();
                                 int impsMin = CustomOptionHolder.impostorRolesCountMin.getSelection();
                                 if (impsMin > impsMax) impsMin = impsMax;
@@ -167,7 +176,8 @@ namespace TheOtherRolesEdited.Modules
                             }
 
                             // Player is no impostor! Handle forcing of 100% roles for crew and neutral
-                            else {
+                            else
+                            {
                                 // No more neutrals possible!
                                 int neutralsPicked = alreadyPicked.Where(x => RoleInfo.roleInfoById[(RoleId)x].isNeutral).Count();
                                 int crewPicked = alreadyPicked.Count - impsPicked - neutralsPicked;
@@ -191,9 +201,11 @@ namespace TheOtherRolesEdited.Modules
                                 // More neutrals needed? Then no more crewmates! This takes precedence over crew roles set to 100%!
                                 var crewmatesLeft = pickOrder.Count - pickOrder.Where(x => Helpers.playerById(x).Data.Role.IsImpostor).Count();
 
-                                if (crewmatesLeft <= neutralsMin - neutralsPicked && !roleInfo.isNeutral) {
+                                if (crewmatesLeft <= neutralsMin - neutralsPicked && !roleInfo.isNeutral)
+                                {
                                     continue;
-                                } else if (neutralsMin - neutrals100 > neutralsPicked)
+                                }
+                                else if (neutralsMin - neutrals100 > neutralsPicked)
                                     allowAnyNeutral = true;
                                 // Handle 100% Roles PER Faction.
 
@@ -373,8 +385,6 @@ namespace TheOtherRolesEdited.Modules
             }
 
             SoundEffectsManager.stop("draft");
-            if (CustomOptionHolder.draftModeCanChat.getBool())
-                FastDestroyableSingleton<HudManager>.Instance.Chat.SetVisible(false);
             isRunning = false;
             yield break;
         }
@@ -432,7 +442,6 @@ namespace TheOtherRolesEdited.Modules
             }
             buttons.Clear();
         }
-
 
         public static void sendPickOrder()
         {
