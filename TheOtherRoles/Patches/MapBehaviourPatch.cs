@@ -55,8 +55,9 @@ namespace TheOtherRolesEdited.Patches {
 					player.CurrentOutfit.ColorId = colorId;
 					herePoints.Add(player.PlayerId, herePoint);
 				}
-				foreach (var s in herePoints.Where(x => !Trapper.playersOnMap.Contains(Helpers.playerById(x.Key))).ToList()) {
-					UnityEngine.Object.Destroy(s.Value);
+                foreach (var s in herePoints.Where(x => !Trapper.playersOnMap.Contains(x.Key)).ToList())
+                {
+                    UnityEngine.Object.Destroy(s.Value);
 					herePoints.Remove(s.Key);
 				}
 			} else if (Snitch.snitch != null && PlayerControl.LocalPlayer.PlayerId == Snitch.snitch.PlayerId && !Snitch.snitch.Data.IsDead && Snitch.mode != Snitch.Mode.Chat) {

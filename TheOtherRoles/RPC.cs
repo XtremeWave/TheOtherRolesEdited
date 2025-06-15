@@ -240,6 +240,9 @@ namespace TheOtherRolesEdited
         }
 
         public static void stopStart(byte playerId) {
+            if (!CustomOptionHolder.anyPlayerCanStopStart.getBool())
+                return;
+            SoundManager.Instance.StopSound(GameStartManager.Instance.gameStartSound);
             if (AmongUsClient.Instance.AmHost && CustomOptionHolder.anyPlayerCanStopStart.getBool()) {
                 GameStartManager.Instance.ResetStartState();
                 PlayerControl.LocalPlayer.RpcSendChat($"{Helpers.playerById(playerId).Data.PlayerName} 取消了游戏的开始!");

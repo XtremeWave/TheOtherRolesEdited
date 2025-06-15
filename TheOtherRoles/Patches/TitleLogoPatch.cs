@@ -169,16 +169,16 @@ internal class TitleLogoPatch
 
             if (AmongUsClient.Instance.AmHost)
             {
-                __instance.EditButton.transform.localPosition = new Vector3(-0.4815f, -0.11f, -1f);
-                __instance.EditButton.transform.localScale = new Vector3(1.24f, 0.8f, 0f);
+                __instance.EditButton.transform.localPosition = new Vector3(-0.4815f, -0.11f);
+                __instance.EditButton.transform.localScale = new Vector3(1.24f, 0.8f);
 
-                __instance.HostViewButton.transform.localPosition = new Vector3(-0.4815f, 0.52f, -1f);
-                __instance.HostViewButton.transform.localScale = new Vector3(1.24f, 0.8f, 0f);
+                __instance.HostViewButton.transform.localPosition = new Vector3(-0.4815f, 0.52f);
+                __instance.HostViewButton.transform.localScale = new Vector3(1.24f, 0.8f);
             }
             else
             {
-                __instance.ClientViewButton.transform.localPosition = new Vector3(0.7823f, 0.5357f, 0f);
-                __instance.ClientViewButton.transform.localScale = new Vector3(0.592f, 0.6f, 0f);
+                __instance.ClientViewButton.transform.localPosition = new Vector3(0.7823f, 0.5357f);
+                __instance.ClientViewButton.transform.localScale = new Vector3(0.592f, 0.6f);
             }
         }
     }

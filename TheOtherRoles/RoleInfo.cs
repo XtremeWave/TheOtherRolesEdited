@@ -32,6 +32,7 @@ namespace TheOtherRolesEdited
             this.isNeutral = isNeutral;
             this.isCrewmate = isCrewmate;
             this.isModifier = isModifier;
+            roleInfoById.TryAdd(roleId, this);
         }
 
         public static RoleInfo jester = new RoleInfo("小丑", Jester.color, "让他们把你投出去！", "让他们把你投出去！", RoleId.Jester, true);

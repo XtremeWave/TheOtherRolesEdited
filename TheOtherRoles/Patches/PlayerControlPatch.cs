@@ -22,7 +22,8 @@ namespace TheOtherRolesEdited.Patches {
     public static class PlayerControlFixedUpdatePatch {
         // Helpers
 
-        static PlayerControl setTarget(bool onlyCrewmates = false, bool targetPlayersInVents = false, List<PlayerControl> untargetablePlayers = null, PlayerControl targetingPlayer = null) {
+        public static PlayerControl setTarget(bool onlyCrewmates = false, bool targetPlayersInVents = false, List<PlayerControl> untargetablePlayers = null, PlayerControl targetingPlayer = null)
+        {
             PlayerControl result = null;
             float num = AmongUs.GameOptions.LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentNormalGameOptions.KillDistance, 0, 2)];
             if (!MapUtilities.CachedShipStatus) return result;
@@ -52,7 +53,8 @@ namespace TheOtherRolesEdited.Patches {
             return result;
         }
 
-        static void setPlayerOutline(PlayerControl target, Color color) {
+        public static void setPlayerOutline(PlayerControl target, Color color)
+        {
             if (target == null || target.cosmetics?.currentBodySprite?.BodySprite == null) return;
 
             color = color.SetAlpha(Chameleon.visibility(target.PlayerId));

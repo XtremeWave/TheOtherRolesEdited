@@ -5,10 +5,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Hazel;
-
 using TheOtherRolesEdited.Utilities;
 using TheOtherRolesEdited.CustomGameModes;
 using TheOtherRolesEdited.Modules;
+using Il2CppSystem.Data.Common;
 
 namespace TheOtherRolesEdited.Patches {
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
@@ -84,9 +84,6 @@ namespace TheOtherRolesEdited.Patches {
                     BountyHunter.cooldownText.gameObject.SetActive(true);
                 }
             }
-
-            // Force Reload of SoundEffectHolder
-            SoundEffectsManager.Load();
 
             // First kill
             if (AmongUsClient.Instance.AmHost && TORMapOptions.shieldFirstKill && TORMapOptions.firstKillName != "" && !HideNSeek.isHideNSeekGM && !PropHunt.isPropHuntGM) {
@@ -178,7 +175,8 @@ namespace TheOtherRolesEdited.Patches {
                 yourTeam = fakeImpostorTeam;
             }
      }
-public static void setupIntroTeam(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
+        public static void setupIntroTeam(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
+        {
             List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
             RoleInfo roleInfo = infos.Where(info => !info.isModifier).FirstOrDefault();
             var neutralColor = new Color32(76, 84, 78, 255);

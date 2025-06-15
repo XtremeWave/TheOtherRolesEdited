@@ -5,12 +5,12 @@ using UnityEngine;
 using TheOtherRolesEdited;
 using TheOtherRolesEdited.Patches;
 
-using static TheOtherRolesEdited.TheOtherRolesEdited;
 using System.Linq;
 using InnerNet;
 using TheOtherRolesEdited.Modules;
 using HarmonyLib;
 using Hazel;
+
 
 namespace TheOtherRolesEdited.Utilities;
 
@@ -31,13 +31,25 @@ public static class EventUtility {
     }
 
     public static void clearAndReload() {
+        kickCounter = 0;
     }
 
-    public static void Update() {
-        if (!isEnabled || AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || TheOtherRolesEdited.rnd == null || IntroCutscene.Instance) return;
+    public static void Update()
+    {
+        //if (!isEnabled || AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || TheOtherRoles.rnd == null || IntroCutscene.Instance) return;
+
+        // set Target
+        var untargetablePlayers = new List<PlayerControl>();
+        foreach (var player in PlayerControl.AllPlayerControls)
+        {
+            if (Mini.mini != player)
+                untargetablePlayers.Add(player);
+        }
+        currentTarget = PlayerControlFixedUpdatePatch.setTarget(untargetablePlayers: untargetablePlayers);
+        PlayerControlFixedUpdatePatch.setPlayerOutline(currentTarget, Color.yellow);
     }
 
-    public static DateTime enabled = DateTime.FromBinary(638475264000000000);
+    public static DateTime enabled = new DateTime(DateTime.Today.Year, 4, 1);
     public static bool isEventDate => DateTime.Today.Date == enabled;
 
     public static bool canBeEnabled => DateTime.Today.Date >= enabled && DateTime.Today.Date <= enabled.AddDays(7); // One Week after the EVENT
@@ -59,7 +71,6 @@ public static class EventUtility {
     }
 
     public static void gameEndsUpdate() {
-        if (!isEnabled) return;
     }
 
 
@@ -141,12 +152,9 @@ public static class EventUtility {
                 }
             }
         })));
-
-
     }
 
-
-    [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat))]
+        [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat))]
     public static class AddChatPatch
     {
         public static void Prefix(ChatController __instance, PlayerControl sourcePlayer, ref string chatText, bool censor)

@@ -106,6 +106,8 @@ public static class ChatBubblePatch
            chatText.Contains("尼玛死了") ||
            chatText.Contains("你妈死了") ||
            chatText.Contains("有马") ||
+           chatText.Contains("你爸") ||
+           chatText.Contains("你爹") ||
            chatText.Contains("sb"))
         {
             chatText = $"{Helpers.GradientColorText("FFFF00", "FF0000", $"【违规消息】")}";

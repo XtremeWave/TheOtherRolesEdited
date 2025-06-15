@@ -759,7 +759,7 @@ namespace TheOtherRolesEdited.Patches {
 
                 if (PlayerControl.LocalPlayer.Data.IsDead && output != "") FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{output}");
 
-                Trapper.playersOnMap = new List<PlayerControl>();
+                Trapper.playersOnMap = new();
                 Snitch.playerRoomMap = new Dictionary<byte, byte>();
 
                 // Remove revealed traps

@@ -25,7 +25,7 @@ namespace TheOtherRolesEdited.Modules {
             var buttonFK = UnityEngine.Object.Instantiate(template, template.transform.parent);
             var buttonGH = UnityEngine.Object.Instantiate(template, template.transform.parent);
             buttonQQ.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.43f);
-            buttonBG.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.389f, 0.30f);
+            buttonBG.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.389f, 0.328f);
             buttonFK.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.36f);
             buttonGH.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.36f);
            
@@ -75,7 +75,7 @@ namespace TheOtherRolesEdited.Modules {
             //Bg Button
             var textBG = buttonBG.transform.GetComponentInChildren<TMPro.TMP_Text>();
             __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
-                textBG.SetText($"<b>Background © AiGe</B>");
+                textBG.SetText($"<b>BG © AiGe</B>");
             })));
             textBG.outlineColor = Color.black;
             textBG.outlineWidth = 0.18f;

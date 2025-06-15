@@ -61,7 +61,7 @@ namespace TheOtherRolesEdited
         // Option creation
 
         public CustomOption(int id, CustomOptionType type, string name, System.Object[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, Action onChange = null, string heading = "", bool invertedParent = false)
-        {
+            {
             this.id = id;
             this.name = parent == null ? name : "- " + name;
             this.selections = selections;

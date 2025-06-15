@@ -29,6 +29,7 @@ namespace TheOtherRolesEdited {
         public static CustomOption CanUseSwitchShipCostumeButton;
         public static CustomOption debugMode;
         public static CustomOption disableGameEnd;
+        public static CustomOption modifierShifterShiftsMedicShield;
 
         public static CustomOption mafiaSpawnRate;
         public static CustomOption janitorCooldown;
@@ -777,7 +778,7 @@ namespace TheOtherRolesEdited {
 
 
             modifierShifter = CustomOption.Create(1100, Types.Modifier, cs(Shifter.color, "交换师"), rates, null, true);
-
+            modifierShifterShiftsMedicShield = CustomOption.Create(1102, Types.Modifier, "可以交换医生的护盾", false, modifierShifter);
 
             modifierArmored = CustomOption.Create(1101, Types.Modifier, cs(Armored.color, "装甲兵"), rates, null, true);
 

@@ -38,19 +38,23 @@ namespace TheOtherRolesEdited.Patches {
         private static TextBoxTMP portField;
         private static GameObject serverWarning;
 
-        public static void Postfix(RegionMenu __instance) {
+        public static void Postfix(RegionMenu __instance)
+        {
             if (!__instance.TryCast<RegionMenu>()) return;
             bool isCustomRegion = FastDestroyableSingleton<ServerManager>.Instance.CurrentRegion.Name == "Custom";
             if (!isCustomRegion)
             {
-                if (ipField != null && ipField.gameObject != null) {
+                if (ipField != null && ipField.gameObject != null)
+                {
                     ipField.gameObject.SetActive(false);
 
                 }
-                if (portField != null && portField.gameObject != null) {
+                if (portField != null && portField.gameObject != null)
+                {
                     portField.gameObject.SetActive(false);
                 }
-            } else
+            }
+            else
             {
                 if (ipField != null && ipField.gameObject != null)
                 {
@@ -64,15 +68,18 @@ namespace TheOtherRolesEdited.Patches {
             }
             var template = FastDestroyableSingleton<JoinGameButton>.Instance;
             var joinGameButtons = GameObject.FindObjectsOfType<JoinGameButton>();
-            foreach (var t in joinGameButtons) {  // The correct button has a background, the other 2 dont
-                if (t.GameIdText != null && t.GameIdText.Background != null) {
+            foreach (var t in joinGameButtons)
+            {  // The correct button has a background, the other 2 dont
+                if (t.GameIdText != null && t.GameIdText.Background != null)
+                {
                     template = t;
                     break;
                 }
             }
             if (template == null || template.GameIdText == null) return;
 
-            if (ipField == null || ipField.gameObject == null) {
+            if (ipField == null || ipField.gameObject == null)
+            {
                 ipField = UnityEngine.Object.Instantiate(template.GameIdText, __instance.transform);
                 ipField.gameObject.name = "IpTextBox";
                 var arrow = ipField.transform.FindChild("arrowEnter");
@@ -89,23 +96,26 @@ namespace TheOtherRolesEdited.Patches {
                     ipField.SetText(TheOtherRolesEditedPlugin.Ip.Value);
                 })));
 
-                ipField.ClearOnFocus = false; 
+                ipField.ClearOnFocus = false;
                 ipField.OnEnter = ipField.OnChange = new Button.ButtonClickedEvent();
                 ipField.OnFocusLost = new Button.ButtonClickedEvent();
                 ipField.OnChange.AddListener((UnityAction)onEnterOrIpChange);
                 ipField.OnFocusLost.AddListener((UnityAction)onFocusLost);
                 ipField.gameObject.SetActive(isCustomRegion);
 
-                void onEnterOrIpChange() {
+                void onEnterOrIpChange()
+                {
                     TheOtherRolesEditedPlugin.Ip.Value = ipField.text;
                 }
 
-                void onFocusLost() {
+                void onFocusLost()
+                {
                     TheOtherRolesEditedPlugin.UpdateRegions();
                 }
             }
 
-            if (portField == null || portField.gameObject == null) {
+            if (portField == null || portField.gameObject == null)
+            {
                 portField = UnityEngine.Object.Instantiate(template.GameIdText, __instance.transform);
                 portField.gameObject.name = "PortTextBox";
                 var arrow = portField.transform.FindChild("arrowEnter");
@@ -117,7 +127,7 @@ namespace TheOtherRolesEdited.Patches {
                 portField.SetText(TheOtherRolesEditedPlugin.Port.Value.ToString());
                 __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
                     portField.outputText.SetText(TheOtherRolesEditedPlugin.Port.Value.ToString());
-                    portField.SetText(TheOtherRolesEditedPlugin.Port.Value.ToString()); 
+                    portField.SetText(TheOtherRolesEditedPlugin.Port.Value.ToString());
                 })));
 
 
@@ -128,30 +138,36 @@ namespace TheOtherRolesEdited.Patches {
                 portField.OnFocusLost.AddListener((UnityAction)onFocusLost);
                 portField.gameObject.SetActive(isCustomRegion);
 
-                void onEnterOrPortFieldChange() {
+                void onEnterOrPortFieldChange()
+                {
                     ushort port = 0;
-                    if (ushort.TryParse(portField.text, out port)) {
+                    if (ushort.TryParse(portField.text, out port))
+                    {
                         TheOtherRolesEditedPlugin.Port.Value = port;
                         portField.outputText.color = Color.white;
-                    } else {
+                    }
+                    else
+                    {
                         portField.outputText.color = Color.red;
                     }
                 }
-                
-                void onFocusLost() {
+
+                void onFocusLost()
+                {
                     TheOtherRolesEditedPlugin.UpdateRegions();
                 }
             }
 
-            if (serverWarning == null) {
-                var tmplt = __instance.ButtonPool.activeChildren[^1] ;
+            if (serverWarning == null)
+            {
+                var tmplt = __instance.ButtonPool.activeChildren[^1];
                 serverWarning = new GameObject("serverWarning");  // GameObject.Instantiate(tmplt.transform.GetChild(0).gameObject, tmplt.transform);
                 var comp = serverWarning.AddComponent<TMPro.TextMeshPro>();  // serverWarning.GetComponent<TMPro.TextMeshPro>();
                 //serverWarning.transform.SetParent(tmplt.transform, true);
                 comp.fontSize = 0.2f;
                 serverWarning.transform.position = new Vector3(5f, 1f, -200f);
                 __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
-                    comp.text = Helpers.cs(Color.red, "Vanilla Servers Are Currently Not Compatible With TOR");
+                    comp.text = Helpers.cs(Color.red, "Vanilla Servers Are Currently Not Compatible With TORE");
                     serverWarning.transform.position = new Vector3(0f, 1f, -200f);
                 })));
                 serverWarning.SetActive(true);
@@ -161,12 +177,15 @@ namespace TheOtherRolesEdited.Patches {
     }
 
     [HarmonyPatch(typeof(RegionMenu), nameof(RegionMenu.ChooseOption))]
-    public static class RegionMenuChooseOptionPatch {
-        public static bool Prefix(RegionMenu __instance, IRegionInfo region) {
+    public static class RegionMenuChooseOptionPatch
+    {
+        public static bool Prefix(RegionMenu __instance, IRegionInfo region)
+        {
             if (region.Name != "Custom" || FastDestroyableSingleton<ServerManager>.Instance.CurrentRegion.Name == "Custom") return true;
             DestroyableSingleton<ServerManager>.Instance.SetRegion(region);
             __instance.RegionText.text = "Custom";
-            foreach (var Button in __instance.ButtonPool.activeChildren) {
+            foreach (var Button in __instance.ButtonPool.activeChildren)
+            {
                 ServerListButton serverListButton = Button.TryCast<ServerListButton>();
                 if (serverListButton != null) serverListButton.SetSelected(serverListButton.Text.text == "Custom");
             }

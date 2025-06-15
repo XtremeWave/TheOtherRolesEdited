@@ -12,7 +12,7 @@ using TheOtherRolesEdited.Players;
 
 namespace TheOtherRolesEdited.Patches
 {
-    [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
+    [HarmonyPatch(typeof(ExileController), nameof(ExileController.BeginForGameplay))]
     [HarmonyPriority(Priority.First)]
     class ExileControllerBeginPatch
     {

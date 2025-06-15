@@ -7,6 +7,8 @@ namespace TheOtherRolesEdited.Patches;
 [HarmonyPatch]
 public static class SoundManager
 {
+    public static object Instance { get; internal set; }
+
     public static void PlaySound(byte playerID, Sounds sound)
     {
         if (PlayerControl.LocalPlayer.PlayerId == playerID)
