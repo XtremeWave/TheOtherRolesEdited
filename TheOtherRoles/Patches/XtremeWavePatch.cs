@@ -20,7 +20,7 @@ public class XtremeWavePatch
         Paint.name = "XtremeWave Lobby Paint";
         Paint.transform.localPosition = new Vector3(0.042f, -2.59f, -10.5f);
         SpriteRenderer renderer = Paint.GetComponent<SpriteRenderer>();
-        renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.XtremeWave.png", 290f);
+        renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.XtremeWave.png", 290f);
     }
 }
 [HarmonyPatch(typeof(ChatBubble))]

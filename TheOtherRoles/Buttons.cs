@@ -89,12 +89,11 @@ namespace TheOtherRolesEdited
         public static TMPro.TMP_Text pursuerButtonBlanksText;
         public static TMPro.TMP_Text hackerAdminTableChargesText;
         public static TMPro.TMP_Text hackerVitalsChargesText;
+        public static TMPro.TMP_Text disperserChargesText;
         public static TMPro.TMP_Text trapperChargesText;
         public static TMPro.TMP_Text portalmakerButtonText1;
         public static TMPro.TMP_Text portalmakerButtonText2;
         public static TMPro.TMP_Text huntedShieldCountText;
-      
-
 
         public static void setCustomButtonCooldowns() {
             if (!initialized) {
@@ -156,7 +155,7 @@ namespace TheOtherRolesEdited
             huntedShieldButton.MaxTimer = Hunted.shieldCooldown;
             defuseButton.MaxTimer = 0f;
             defuseButton.Timer = 0f;
-            disperserDisperseButton.MaxTimer = 0f;
+            disperserDisperseButton.MaxTimer = Disperser.cooldown;
             propDisguiseButton.MaxTimer = 1f;
             propHuntUnstuckButton.MaxTimer = PropHunt.unstuckCooldown;
             propHuntRevealButton.MaxTimer = PropHunt.revealCooldown;
@@ -363,7 +362,7 @@ namespace TheOtherRolesEdited
                 __instance,
                 KeyCode.F
             );
-                
+
 
             // Janitor Clean
             janitorCleanButton = new CustomButton(
@@ -409,15 +408,18 @@ namespace TheOtherRolesEdited
                     MurderAttemptResult murderAttemptResult = Helpers.checkMuderAttempt(Sheriff.sheriff, Sheriff.currentTarget);
                     if (murderAttemptResult == MurderAttemptResult.SuppressKill) return;
 
-                    if (murderAttemptResult == MurderAttemptResult.PerformKill) {
+                    if (murderAttemptResult == MurderAttemptResult.PerformKill)
+                    {
                         byte targetId = 0;
                         if ((Sheriff.currentTarget.Data.Role.IsImpostor && (Sheriff.currentTarget != Mini.mini || Mini.isGrownUp())) ||
                             (Sheriff.spyCanDieToSheriff && Spy.spy == Sheriff.currentTarget) ||
                             (Sheriff.canKillNeutrals && Helpers.isNeutral(Sheriff.currentTarget)) ||
-                            (Jackal.jackal == Sheriff.currentTarget || Sidekick.sidekick == Sheriff.currentTarget)) {
+                            (Jackal.jackal == Sheriff.currentTarget || Sidekick.sidekick == Sheriff.currentTarget))
+                        {
                             targetId = Sheriff.currentTarget.PlayerId;
                         }
-                        else {
+                        else
+                        {
                             targetId = PlayerControl.LocalPlayer.PlayerId;
                         }
 
@@ -437,12 +439,13 @@ namespace TheOtherRolesEdited
                 },
                 () => { return Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return Sheriff.currentTarget && PlayerControl.LocalPlayer.CanMove; },
-                () => { sheriffKillButton.Timer = sheriffKillButton.MaxTimer;},
+                () => { sheriffKillButton.Timer = sheriffKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
                 __instance,
                 KeyCode.Q
             );
+
 
             // Deputy Handcuff
             deputyHandcuffButton = new CustomButton(
@@ -534,7 +537,7 @@ namespace TheOtherRolesEdited
            false,
            "勒索"
        );
-
+           
             // Medic Shield
             medicShieldButton = new CustomButton(
                 () => {
@@ -560,7 +563,6 @@ namespace TheOtherRolesEdited
                 KeyCode.F
             );
 
-            
             // Shifter shift
             shifterShiftButton = new CustomButton(
                 () => {
@@ -582,23 +584,40 @@ namespace TheOtherRolesEdited
 
             // Disperser disperse
             disperserDisperseButton = new CustomButton(
-                () => {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.Disperse, Hazel.SendOption.Reliable, -1);
+                () =>
+                {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.Disperse, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.disperse();
                     SoundEffectsManager.play("shifterShift");
+
+                    disperserDisperseButton.Timer = disperserDisperseButton.MaxTimer;
                 },
-                () => { return Disperser.disperser != null && Disperser.disperser == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead; },
-                () => {
-                    return Disperser.remainingDisperses > 0 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
+                () => { return Disperser.disperser != null && Disperser.disperser == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () =>
+                {
+                    if (disperserChargesText != null) disperserChargesText.text = $"{Disperser.remainingDisperses}";
+                    return Disperser.remainingDisperses > 0 && PlayerControl.LocalPlayer.CanMove;
                 },
-                () => { },
+                () =>
+                {
+                    if (Disperser.remainingDisperses > 0) disperserDisperseButton.Timer = disperserDisperseButton.MaxTimer;
+                },
                 Disperser.getButtonSprite(),
                 new Vector3(0, 2f, 0),
                 __instance,
-                null,
-                true
+                KeyCode.G,
+                true,
+                buttonText: "分散",
+                abilityTexture: CustomButton.ButtonLabelType.UseButton
+
             );
+            // 分散者分散剩余次数
+            disperserChargesText = GameObject.Instantiate(disperserDisperseButton.actionButton.cooldownTimerText, disperserDisperseButton.actionButton.cooldownTimerText.transform.parent);
+            disperserChargesText.text = "";
+            disperserChargesText.enableWordWrapping = false;
+            disperserChargesText.transform.localScale = Vector3.one * 0.5f;
+            disperserChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
             // Morphling morph
 
@@ -935,15 +954,15 @@ namespace TheOtherRolesEdited
 
             garlicButton = new CustomButton(
                 () => {
-                    Vampire.localPlacedGarlic = true;
-                    var pos = PlayerControl.LocalPlayer.transform.position;
-                    byte[] buff = new byte[sizeof(float) * 2];
-                    Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0*sizeof(float), sizeof(float));
-                    Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1*sizeof(float), sizeof(float));
+                Vampire.localPlacedGarlic = true;
+                var pos = PlayerControl.LocalPlayer.transform.position;
+                byte[] buff = new byte[sizeof(float) * 2];
+                Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
+                Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceGarlic, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceGarlic, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
-                    writer.EndMessage();
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.placeGarlic(buff);
                     SoundEffectsManager.play("garlic");
                 },
@@ -966,9 +985,9 @@ namespace TheOtherRolesEdited
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlacePortal, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlacePortal, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
-                    writer.EndMessage();
+                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.placePortal(buff);
                     SoundEffectsManager.play("tricksterPlaceBox");
                 },
@@ -1228,9 +1247,9 @@ namespace TheOtherRolesEdited
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0*sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1*sizeof(float), sizeof(float));
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceJackInTheBox, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceJackInTheBox, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
-                    writer.EndMessage();
+                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.placeJackInTheBox(buff);
                     SoundEffectsManager.play("tricksterPlaceBox");
                 },
@@ -1327,10 +1346,9 @@ namespace TheOtherRolesEdited
 
                     } else if (Warlock.curseVictim != null && Warlock.curseVictimTarget != null) {
                         MurderAttemptResult murder = Helpers.checkMurderAttemptAndKill(Warlock.warlock, Warlock.curseVictimTarget, showAnimation: false);
-                        if (murder == MurderAttemptResult.SuppressKill) return; 
-
+                        if (murder == MurderAttemptResult.SuppressKill) return;
                         // If blanked or killed
-                        if(Warlock.rootTime > 0) {
+                        if (Warlock.rootTime > 0) {
                             AntiTeleport.position = PlayerControl.LocalPlayer.transform.position;
                             PlayerControl.LocalPlayer.moveable = false;
                             PlayerControl.LocalPlayer.NetTransform.Halt(); // Stop current movement so the warlock is not just running straight into the next object
@@ -1372,9 +1390,9 @@ namespace TheOtherRolesEdited
             securityGuardButton = new CustomButton(
                 () => {
                     if (SecurityGuard.ventTarget != null) { // Seal vent
-                        MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
                         writer.WritePacked(SecurityGuard.ventTarget.Id);
-                        writer.EndMessage();
+                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.sealVent(SecurityGuard.ventTarget.Id);
                         SecurityGuard.ventTarget = null;
                         
@@ -1384,9 +1402,9 @@ namespace TheOtherRolesEdited
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0*sizeof(float), sizeof(float));
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1*sizeof(float), sizeof(float));
 
-                        MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceCamera, Hazel.SendOption.Reliable);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceCamera, Hazel.SendOption.Reliable);
                         writer.WriteBytesAndSize(buff);
-                        writer.EndMessage();
+                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.placeCamera(buff); 
                     }
                     SoundEffectsManager.play("securityGuardPlaceCam");  // Same sound used for both types (cam or vent)!
@@ -1407,7 +1425,7 @@ namespace TheOtherRolesEdited
                 __instance,
                 KeyCode.F
             );
-            
+
             // Security Guard button screws counter
             securityGuardButtonScrewsText = GameObject.Instantiate(securityGuardButton.actionButton.cooldownTimerText, securityGuardButton.actionButton.cooldownTimerText.transform.parent);
             securityGuardButtonScrewsText.text = "";
@@ -1763,9 +1781,9 @@ namespace TheOtherRolesEdited
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                            writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceNinjaTrace, Hazel.SendOption.Reliable);
+                            writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceNinjaTrace, Hazel.SendOption.Reliable);
                             writer.WriteBytesAndSize(buff);
-                            writer.EndMessage();
+                             AmongUsClient.Instance.FinishRpcImmediately(writer);
                             RPCProcedure.placeNinjaTrace(buff);
 
                             MessageWriter invisibleWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetInvisible, Hazel.SendOption.Reliable, -1);
@@ -1791,7 +1809,7 @@ namespace TheOtherRolesEdited
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                             Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                            MessageWriter writer3 = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceNinjaTrace, Hazel.SendOption.Reliable);
+                            MessageWriter writer3 = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceNinjaTrace, Hazel.SendOption.Reliable);
                             writer3.WriteBytesAndSize(buff);
                             writer3.EndMessage();
                             RPCProcedure.placeNinjaTrace(buff);
@@ -1879,9 +1897,9 @@ namespace TheOtherRolesEdited
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetTrap, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetTrap, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
-                    writer.EndMessage();
+                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setTrap(buff);
 
                     SoundEffectsManager.play("trapperTrap");
@@ -1908,9 +1926,9 @@ namespace TheOtherRolesEdited
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                        MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceBomb, Hazel.SendOption.Reliable);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceBomb, Hazel.SendOption.Reliable);
                         writer.WriteBytesAndSize(buff);
-                        writer.EndMessage();
+                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.placeBomb(buff);
 
                         SoundEffectsManager.play("trapperTrap");
@@ -2037,9 +2055,9 @@ namespace TheOtherRolesEdited
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
                     
                     if (Yoyo.markedLocation == null) {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.YoyoMarkLocation, Hazel.SendOption.Reliable);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.YoyoMarkLocation, Hazel.SendOption.Reliable);
                         writer.WriteBytesAndSize(buff);
-                        writer.EndMessage();
+                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.yoyoMarkLocation(buff);
                         SoundEffectsManager.play("tricksterPlaceBox");
                         yoyoButton.Sprite = Yoyo.getBlinkButtonSprite();
@@ -2052,10 +2070,10 @@ namespace TheOtherRolesEdited
                         if (SubmergedCompatibility.IsSubmerged) {
                             SubmergedCompatibility.ChangeFloor(exit.y > -7);
                         }
-                        MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.YoyoBlink, Hazel.SendOption.Reliable);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.YoyoBlink, Hazel.SendOption.Reliable);
                         writer.Write(Byte.MaxValue);
                         writer.WriteBytesAndSize(buff);
-                        writer.EndMessage();
+                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.yoyoBlink(true, buff);
                         yoyoButton.EffectDuration = Yoyo.blinkDuration;
                         yoyoButton.Timer = 10f;
@@ -2102,10 +2120,10 @@ namespace TheOtherRolesEdited
                     if (SubmergedCompatibility.IsSubmerged) {
                         SubmergedCompatibility.ChangeFloor(exit.y > -7);
                     }
-                    MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.YoyoBlink, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.YoyoBlink, Hazel.SendOption.Reliable);
                     writer.Write((byte)0);
                     writer.WriteBytesAndSize(buff);
-                    writer.EndMessage();
+                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.yoyoBlink(false, buff);
 
                     yoyoButton.Timer = yoyoButton.MaxTimer;
@@ -2119,7 +2137,7 @@ namespace TheOtherRolesEdited
                         Minigame.Instance.Close();
                     }
                 },
-                buttonText: "标记位置"
+                buttonText: "标记位置"       
             );
 
             yoyoAdminTableButton = new CustomButton(
@@ -2388,7 +2406,8 @@ namespace TheOtherRolesEdited
                 5f,
                 () => {
                     propHuntRevealButton.Timer = propHuntRevealButton.MaxTimer;
-                }
+                },
+                buttonText: "显灵"
                 );
 
             propHuntInvisButton = new CustomButton(

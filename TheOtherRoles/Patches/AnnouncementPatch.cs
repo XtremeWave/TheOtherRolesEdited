@@ -44,11 +44,28 @@ public class ModNewsHistory
     {
         // 创建新公告时，不能删除旧公告   
         {
+
+            {
+                // TORE v1.2.6
+                var news = new ModNews
+                {
+                    Number = 100008,
+                    Title = $"TheOtherRolesEdited  v1.2.6",
+                    SubTitle = "新职业来啦!",
+                    ShortTitle = $"★TORE",
+                    Text = "<size=100%>欢迎来到 TORE v1.2.6.适配Among us v2025.4.15s/v16.1.0</size>\n"
+                        + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
+                        + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
+                        + "\n<b>更新内容</b>\n · 新增按钮[模组官网]\n · 修改按钮颜色\n · 修改MOD图标的坐标\n · 修改VersionShower的坐标\n · 增加边框移动动画\n · 增加主页边框\n · 增加关闭边框按钮\n · 重写制作人员内容\n · 为了保证UI的适配所以强制游戏画面大小为1980x1080\n · 移除在线游戏里的搜索游戏按钮\n · 修改BarSprite的不透明度\n · 修改模组职业设置UI(by:fangkuai)",
+                    Date = "2025-8-19T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
             {
                 // TORE v1.2.5.2
                 var news = new ModNews
                 {
-                    Number = 100006,
+                    Number = 100007,
                     Title = $"TheOtherRolesEdited  v1.2.5.2",
                     SubTitle = "每日更新:)",
                     ShortTitle = $"★TORE",
@@ -64,7 +81,7 @@ public class ModNewsHistory
                 // TORE v1.2.5
                 var news = new ModNews
                 {
-                    Number = 100005,
+                    Number = 100006,
                     Title = $"TheOtherRolesEdited  v1.2.5",
                     SubTitle = "最勤奋的一集(端午节&儿童节快乐!)",
                     ShortTitle = $"★TORE",

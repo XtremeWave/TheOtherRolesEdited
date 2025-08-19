@@ -14,6 +14,6 @@ public class LobbyStartPatch
         Paint.name = "TheOtherRolesEdited Lobby Paint";
         Paint.transform.localPosition = new Vector3(0.329f,4.11f,-10.5f);
         SpriteRenderer renderer = Paint.GetComponent<SpriteRenderer>();
-        renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.TORE-logo.png", 290f);
+        renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-logo.png", 290f);
     }
 }

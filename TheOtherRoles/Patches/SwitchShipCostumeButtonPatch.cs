@@ -5,7 +5,7 @@ using static TheOtherRolesEdited.Patches.SwitchShipCostumeButtonPatch;
 namespace TheOtherRolesEdited.Patches;
 
 [HarmonyPatch]
-public static class SoundManager
+public static class ModSoundManager
 {
     public static object Instance { get; internal set; }
 
@@ -86,7 +86,7 @@ public class SwitchShipCostumeButtonPatch
             var sounds = Sounds.TaskComplete;
             if (Costume == 0) sounds = Sounds.KillSound;
             if (Costume == 1) sounds = Sounds.ImpTransform;
-            SoundManager.PlaySound(PlayerControl.LocalPlayer.PlayerId, sounds);
+            ModSoundManager.PlaySound(PlayerControl.LocalPlayer.PlayerId, sounds);
             return false;
         }
     }

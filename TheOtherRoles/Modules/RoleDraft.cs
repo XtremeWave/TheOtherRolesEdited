@@ -31,8 +31,10 @@ namespace TheOtherRolesEdited.Modules
         public static TextMeshPro buttonText;
         public static IEnumerator CoSelectRoles(IntroCutscene __instance)
         {
+            if (!isEnabled) yield break;
+
             if (CustomOptionHolder.draftModeCanChat.getBool())
-                FastDestroyableSingleton <HudManager>.Instance.Chat.SetVisible(true);
+                FastDestroyableSingleton<HudManager>.Instance.Chat.SetVisible(true);
 
             isRunning = true;
             SoundEffectsManager.play("draft", volume: 1f, true, true);
@@ -225,8 +227,10 @@ namespace TheOtherRolesEdited.Modules
                             }
                             // Handle role pairings that are blocked, e.g. Vampire Warlock, Cleaner Vulture etc.
                             bool blocked = false;
-                            foreach (var blockedRoleId in CustomOptionHolder.blockedRolePairings) {
-                                if (alreadyPicked.Contains(blockedRoleId.Key) && blockedRoleId.Value.ToList().Contains((byte)roleInfo.roleId)) {
+                            foreach (var blockedRoleId in CustomOptionHolder.blockedRolePairings)
+                            {
+                                if (alreadyPicked.Contains(blockedRoleId.Key) && blockedRoleId.Value.ToList().Contains((byte)roleInfo.roleId))
+                                {
                                     blocked = true;
                                     break;
                                 }
@@ -238,7 +242,8 @@ namespace TheOtherRolesEdited.Modules
                         }
 
                         // Fallback for if all roles are somehow removed. (This is only the case if there is a bug, hence print a warning
-                        if (availableRoles.Count == 0) {
+                        if (availableRoles.Count == 0)
+                        {
                             if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
                                 availableRoles.Add(RoleInfo.impostor);
                             else
@@ -249,9 +254,11 @@ namespace TheOtherRolesEdited.Modules
                         List<RoleInfo> originalAvailable = new(availableRoles);
 
                         // remove some roles, so that you can't always get the same roles:
-                        if (availableRoles.Count > CustomOptionHolder.draftModeAmountOfChoices.getFloat()) {
+                        if (availableRoles.Count > CustomOptionHolder.draftModeAmountOfChoices.getFloat())
+                        {
                             int countToRemove = availableRoles.Count - (int)CustomOptionHolder.draftModeAmountOfChoices.getFloat();
-                            while (countToRemove-- > 0) {
+                            while (countToRemove-- > 0)
+                            {
                                 var toRemove = availableRoles.OrderBy(_ => Guid.NewGuid()).First();
                                 availableRoles.Remove(toRemove);
                             }
@@ -349,8 +356,8 @@ namespace TheOtherRolesEdited.Modules
                             }
                         }
                     }
-                    else 
-                   {
+                    else
+                    {
                         int currentPick = PlayerControl.AllPlayerControls.Count - pickOrder.Count + 1;
                         playerText = $"匿名玩家 {currentPick}";
                         HudManager.Instance.FullScreen.color = Color.black;
@@ -358,8 +365,9 @@ namespace TheOtherRolesEdited.Modules
                     __instance.TeamTitle.text = $"{Helpers.cs(Color.white, "<size=280%>欢迎来到轮抽选职模式!</size>")}\n\n\n<size=200%>当前选择:</size>\n\n\n<size=250%>{playerText}</size>";
                     int waitMore = pickOrder.IndexOf(PlayerControl.LocalPlayer.PlayerId);
                     string waitMoreText = "";
-                    if (waitMore > 0) {
-                        waitMoreText = $" (再等回合 {waitMore} 到你的回合)";
+                    if (waitMore > 0)
+                    {
+                        waitMoreText = $" (再等 {waitMore} 个回合后到你的回合)";
                     }
                     __instance.TeamTitle.text += $"\n\n{waitMoreText}\n正在选择... {(int)(maxTimer + 1 - timer)}\n {(SoundManager.MusicVolume > -80 ? "♫ 音乐: Ultimate Superhero 3 - Kenët & Rez ♫" : "")}";
                     yield return null;
@@ -398,23 +406,27 @@ namespace TheOtherRolesEdited.Modules
             {
                 pickOrder.Remove(playerId);
                 timer = 0;
-                picked = true;                
+                picked = true;
                 RoleInfo roleInfo = RoleInfo.allRoleInfos.First(x => (byte)x.roleId == roleId);
                 string roleString = Helpers.cs(roleInfo.color, roleInfo.name);
                 int roleLength = roleInfo.name.Length;  // Not used for now, but stores the amount of charactes of the roleString.
-                if (!CustomOptionHolder.draftModeShowRoles.getBool() && !(playerId == PlayerControl.LocalPlayer.PlayerId)) {
+                if (!CustomOptionHolder.draftModeShowRoles.getBool() && !(playerId == PlayerControl.LocalPlayer.PlayerId))
+                {
                     roleString = "未知职业";
                     roleLength = roleString.Length;
                 }
-                else if (CustomOptionHolder.draftModeHideImpRoles.getBool() && roleInfo.isImpostor && !(playerId == PlayerControl.LocalPlayer.PlayerId)) {
+                else if (CustomOptionHolder.draftModeHideImpRoles.getBool() && roleInfo.isImpostor && !(playerId == PlayerControl.LocalPlayer.PlayerId))
+                {
                     roleString = Helpers.cs(Palette.ImpostorRed, "内鬼职业");
                     roleLength = "内鬼职业".Length;
                 }
-                else if (CustomOptionHolder.draftModeHideNeutralRoles.getBool() && roleInfo.isNeutral && !(playerId == PlayerControl.LocalPlayer.PlayerId)) {
+                else if (CustomOptionHolder.draftModeHideNeutralRoles.getBool() && roleInfo.isNeutral && !(playerId == PlayerControl.LocalPlayer.PlayerId))
+                {
                     roleString = Helpers.cs(Palette.Blue, "中立职业");
                     roleLength = "中立职业".Length;
                 }
-                else if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && roleInfo.isNeutral && roleInfo.isImpostor && !(playerId == PlayerControl.LocalPlayer.PlayerId)) { 
+                else if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && roleInfo.isNeutral && roleInfo.isImpostor && !(playerId == PlayerControl.LocalPlayer.PlayerId))
+                {
                     roleString = Helpers.cs(Palette.Blue, "船员职业");
                     roleLength = "船员职业".Length;
                 }
@@ -463,40 +475,6 @@ namespace TheOtherRolesEdited.Modules
             {
                 pickOrder.Add(reader.ReadByte());
             }
-        }
-
-        class PatchedEnumerator() : IEnumerable
-        {
-            public IEnumerator enumerator;
-            public IEnumerator Postfix;
-            public IEnumerator GetEnumerator()
-            {
-                while (enumerator.MoveNext())
-                {
-                    yield return enumerator.Current;
-                }
-                while (Postfix.MoveNext())
-                    yield return Postfix.Current;
-            }
-        }
-
-
-        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowTeam))]
-
-        class ShowRolePatch
-        {
-            [HarmonyPostfix]
-            public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.IEnumerator __result)
-            {
-                if (!isEnabled) return;
-                var newEnumerator = new PatchedEnumerator()
-                {
-                    enumerator = __result.WrapToManaged(),
-                    Postfix = CoSelectRoles(__instance)
-                };
-                __result = newEnumerator.GetEnumerator().WrapToIl2Cpp();
-            }
-
         }
     }
 }

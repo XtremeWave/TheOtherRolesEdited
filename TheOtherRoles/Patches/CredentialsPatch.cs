@@ -36,21 +36,22 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             private static string PingTextColor;
             private static float deltaTime;
             public static string ServerName = "";
-            private static Sprite commsdown;
+            //private static Sprite commsdown;
 
             static void Postfix(PingTracker __instance)
             {
-                if (!__instance.GetComponentInChildren<SpriteRenderer>())
-                {
-                    var spriteObject = new GameObject("WIFI Sprite");
-                    spriteObject.AddComponent<SpriteRenderer>().sprite = commsdown;
-                    spriteObject.transform.parent = __instance.transform;
-                    spriteObject.transform.localPosition = new Vector3(3.5958f, -3.2061f, -1);
-                    spriteObject.transform.localScale *= 0.72f;
-                    var TORE = spriteObject.GetComponent<SpriteRenderer>();
-                    TORE.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.TORE - Photo.png", 450f);
+                LobbyJoinBind.fontAssetPingTracker = __instance.text.font;
+                /* if (!__instance.GetComponentInChildren<SpriteRenderer>())
+                 {
+                     var spriteObject = new GameObject("WIFI Sprite");
+                     spriteObject.AddComponent<SpriteRenderer>().sprite = commsdown;
+                     spriteObject.transform.parent = __instance.transform;
+                     spriteObject.transform.localPosition = new Vector3(3.5958f, -3.2061f, -1);
+                     spriteObject.transform.localScale *= 0.72f;
+                     var TORE = spriteObject.GetComponent<SpriteRenderer>();
+                     TORE.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE - Photo.png", 450f);
 
-                }
+                 }*/
                 var ping = AmongUsClient.Instance.Ping;
                 if (ping < 10) PingTextColor = ("<color=#ff0000>");
                 else if (ping < 50) PingTextColor = ("<color=#00ffff>");
@@ -90,7 +91,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                     if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText) + "\n";
                     if (ModOption.DebugMode) gameModeText += "<color=#FF0000>(Debug Mode)</color>\n";
                     __instance.text.text = $"{fullCredentialsVersion}\n{gameModeText + fullCredentials}\n" + $"{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>        <color=#01A4F4>{fps}<size=40%>fps</size></color>" +
-                        $"\n  <size=80%><color=#FFDCB1>◈" + $"{XtremeGameData.GameStates.GetRegionName()}</color></size>";
+                        $"\n  <size=80%><color=#FFDCB1>◈" + $"{XtremeGameData.GameStates.GetRegionName()}</color>";
                     __instance.text.outlineColor = Color.black;
                     __instance.text.outlineWidth = 0.25f;
                     position.DistanceFromEdge = new Vector3(0.5f, 0.11f);
@@ -115,10 +116,9 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             public static Sprite bannerSprite;
             public static Sprite horseBannerSprite;
             public static Sprite banner2Sprite;
-            private static PingTracker instance;
             public static GameObject motdObject;
             public static TextMeshPro motdText;
-            static void Postfix(PingTracker __instance)
+            static void Postfix(MainMenuManager __instance)
             {
                 var torLogo = new GameObject("bannerLogo_TOR");
                 motdObject = new GameObject("torMOTD");
@@ -137,27 +137,6 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 mat.shaderKeywords = new string[] { "OUTLINE_ON" };
                 motdText.SetOutlineColor(Color.white);
                 motdText.SetOutlineThickness(0.095f);
-            }
-
-            public static void updateSprite()
-            {
-                //      loadSprites();
-                if (renderer != null)
-                {
-                    float fadeDuration = 1f;
-                    instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>((p) =>
-                    {
-                        renderer.color = new Color(1, 1, 1, 1 - p);
-                        if (p == 1)
-                        {
-                            renderer.sprite = TORMapOptions.enableHorseMode ? horseBannerSprite : bannerSprite;
-                            instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>((p) =>
-                            {
-                                renderer.color = new Color(1, 1, 1, p);
-                            })));
-                        }
-                    })));
-                }
             }
         }
 
@@ -195,7 +174,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             public static async Task loadMOTDs()
             {
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync("http://api.fangkuai.fun:22022/XtremeWave/MOTD/main/motd.txt");
+                HttpResponseMessage response = await client.GetAsync("https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd.txt");
                 response.EnsureSuccessStatusCode();
                 string motds = await response.Content.ReadAsStringAsync();
                 foreach (string line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries))

@@ -1,24 +1,25 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
-using UnityEngine;
 using System.Linq;
-using static TheOtherRolesEdited.TheOtherRolesEdited;
-using TheOtherRolesEdited.Modules;
+using System.Reflection;
+using System.Threading.Tasks;
+using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
-using TheOtherRolesEdited.Utilities;
-using System.Threading.Tasks;
-using TheOtherRolesEdited.CustomGameModes;
 using Reactor.Utilities.Extensions;
-using AmongUs.GameOptions;
-using TheOtherRolesEdited.Patches;
 using Rewired.Utils.Platforms.Windows;
-using TheOtherRolesEdited.Players;
-using System.Collections;
+using TheOtherRolesEdited.CustomGameModes;
+using TheOtherRolesEdited.Modules;
 using TheOtherRolesEdited.Objects;
+using TheOtherRolesEdited.Patches;
+using TheOtherRolesEdited.Players;
+using TheOtherRolesEdited.Utilities;
+using UnityEngine;
+using UnityEngine.Networking;
+using static TheOtherRolesEdited.TheOtherRolesEdited;
 
 namespace TheOtherRolesEdited {
 
@@ -143,7 +144,7 @@ namespace TheOtherRolesEdited {
             yield return HudManager.Instance.CoFadeFullScreen(new Color(0f, 0f, 0f, 0.98f), Color.clear);
             yield return null;
         }
-
+       
         public static unsafe Texture2D loadTextureFromResources(string path) {
             try {
                 Texture2D texture = new Texture2D(2, 2, TextureFormat.ARGB32, true);
@@ -339,12 +340,21 @@ namespace TheOtherRolesEdited {
                 player.myTasks.Insert(0, task);
             }
         }
+         public static string camelString(this string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            string firstLetter = input[..1].ToUpper();
+            string remainingLetters = input[1..].ToLower();
+            return firstLetter + remainingLetters;
+        }
 
         public static void enableCursor(bool initalSetCursor)
         {
             if (initalSetCursor)
             {
-                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.Cursor.png", 115f);
+                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Cursor.png", 115f);
                 Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
                 return;
             }
@@ -354,7 +364,7 @@ namespace TheOtherRolesEdited {
             }
             else
             {
-                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.Cursor.png", 115f);
+                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Cursor.png", 115f);
                 Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
             }
         }
@@ -861,6 +871,14 @@ namespace TheOtherRolesEdited {
         public static object TryCast(this Il2CppObjectBase self, Type type)
         {
             return AccessTools.Method(self.GetType(), nameof(Il2CppObjectBase.TryCast)).MakeGenericMethod(type).Invoke(self, Array.Empty<object>());
+        }
+
+        public static byte[] GetUnstrippedData(this DownloadHandler dh)
+        {
+            var nativeData = dh.GetNativeData();
+            if (nativeData.IsCreated)
+                return nativeData.ToArray();
+            return null;
         }
     }
 }

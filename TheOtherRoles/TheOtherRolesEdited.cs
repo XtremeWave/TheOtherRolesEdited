@@ -216,45 +216,53 @@ namespace TheOtherRolesEdited
             }
         }
 
-        public static class Godfather {
+        public static class Godfather
+        {
             public static PlayerControl godfather;
             public static Color color = Palette.ImpostorRed;
 
-            public static void clearAndReload() {
+            public static void clearAndReload()
+            {
                 godfather = null;
             }
         }
 
-        public static class Mafioso {
+        public static class Mafioso
+        {
             public static PlayerControl mafioso;
             public static Color color = Palette.ImpostorRed;
 
-            public static void clearAndReload() {
+            public static void clearAndReload()
+            {
                 mafioso = null;
             }
         }
 
 
-        public static class Janitor {
+        public static class Janitor
+        {
             public static PlayerControl janitor;
             public static Color color = Palette.ImpostorRed;
 
             public static float cooldown = 30f;
 
             private static Sprite buttonSprite;
-            public static Sprite getButtonSprite() {
+            public static Sprite getButtonSprite()
+            {
                 if (buttonSprite) return buttonSprite;
                 buttonSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.CleanButton.png", 115f);
                 return buttonSprite;
             }
 
-            public static void clearAndReload() {
+            public static void clearAndReload()
+            {
                 janitor = null;
                 cooldown = CustomOptionHolder.janitorCooldown.getFloat();
             }
         }
 
-        public static class Sheriff {
+        public static class Sheriff
+        {
             public static PlayerControl sheriff;
             public static Color color = new Color32(248, 205, 70, byte.MaxValue);
 
@@ -266,7 +274,7 @@ namespace TheOtherRolesEdited
 
             public static PlayerControl formerDeputy;  // Needed for keeping handcuffs + shifting
             public static PlayerControl formerSheriff;  // When deputy gets promoted...
-
+            
             public static void replaceCurrentSheriff(PlayerControl deputy)
             {
                 if (!formerSheriff) formerSheriff = sheriff;
@@ -275,7 +283,8 @@ namespace TheOtherRolesEdited
                 cooldown = CustomOptionHolder.sheriffCooldown.getFloat();
             }
 
-            public static void clearAndReload() {
+            public static void clearAndReload()
+            {
                 sheriff = null;
                 currentTarget = null;
                 formerDeputy = null;
@@ -303,7 +312,7 @@ namespace TheOtherRolesEdited
 
             private static Sprite buttonSprite;
             private static Sprite handcuffedSprite;
-            
+
             public static Sprite getButtonSprite()
             {
                 if (buttonSprite) return buttonSprite;
@@ -324,24 +333,27 @@ namespace TheOtherRolesEdited
                 if (playerId == Byte.MaxValue)
                     playerId = PlayerControl.LocalPlayer.PlayerId;
 
-                if (active && playerId == PlayerControl.LocalPlayer.PlayerId) {
+                if (active && playerId == PlayerControl.LocalPlayer.PlayerId)
+                {
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareGhostInfo, Hazel.SendOption.Reliable, -1);
                     writer.Write(PlayerControl.LocalPlayer.PlayerId);
                     writer.Write((byte)RPCProcedure.GhostInfoTypes.HandcuffNoticed);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                 }
 
-                if (active) {
+                if (active)
+                {
                     handcuffedKnows.Add(playerId, handcuffDuration);
                     handcuffedPlayers.RemoveAll(x => x == playerId);
-               }
+                }
 
-                if (playerId == PlayerControl.LocalPlayer.PlayerId) {
+                if (playerId == PlayerControl.LocalPlayer.PlayerId)
+                {
                     HudManagerStartPatch.setAllButtonsHandcuffedStatus(active);
                     SoundEffectsManager.play("deputyHandcuff");
-		}
- 
-	    }
+                }
+
+            }
 
             public static void clearAndReload()
             {
@@ -359,15 +371,17 @@ namespace TheOtherRolesEdited
             }
         }
 
-        public static class Lighter {
+        public static class Lighter
+        {
             public static PlayerControl lighter;
             public static Color color = new Color32(238, 229, 190, byte.MaxValue);
-            
+
             public static float lighterModeLightsOnVision = 2f;
             public static float lighterModeLightsOffVision = 0.75f;
             public static float flashlightWidth = 0.75f;
 
-            public static void clearAndReload() {
+            public static void clearAndReload()
+            {
                 lighter = null;
                 flashlightWidth = CustomOptionHolder.lighterFlashlightWidth.getFloat();
                 lighterModeLightsOnVision = CustomOptionHolder.lighterModeLightsOnVision.getFloat();
@@ -375,7 +389,8 @@ namespace TheOtherRolesEdited
             }
         }
 
-        public static class Detective {
+        public static class Detective
+        {
             public static PlayerControl detective;
             public static Color color = new Color32(45, 106, 165, byte.MaxValue);
 
@@ -386,7 +401,8 @@ namespace TheOtherRolesEdited
             public static float reportColorDuration = 20f;
             public static float timer = 6.2f;
 
-            public static void clearAndReload() {
+            public static void clearAndReload()
+            {
                 detective = null;
                 anonymousFootprints = CustomOptionHolder.detectiveAnonymousFootprints.getBool();
                 footprintIntervall = CustomOptionHolder.detectiveFootprintIntervall.getFloat();
@@ -398,9 +414,11 @@ namespace TheOtherRolesEdited
         }
     }
 
-    public static class TimeMaster {
+    public static class TimeMaster
+    {
         public static PlayerControl timeMaster;
         public static Color color = new Color32(112, 142, 239, byte.MaxValue);
+
 
         public static bool reviveDuringRewind = false;
         public static float rewindTime = 3f;
@@ -2026,7 +2044,10 @@ namespace TheOtherRolesEdited
     {
         public static PlayerControl disperser;
         public static Color color = new Color32(48, 21, 89, byte.MaxValue);
-        public static int remainingDisperses = 1;
+
+        public static float cooldown = 30f;
+        public static float remainingDisperses = 1;
+        public static bool dispersesToVent;
         private static Sprite buttonSprite;
 
         public static Sprite getButtonSprite()
@@ -2035,15 +2056,13 @@ namespace TheOtherRolesEdited
             buttonSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.Disperse.png", 115f);
             return buttonSprite;
         }
-
-
         public static void clearAndReload()
         {
             disperser = null;
-            remainingDisperses = 1;
+            cooldown = CustomOptionHolder.modifierDisperserCooldown.getFloat();
+            remainingDisperses = CustomOptionHolder.modifierDisperserNumberOfUses.getFloat();
         }
     }
-
 
     public static class Mini {
         public static PlayerControl mini;

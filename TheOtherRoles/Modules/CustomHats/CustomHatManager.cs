@@ -14,16 +14,17 @@ public static class CustomHatManager
     public const string ResourcesDirectory = "TheOtherHats";
     public const string InnerslothPackageName = "官方帽子";
     public const string DeveloperPackageName = "开发者帽子";
-    
+
     internal static readonly Tuple<string, string> Repository = new("TheOtherRolesAU", "TheOtherHats");
     internal static string RepositoryUrl
     {
         get
         {
             var (owner, repository) = Repository;
-            return $"https://dl.fungle.icu/ModFiles/TheOtherRoles/TheOtherHats";
+            return $"https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/{owner}/{repository}/master";
         }
     }
+
 
     internal static readonly string ManifestFileName = "CustomHats.json";
     

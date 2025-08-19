@@ -13,34 +13,33 @@ public class CreditsControllerPatch
         var TeamList = new List<string>()
             {
 
-                $"slok",
-                $"喜",
-                $"方块",
-                $"{TheOtherRolesEditedPlugin.Dev}",
-                $"Zxylem",
-                $"照路行不行",
-                $"一念旧情丶",
-                $"小黄117",
-                $"中立小黑",
-                $"JMS",
-                $"空水梦冰",
-                $"KpCam",
-                $"刻刻刻刻刻薄",
-                $"玖咪~啾啾猫猫好爱",
-                $"核聚变砂糖橘TvT",
-                $"Hartex",
-                $"Crewmate Ender&Impostor Ender",
-                $"清风",
-                $"ZEYAN",
-                $"白糖咖啡",
-                $"崩pz衫",
+                $"★slok★",
+                $"★喜★",
+                $"★方块★",
+                $"★{TheOtherRolesEditedPlugin.Dev}★",
+                $"★Elinmei★",
+                $"★Zxylem★",
+                $"★照路行不行★",
+                $"★一念旧情丶★",
+                $"★小黄117★",
+                $"★中立小黑★",
+                $"★JMS★",
+                $"★空水梦冰★",
+                $"★KpCam★",
+                $"★刻刻刻刻刻薄★",
+                $"★玖咪~啾啾猫猫好爱★",
+                $"★核聚变砂糖橘TvT★",
+                $"★Hartex★",
+                $"★ Crewmate Ender&Impostor Ender★",
+                $"★清风★",
+                $"★ZEYAN★",
+                $"★白糖咖啡★",
+                $"★崩pz衫★",
 
             };
 
         var devList = new List<string>()
             {
-                //$"<color=#bd262a><size=150%>{GetString("FromChina")}</size></color>",
-
                 $"{TheOtherRolesEditedPlugin.Dev} - 开发者({Helpers.GradientColorText("00BFFF", "0000FF", $"TheOtherRolesEdited")})",
                 $"Eisbison - 开发者(<color=#FF0000>TheOtherRoles</color>)",
                 $"尤路丽丝 - 美工",
@@ -49,39 +48,42 @@ public class CreditsControllerPatch
         var translatorList = new List<string>()
             {
                 $"方块 - 贡献者",
-                $"YU - 贡献者(<color=#EEC900>MCI</color>)",
+                $"Elinmei - 贡献者",
             };
         var acList = new List<string>()
             {
                 //Mods
-                $"<color=#FF0000>TheOtherRoles</color>",
-                $"<color=#FF0000>TheOtherRolesGMIA</color>",
+                $"{Helpers.GradientColorText("FC0000", "FEE50A", $"TheOtherRolesGMIA")}",
                 $"<color=#FF0000>TheOtherUs</color>",
-                $"<color=#000FFF>YuET</color>",
-                $"<color=#00Bfff>TownOfNext</color>",
-                $"<color=#00FFFF>TownOfNewEpic_Xtreme</color>",
+                $"<color=#FF0000>TheOtherUsEdited</color>",
+                $"<color=#FF0000>TheOtherRolesRework</color>",
+                $"<color=#001EFC>YuET</color>",
+                $"<color=#FC77D1>TownOfNext</color>",
 
                 // Sponsor
                 $"小叨院长",
-                $"<color=#FFFF00>屑杰鱼</color>",
+                $"屑杰鱼",
                 $"A master",
+                $"TAIKonguo",
+                $"Elinmei",
+                $"Imp11",
                 $"...",
             };
 
         var credits = new List<CreditsController.CreditStruct>();
-        AddTitleToCredits($" <size=500%><color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color> </size>");
+        AddTitleToCredits($" <size=500%>★<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>★</size>");
         AddPersonToCredits(TeamList);
         AddSpcaeToCredits();
 
-        AddTitleToCredits("<color=#FF0000>模组开发者</color>");
+        AddTitleToCredits("★<color=#FCF300>模组开发者</color>★");
         AddPersonToCredits(devList);
         AddSpcaeToCredits();
 
-        AddTitleToCredits("<color=#FF0000>模组贡献者</color>");
+        AddTitleToCredits("★<color=#00BDFC>模组贡献者</color>★");
         AddPersonToCredits(translatorList);
         AddSpcaeToCredits();
 
-        AddTitleToCredits("<color=#FF0000>帮助我们的模组及个人</color>");
+        AddTitleToCredits($"★{Helpers.GradientColorText("0011FC", "FC00AC", $"帮助我们的模组及个人")}★");
         AddPersonToCredits(acList);
         AddSpcaeToCredits();
 

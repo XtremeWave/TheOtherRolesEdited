@@ -2,14 +2,11 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using BepInEx;
-using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using UnityEngine;
@@ -19,8 +16,8 @@ namespace TheOtherRolesEdited.Modules;
 
 public class BepInExUpdater : MonoBehaviour
 {
-    public const string RequiredBepInExVersion = "6.0.0-be.697+53625800b86f6c68751445248260edf0b27a71c2";
-    public const string BepInExDownloadURL = "https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.697%2B5362580.zip";
+    public const string RequiredBepInExVersion = "6.0.0-be.735+5fef3570f212b2fb5fbe9c1d20487c13c2fa90cb";
+    public const string BepInExDownloadURL = "https://builds.bepinex.dev/projects/bepinex_be/735/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.735%2B5fef357.zip";
     public static bool UpdateRequired => Paths.BepInExVersion.ToString() != RequiredBepInExVersion;
 
     public void Awake()
@@ -34,7 +31,7 @@ public class BepInExUpdater : MonoBehaviour
     [HideFromIl2Cpp]
     public IEnumerator CoUpdate()
     {
-        Task.Run(() => MessageBox(GetForegroundWindow(), "Required BepInEx update is downloading, please wait...","The Other Roles", 0));
+        Task.Run(() => MessageBox(GetForegroundWindow(), "Required BepInEx update is downloading, please wait...","The Other Roles Edited", 0));
         UnityWebRequest www = UnityWebRequest.Get(BepInExDownloadURL);
         yield return www.Send();        
         if (www.isNetworkError || www.isHttpError)
@@ -44,7 +41,7 @@ public class BepInExUpdater : MonoBehaviour
         }
 
         var zipPath = Path.Combine(Paths.GameRootPath, ".bepinex_update");
-        File.WriteAllBytes(zipPath, www.downloadHandler.data);
+        File.WriteAllBytes(zipPath, www.downloadHandler.GetUnstrippedData());
 
         
         var tempPath = Path.Combine(Path.GetTempPath(), "TheOtherUpdater.exe");

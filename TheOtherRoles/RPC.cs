@@ -1902,6 +1902,9 @@ namespace TheOtherRolesEdited
                 case (byte)CustomRPC.BreakArmor:
                     RPCProcedure.breakArmor();
                     break;
+                case (byte)CustomRPC.Disperse:
+                    RPCProcedure.disperse();
+                    break;
 
                 // Game mode
                 case (byte)CustomRPC.SetGuesserGm:

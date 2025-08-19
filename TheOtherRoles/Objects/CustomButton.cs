@@ -1,3 +1,4 @@
+using AmongUs.GameOptions;
 using Il2CppSystem.Runtime.ExceptionServices;
 using Rewired;
 using System;
@@ -9,10 +10,11 @@ using UnityEngine.UI;
 using static TheOtherRolesEdited.TheOtherRolesEdited;
 
 namespace TheOtherRolesEdited.Objects {
-    public class CustomButton {
+    public class CustomButton
+    {
+        public static List<CustomButton> buttons = new List<CustomButton>();
         public static KeyCode Action2Keycode = KeyCode.G; //TheOtherRolesPlugin.Instance.Config.Bind("Buttons", "Action2Keycode", KeyCode.G, "Second Ability Button Key").Value;
         public static KeyCode Action3Keycode = KeyCode.H; // TheOtherRolesPlugin.Instance.Config.Bind("Buttons", "Action3Keycode", KeyCode.H, "Third Ability Button Key").Value;
-        public static List<CustomButton> buttons = new List<CustomButton>();
         public ActionButton actionButton;
         public GameObject actionButtonGameObject;
         public SpriteRenderer actionButtonRenderer;
@@ -40,7 +42,9 @@ namespace TheOtherRolesEdited.Objects {
         public string buttonText;
         public bool isHandcuffed = false;
         private static readonly int Desat = Shader.PropertyToID("_Desat");
-        public static class ButtonPositions {
+
+        public static class ButtonPositions
+        {
             public static readonly Vector3 lowerRowRight = new Vector3(-2f, -0.06f, 0);  // Not usable for imps beacuse of new button positions!
             public static readonly Vector3 lowerRowCenter = new Vector3(-3f, -0.06f, 0);
             public static readonly Vector3 lowerRowLeft = new Vector3(-4f, -0.06f, 0);
@@ -51,12 +55,21 @@ namespace TheOtherRolesEdited.Objects {
             public static readonly Vector3 highRowRight = new Vector3(0f, 2.06f, 0f);
         }
 
-        public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool HasEffect, float EffectDuration, Action OnEffectEnds, bool mirror = false, string buttonText = "")
+        public enum ButtonLabelType
+        {
+            UseButton,
+            AdminButton,
+            KillButton,
+            HauntButton
+        }
+
+        public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool HasEffect, float EffectDuration, Action OnEffectEnds, bool mirror = false, string buttonText = "", ButtonLabelType abilityTexture = ButtonLabelType.KillButton)
         {
             this.hudManager = hudManager;
             this.OnClick = OnClick;
             this.InitialOnClick = OnClick;
             this.HasButton = HasButton;
+            this.HasEffect = HasEffect;
             this.CouldUse = CouldUse;
             this.PositionOffset = PositionOffset;
             this.OnMeetingEnds = OnMeetingEnds;
@@ -79,12 +92,11 @@ namespace TheOtherRolesEdited.Objects {
             this.showButtonText = (actionButtonRenderer.sprite == Sprite || buttonText != "");
             button.OnClick = new Button.ButtonClickedEvent();
             button.OnClick.AddListener((UnityEngine.Events.UnityAction)onClickEvent);
-
             setActive(false);
         }
 
-        public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool mirror = false, string buttonText = "")
-        : this(OnClick, HasButton, CouldUse, OnMeetingEnds, Sprite, PositionOffset, hudManager, hotkey, false, 0f, () => {}, mirror, buttonText) { }
+        public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool mirror = false, string buttonText = "", ButtonLabelType abilityTexture = ButtonLabelType.KillButton)
+        : this(OnClick, HasButton, CouldUse, OnMeetingEnds, Sprite, PositionOffset, hudManager, hotkey, false, 0f, () => { }, mirror, buttonText, abilityTexture) { }
 
         public void onClickEvent()
         {
@@ -96,7 +108,8 @@ namespace TheOtherRolesEdited.Objects {
                 // Deputy skip onClickEvent if handcuffed
                 if (Deputy.handcuffedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Deputy.handcuffedKnows[PlayerControl.LocalPlayer.PlayerId] > 0f) return;
 
-                if (this.HasEffect && !this.isEffectActive) {
+                if (this.HasEffect && !this.isEffectActive)
+                {
                     this.DeputyTimer = this.EffectDuration;
                     this.Timer = this.EffectDuration;
                     actionButton.cooldownTimerText.color = new Color(0F, 0.8F, 0F);
@@ -108,7 +121,7 @@ namespace TheOtherRolesEdited.Objects {
         public static void HudUpdate()
         {
             buttons.RemoveAll(item => item.actionButton == null);
-        
+
             for (int i = 0; i < buttons.Count; i++)
             {
                 try
@@ -122,7 +135,8 @@ namespace TheOtherRolesEdited.Objects {
             }
         }
 
-        public static void MeetingEndedUpdate() {
+        public static void MeetingEndedUpdate()
+        {
             buttons.RemoveAll(item => item.actionButton == null);
             for (int i = 0; i < buttons.Count; i++)
             {
@@ -138,7 +152,8 @@ namespace TheOtherRolesEdited.Objects {
             }
         }
 
-        public static void ResetAllCooldowns() {
+        public static void ResetAllCooldowns()
+        {
             for (int i = 0; i < buttons.Count; i++)
             {
                 try
@@ -153,7 +168,9 @@ namespace TheOtherRolesEdited.Objects {
                 }
             }
         }
-        // Reload the rebound hotkeys from the among us settings.Add commentMore actions
+
+
+        // Reload the rebound hotkeys from the among us settings.
         public static void ReloadHotkeys()
         {
             foreach (var button in buttons)
@@ -184,11 +201,16 @@ namespace TheOtherRolesEdited.Objects {
             }
 
         }
-        public void setActive(bool isActive) {
-            if (isActive) {
+
+        public void setActive(bool isActive)
+        {
+            if (isActive)
+            {
                 actionButtonGameObject.SetActive(true);
                 actionButtonRenderer.enabled = true;
-            } else {
+            }
+            else
+            {
                 actionButtonGameObject.SetActive(false);
                 actionButtonRenderer.enabled = false;
             }
@@ -256,7 +278,8 @@ namespace TheOtherRolesEdited.Objects {
                 actionButtonMat.SetFloat(Desat, 1f);
             }
 
-            if (Timer >= 0 && !RoleDraft.isRunning){  // Make sure role draft has finished or isnt running
+            if (Timer >= 0 && !RoleDraft.isRunning)
+            {  // Make sure role draft has finished or isnt running
                 if (HasEffect && isEffectActive)
                     Timer -= Time.deltaTime;
                 else if (!localPlayer.inVent && moveable)
@@ -278,7 +301,8 @@ namespace TheOtherRolesEdited.Objects {
             // Deputy disable the button and display Handcuffs instead...
             if (Deputy.handcuffedPlayers.Contains(localPlayer.PlayerId))
             {
-                OnClick = () => {
+                OnClick = () =>
+                {
                     Deputy.setHandcuffedKnows();
                 };
             }
@@ -289,3 +313,4 @@ namespace TheOtherRolesEdited.Objects {
         }
     }
 }
+  

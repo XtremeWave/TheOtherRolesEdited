@@ -100,7 +100,7 @@ namespace TheOtherRolesEdited.Modules
             var asset = release.Assets.Find(FilterPluginAsset);
             var www = new UnityWebRequest();
             www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
-            www.SetUrl(asset.DownloadUrl);
+            www.SetUrl("https://ghproxy.fangkuai.fun/" + asset.DownloadUrl);
             www.downloadHandler = new DownloadHandlerBuffer();
             var operation = www.SendWebRequest();
 
@@ -124,7 +124,7 @@ namespace TheOtherRolesEdited.Modules
             if (File.Exists(filePath + ".old")) File.Delete(filePath + "old");
             if (File.Exists(filePath)) File.Move(filePath, filePath + ".old");
 
-            var persistTask = File.WriteAllBytesAsync(filePath, www.downloadHandler.data);
+            var persistTask = File.WriteAllBytesAsync(filePath, www.downloadHandler.GetUnstrippedData());
             var hasError = false;
             while (!persistTask.IsCompleted)
             {
@@ -207,7 +207,7 @@ namespace TheOtherRolesEdited.Modules
             BGLogo.transform.localPosition = new Vector3(0.9605f, -2.0005f, 4.8782f);
             BGLogo.transform.localScale = new Vector3(0.3964f,0.3964f,1f);
             ModUpdateBG = BGLogo.AddComponent<SpriteRenderer>();
-            ModUpdateBG.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.Update.png", 100f);
+            ModUpdateBG.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Update.png", 100f);
             
         }
 

@@ -12,7 +12,7 @@ using TheOtherRolesEdited.CustomGameModes;
 using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches {
-    [HarmonyPatch(typeof(RoleOptionsCollectionV08), nameof(RoleOptionsCollectionV08.GetNumPerGame))]
+    [HarmonyPatch(typeof(RoleOptionsCollectionV09), nameof(RoleOptionsCollectionV09.GetNumPerGame))]
     class RoleOptionsDataGetNumPerGamePatch{
         public static void Postfix(ref int __result) {
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0; // Deactivate Vanilla Roles if the mod roles are active
@@ -454,7 +454,8 @@ namespace TheOtherRolesEdited.Patches {
                 RoleId.Invert,
                 RoleId.Chameleon,
                 RoleId.Armored,
-                RoleId.Shifter
+                RoleId.Shifter,
+                RoleId.Disperser
             });
 
             if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10)
