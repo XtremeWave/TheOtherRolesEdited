@@ -151,6 +151,9 @@ namespace TheOtherRolesEdited {
 
         public static CustomOption timeMasterSpawnRate;
         public static CustomOption timeMasterCooldown;
+        public static CustomOption timeMasterCanRewind;
+        public static CustomOption timeMasterReviveDuringRewind;
+        public static CustomOption timeMasterRewindCooldown;
         public static CustomOption timeMasterRewindTime;
         public static CustomOption timeMasterShieldDuration;
 
@@ -638,8 +641,11 @@ namespace TheOtherRolesEdited {
             timeMasterSpawnRate = CustomOption.Create(Types.Crewmate, cs(TimeMaster.color, "时间之主"), rates, null, true);
             timeMasterCooldown = CustomOption.Create(Types.Crewmate, "时间之盾冷却时间", 30f, 10f, 120f, 2.5f, timeMasterSpawnRate);
             timeMasterShieldDuration = CustomOption.Create(Types.Crewmate, "时间之盾持续时间", 3f, 1f, 20f, 1f, timeMasterSpawnRate);
-            timeMasterRewindTime = CustomOption.Create(Types.Crewmate, "倒退时间", 3f, 1f, 10f, 1f, timeMasterSpawnRate);
-           
+            timeMasterRewindTime = CustomOption.Create(Types.Crewmate, "时间之盾倒退时间", 3f, 1f, 10f, 1f, timeMasterSpawnRate);
+            timeMasterCanRewind = CustomOption.Create(Types.Crewmate, "可以使用时间回溯",true, timeMasterSpawnRate);
+            timeMasterRewindCooldown = CustomOption.Create(Types.Crewmate, "时间回溯冷却时间", 30f, 2.5f, 60f, 2.5f,timeMasterCanRewind);
+            timeMasterReviveDuringRewind = CustomOption.Create(Types.Crewmate, "在回溯期间复活玩家", true, timeMasterCanRewind);
+
             medicSpawnRate = CustomOption.Create(Types.Crewmate, cs(Medic.color, "医生"), rates, null, true);
             medicShowShielded = CustomOption.Create(Types.Crewmate, "所有人可见护盾保护的玩家", new string[] { "所有人可见", "被保护者和医生可见", "仅医生可见" }, medicSpawnRate);
             medicShowAttemptToShielded = CustomOption.Create(Types.Crewmate, "被护盾保护的玩家如被击杀被保护玩家会有提示", false, medicSpawnRate);

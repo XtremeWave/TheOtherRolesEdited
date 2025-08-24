@@ -15,6 +15,7 @@ using AmongUs.Data;
 using Assets.InnerNet;
 using Twitch;
 using static StarGen;
+using static Rewired.Glyphs.UnityUI.UnityUITextMeshProGlyphHelper;
 
 namespace TheOtherRolesEdited.Modules
 {
@@ -45,6 +46,31 @@ namespace TheOtherRolesEdited.Modules
             if (_busy) return;
             this.StartCoroutine(CoCheckForUpdate());
             SceneManager.add_sceneLoaded((System.Action<Scene, LoadSceneMode>)(OnSceneLoaded));
+        }
+
+
+        // 新增：获取下载量的函数
+        [HideFromIl2Cpp]
+        public int GetDownloadCount(string tag = null)
+        {
+            if (Releases == null || Releases.Count == 0) return 0;
+
+            GithubRelease release;
+            if (tag == null)
+            {
+                // 如果没有指定tag，获取最新版本
+                release = Releases.OrderByDescending(r => r.PublishedAt).FirstOrDefault();
+            }
+            else
+            {
+                // 获取指定tag的版本
+                release = Releases.FirstOrDefault(r => r.Tag == tag);
+            }
+
+            if (release == null) return 0;
+
+            // 累加所有资源的下载量
+            return release.Assets?.Sum(asset => asset.DownloadCount) ?? 0;
         }
 
 
@@ -289,7 +315,6 @@ namespace TheOtherRolesEdited.Modules
             return Version > version;
         }
     }
-
     public class GithubAsset
     {
         [JsonPropertyName("url")]
@@ -306,5 +331,9 @@ namespace TheOtherRolesEdited.Modules
 
         [JsonPropertyName("browser_download_url")]
         public string DownloadUrl { get; set; }
+
+        // 新增：下载量字段
+        [JsonPropertyName("download_count")]
+        public int DownloadCount { get; set; }
     }
 }

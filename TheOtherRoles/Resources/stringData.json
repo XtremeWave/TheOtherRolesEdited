@@ -1,6 +1,222 @@
 {
-    "creditsButton": {
-        "0": "TORE credits",
-        "13": "TORE 公告"
+    "ToDateToday": {
+        "0": "To date today TORE has been used  <color=#00bfff>{0}</color> times~",
+        "13": "截至今日TORE已被使用 <color=#00bfff>{0}</color> 次啦~"
+    },
+    "PreviousPageButton": {
+        "0": "Previous Page",
+        "13": "上一页"
+    },
+    "NextPageButton": {
+        "0": "Next Page",
+        "13": "下一页"
+    },
+    "ThankYouForPlayingTORE": {
+        "0": "Thank You For Playing TORE!",
+        "13": "感谢您使用TORE!"
+    },
+    "Welcome": {
+        "0": "Welcome to The Other Roles Edited!",
+        "13": "欢迎来到The Other Roles Edited!"
+    },
+    "Politics": {
+        "0": "【The content of the message contains politically sensitive information and has been rejected】",
+        "13": "【发送内容包含政治敏感信息,已驳回】"
+    },
+    "Guesser": {
+        "0": "Guesser",
+        "13": "赌怪模式"
+    },
+    "HideNSeek": {
+        "0": "Hide N Seek",
+        "13": "捉迷藏模式"
+    },
+    "PropHunt": {
+        "0": "Prop Hunt",
+        "13": "变形躲猫猫模式"
+    },
+    "GuesserTip": {
+        "0": "Based on the classic mode, every player is a new mode of guesser",
+        "13": "在经典模式的基础上,每一位玩家都是赌怪的全新模式。"
+    },
+    "HideNSeekTip": {
+        "0": "A separate new mode in which the hunter catches all the hiders within the specified time.",
+        "13": "一个独立的新模式,猎人要在规定的时间内抓住所有躲藏者。"
+    },
+    "PropHuntTip": {
+        "0": "A separate new mode where each hider can be transformed into any item on the map.",
+        "13": "一个独立的新模式,每个躲藏者可变换为地图上的任意物品,猎人需要识破他们的伪装并击杀掉他们。"
+    },
+    "GameMode": {
+        "0": "Game Mode",
+        "13": "游戏模式"
+    },
+    "VanHideNSeek": {
+        "0": "Van. HideNSeek",
+        "13": "官方躲猫猫"
+    },
+    "Classic": {
+        "0": "Classic",
+        "13": "经典模式"
+    },
+    "Credentials": {
+        "0": "Translate by:<color=#FCCE03FF>farewell</color>",
+        "13": "中文翻译:<color=#FCCE03FF>farewell</color> & <color=#FCCE03FF>FangKuaiYa</color>"
+    },
+    "PrevLobby": {
+        "0": "Prev Lobby",
+        "13": "上一个房间"
+    },
+    "Clipboard": {
+        "0": "Clipboard",
+        "13": "剪切板"
+    },
+    "ModWebsite": {
+        "0": "Mod Website",
+        "13": "模组官网"
+    },
+    "QQGroup": {
+        "0": "QQ Group",
+        "13": "QQ群"
+    },
+    "TOREcredits": {
+        "0": "TORE Credits",
+        "13": "TORE贡献者"
+    },
+    "Dev": {
+        "0": "Developers",
+        "13": "开发者"
+    },
+    "ServerHost": {
+        "0": "Server Host",
+        "13": "服主"
+    },
+    "Con": {
+        "0": "Contributors",
+        "13": "贡献者"
+    },
+    "Tester": {
+        "0": "Tester",
+        "13": "测逝员"
+    },
+    "Art": {
+        "0": "Artist",
+        "13": "美工"
+    },
+    "On": {
+        "0": "On",
+        "13": "开启"
+    },
+    "Off": {
+        "0": "Off",
+        "13": "关闭"
+    },
+    "Preset": {
+        "0": "Preset",
+        "13": "预设"
+    },
+    "GameOptions": {
+        "0": "Game Options",
+        "13": "游戏选项"
+    },
+    "Options1": {
+        "0": "Ghosts See Tasks & Other Info",
+        "13": "幽灵可以查看任务&其他"
+    },
+    "Options2": {
+        "0": "Ghosts Can See Votes",
+        "13": "幽灵可以看到地图上的管道"
+    },
+    "Options3": {
+        "0": "Ghosts Can See Roles",
+        "13": "幽灵可以看到职业"
+    },
+    "Options4": {
+        "0": "Ghosts Can Additionally See Modifier",
+        "13": "幽灵可以看到附加职业"
+    },
+    "Options5": {
+        "0": "Show Role Summary",
+        "13": "显示复盘角色"
+    },
+    "Options6": {
+        "0": "Show Lighter / Darker",
+        "13": "显示颜色类型亮/暗"
+    },
+    "Options7": {
+        "0": "Show Vents On Map",
+        "13": "显示在地图上显示通风口"
+    },
+    "Options8": {
+        "0": "Show Chat Notifications",
+        "13": "显示聊天通知"
+    },
+    "Options9": {
+        "0": "Enable The Mod Cursor",
+        "13": "启用模组光标"
+    },
+    "Options10": {
+        "0": "Enable Sound Effects",
+        "13": "启用模组音效"
+    },
+    "modOptionsText": {
+        "0": "Mod Options",
+        "13": "模组设置"
+    },
+    "moreOptionsText": {
+        "0": "More Options",
+        "13": "更多设置..."
+    },
+    "ImpostorRoles": {
+        "0": "Impostor Roles",
+        "13": "内鬼职业"
+    },
+    "CrewmateRoles": {
+        "0": "Crewmate Roles",
+        "13": "船员职业"
+    },
+    "NeutralRoles": {
+        "0": "Neutral Role",
+        "13": "中立职业"
+    },
+    "ModifierRoles": {
+        "0": "Modifier Roles",
+        "13": "附加职业"
+    },
+    "SpawnChance": {
+        "0": "Spawn Chance:",
+        "13": "随机机率:"
+    },
+    "GuesserSettings": {
+        "0": "Guesser\nSettings:",
+        "13": "赌怪\n模式设置"
+    },
+    "ImpostorSettings": {
+        "0": "Impostor\nSettings",
+        "13": "内鬼\n设置"
+    },
+    "NeutralSettings": {
+        "0": "Neutral\nSettings",
+        "13": "中立\n设置"
+    },
+    "CrewmateSettings": {
+        "0": "Crewmate\nSettings",
+        "13": "船员\n设置"
+    },
+    "ModifierSettings": {
+        "0": "Modifier\nSettings",
+        "13": "附加\n设置"
+    },
+    "HideNSeekMain": {
+        "0": "HideNSeekMain\nSetting",
+        "13": "捉迷藏\n设置"
+    },
+    "HideNSeekRoles": {
+        "0": "HideNSeek Roles\nSetting",
+        "13": "捉迷藏\n职业设置"
+    },
+    "Prophunt": {
+        "0": "PropHunt\nSetting",
+        "13": "变形躲猫猫\n设置"
     }
 }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheOtherRolesEdited.Modules;
 using TheOtherRolesEdited.Utilities;
 using TMPro;
 using UnityEngine;
@@ -111,7 +112,7 @@ namespace TheOtherRolesEdited
 
         public static CustomOption Create(CustomOptionType type, string name, bool defaultValue, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "", bool invertedParent = false, string stringId = "")
         {
-            return new CustomOption(idI++, stringId, type, name, new[] { "关闭", "开启" }, defaultValue ? "开启": "关闭", parent, isHeader, onChange, heading, invertedParent);
+            return new CustomOption(idI++, stringId, type, name, new[] { $"{ModTranslation.getString("Off")}", $"{ModTranslation.getString("On")}" }, defaultValue ? $"{ModTranslation.getString("On")}" : $"{ModTranslation.getString("Off")}", parent, isHeader, onChange, heading, invertedParent);
         }
 
         // Static behaviour
@@ -120,13 +121,13 @@ namespace TheOtherRolesEdited
         {
             saveVanillaOptions();
             CustomOption.preset = newPreset;
-            vanillaSettings = TheOtherRolesEditedPlugin.Instance.Config.Bind($"预设{preset}", "游戏设置", "");
+            vanillaSettings = TheOtherRolesEditedPlugin.Instance.Config.Bind($"{ModTranslation.getString("Preset")}{preset}", $"{ModTranslation.getString("GameOptions")}", "");
             loadVanillaOptions();
             foreach (CustomOption option in CustomOption.options)
             {
                 if (option.id == 0) continue;
 
-                option.entry = TheOtherRolesEditedPlugin.Instance.Config.Bind($"预设{preset}", option.id.ToString(), option.defaultSelection);
+                option.entry = TheOtherRolesEditedPlugin.Instance.Config.Bind($"{ModTranslation.getString("Preset")}{preset}", option.id.ToString(), option.defaultSelection);
                 option.selection = Mathf.Clamp(option.entry.Value, 0, option.selections.Length - 1);
                 if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption)
                 {
@@ -335,7 +336,7 @@ namespace TheOtherRolesEdited
                     if (id == 0) continue;
                     lastId = id;
                     CustomOption option = options.First(option => option.id == id);
-                    option.entry = TheOtherRolesEditedPlugin.Instance.Config.Bind($"预设{preset}", option.id.ToString(), option.defaultSelection);
+                    option.entry = TheOtherRolesEditedPlugin.Instance.Config.Bind($"{ModTranslation.getString("Preset")}{preset}", option.id.ToString(), option.defaultSelection);
                     option.selection = selection;
                     if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption)
                     {
@@ -631,8 +632,8 @@ namespace TheOtherRolesEdited
                     categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 61);
                     categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
                     if ((int)optionType == 99)
-                        categoryHeaderMasked.Title.text = new Dictionary<CustomOptionType, string>() { { CustomOptionType.Impostor, "内鬼职业" }, { CustomOptionType.Neutral, "中立职业" },
-                            { CustomOptionType.Crewmate, "船员职业" }, { CustomOptionType.Modifier, "附加职业" } }[curType];
+                        categoryHeaderMasked.Title.text = new Dictionary<CustomOptionType, string>() { { CustomOptionType.Impostor, $"{ModTranslation.getString("ImpostorRoles")}" }, { CustomOptionType.Neutral, $"{ModTranslation.getString("NeutralRoles")}" },
+                            { CustomOptionType.Crewmate, $"{ModTranslation.getString("CrewmateRoles")}" }, { CustomOptionType.Modifier, $"{ModTranslation.getString("ModifierRoles")}" } }[curType];
                     categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
                     categoryHeaderMasked.transform.localScale = Vector3.one;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
@@ -666,7 +667,7 @@ namespace TheOtherRolesEdited
                 viewSettingsInfoPanel.titleText.text = settingTuple.Item1;
                 if (option.isHeader && (int)optionType != 99 && option.heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier))
                 {
-                    viewSettingsInfoPanel.titleText.text = "出现概率:";
+                    viewSettingsInfoPanel.titleText.text = ModTranslation.getString("SpawnChance");
                 }
                 if ((int)optionType == 99)
                 {
@@ -921,7 +922,7 @@ namespace TheOtherRolesEdited
                 stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
                 stringOption.TitleText.text = option.name;
                 if (option.isHeader && option.heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier)) {
-                    stringOption.TitleText.text = "出现概率:";
+                    stringOption.TitleText.text = ModTranslation.getString("SpawnChance");
                 }
                 if (stringOption.TitleText.text.Length > 25)
                     stringOption.TitleText.fontSize = 2.2f;
@@ -947,17 +948,25 @@ namespace TheOtherRolesEdited
 
         private static void removeVanillaTabs(GameSettingMenu __instance)
         {
-            //GameObject.Find("What Is This?")?.Destroy();
+            GameObject.Find("What Is This?").transform.localPosition = new Vector3(-0.1f, -0.1872f, -1f);
             GameObject.Find("GamePresetButton")?.Destroy();
             //GameObject.Find("RoleSettingsButton")?.Destroy();
-            GameObject.Find("RoleSettingsButton")?.GetComponent<PassiveButton>().OnClick.RemoveAllListeners();
-            GameObject.Find("RoleSettingsButton")?.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() =>
+            var GameSettingsButton = GameObject.Find("GameSettingsButton");
+            if (GameSettingsButton.GetComponent<PassiveButton>().IsSelected()) return;
+            GameSettingsButton.GetComponent<PassiveButton>().SelectButton(true);
+            GameSettingsButton.transform.GetChild(3).GetComponent<SpriteRenderer>().color = Color.blue;
+            GameSettingsButton.transform.GetChild(3).GetChild(0).gameObject.SetActive(true);;
+            var roleSettingsButton = GameObject.Find("RoleSettingsButton");
+            roleSettingsButton?.GetComponent<PassiveButton>().OnClick.RemoveAllListeners();
+            roleSettingsButton?.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() =>
             {
-                if (GameObject.Find("RoleSettingsButton").GetComponent<PassiveButton>().IsSelected()) return;
+                if (roleSettingsButton.GetComponent<PassiveButton>().IsSelected()) return;
                 createSettingButtons(__instance);
                 __instance.ChangeTab(3, false);
-                GameObject.Find("RoleSettingsButton").GetComponent<PassiveButton>().SelectButton(true);
-                
+                roleSettingsButton.GetComponent<PassiveButton>().SelectButton(true);
+                roleSettingsButton.transform.GetChild(3).GetComponent<SpriteRenderer>().color = Color.blue;
+                roleSettingsButton.transform.GetChild(3).GetChild(0).gameObject.SetActive(true);
+
                 allButtonBackground = GameObject.Instantiate(__instance.RoleSettingsTab.roleSettingsTabButtonOrigin.button.gameObject, GameObject.Find("LeftPanel").transform);
                 allButtonBackground.GetComponent<PassiveButton>().transform.GetChild(2).gameObject.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.AllButtonBackground.png", 100f);
                 allButtonBackground.GetComponent<PassiveButton>().transform.GetChild(3).gameObject.SetActive(false);
@@ -1047,29 +1056,29 @@ namespace TheOtherRolesEdited
                 // Guesser if applicable
                 if (TORMapOptions.gameMode == CustomGamemodes.Guesser)
                 {
-                    createCustomButton(__instance, next++, "GuesserSettings", "赌怪模式\n设置", Color.yellow);
+                    createCustomButton(__instance, next++, "GuesserSettings", $"{ModTranslation.getString("GuesserSettings")}", Color.yellow);
                 }
 
                 // IMp
-                createCustomButton(__instance, next++, "ImpostorSettings", "内鬼\n职业", Palette.ImpostorRed);
+                createCustomButton(__instance, next++, "ImpostorSettings", $"{ModTranslation.getString("ImpostorSettings")}", Palette.ImpostorRed);
 
                 // Neutral
-                createCustomButton(__instance, next++, "NeutralSettings", "中立\n职业", Color.gray);
+                createCustomButton(__instance, next++, "NeutralSettings", $"{ModTranslation.getString("NeutralSettings")}", Color.gray);
                 // Crew
-                createCustomButton(__instance, next++, "CrewmateSettings", "船员\n职业", Palette.CrewmateBlue);
+                createCustomButton(__instance, next++, "CrewmateSettings", $"{ModTranslation.getString("CrewmateSettings")}", Palette.CrewmateBlue);
                 // Modifier
-                createCustomButton(__instance, next++, "ModifierSettings", "附加\n职业", Color.yellow);
+                createCustomButton(__instance, next++, "ModifierSettings", $"{ModTranslation.getString("ModifierSettings")}", Color.yellow);
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
             {
                 // create Main HNS settings
-                createCustomButton(__instance, next++, "HideNSeekMain", "捉迷藏\n设置", Color.blue);
+                createCustomButton(__instance, next++, "HideNSeekMain", $"{ModTranslation.getString("HideNSeekMain")}", Color.blue);
                 // create HNS Role settings
-                createCustomButton(__instance, next++, "HideNSeekRoles", "捉迷藏\n职业设置", Color.blue);
+                createCustomButton(__instance, next++, "HideNSeekRoles", $"{ModTranslation.getString("HideNSeekRoles")}", Color.blue);
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
             {
-                createCustomButton(__instance, next++, "PropHunt", "变形躲猫猫设置", Color.yellow);
+                createCustomButton(__instance, next++, "PropHunt", $"{ModTranslation.getString("Prophunt")}", Color.yellow);
             }
         }
 
@@ -1865,7 +1874,7 @@ namespace TheOtherRolesEdited
             {
                 // add a special button for settings viewing:
                 toggleSummaryButtonObject = GameObject.Instantiate(__instance.MapButton.gameObject, __instance.MapButton.transform.parent);
-                toggleSummaryButtonObject.transform.localPosition = __instance.MapButton.transform.localPosition + new Vector3(0, -1.25f, -500f);
+                toggleSummaryButtonObject.transform.localPosition = __instance.MapButton.transform.localPosition + new Vector3(0, -1.25f, 500f);
                 toggleSummaryButtonObject.name = "TOGGLESUMMARYSBUTTON";
                 SpriteRenderer renderer = toggleSummaryButtonObject.transform.Find("Inactive").GetComponent<SpriteRenderer>();
                 SpriteRenderer rendererActive = toggleSummaryButtonObject.transform.Find("Active").GetComponent<SpriteRenderer>();
@@ -1878,7 +1887,7 @@ namespace TheOtherRolesEdited
             }
             toggleSummaryButtonObject.SetActive(__instance.SettingsButton.gameObject.active && LobbyBehaviour.Instance && !Helpers.previousEndGameSummary.IsNullOrWhiteSpace() && GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.HideNSeek
                 && AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started);
-            toggleSummaryButtonObject.transform.localPosition = __instance.SettingsButton.transform.localPosition + new Vector3(-1.45f, 0.03f, -500f);
+            toggleSummaryButtonObject.transform.localPosition = __instance.SettingsButton.transform.localPosition + new Vector3(-1.45f, 0.03f, 500f);
         }
     }
 }

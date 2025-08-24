@@ -1004,8 +1004,8 @@ namespace TheOtherRolesEdited.Patches {
                 }
             }
         }
-
         public static void Postfix(PlayerControl __instance) {
+            Modules.CustomName.ApplySuffix();
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
 
             // Mini and Morphling shrink

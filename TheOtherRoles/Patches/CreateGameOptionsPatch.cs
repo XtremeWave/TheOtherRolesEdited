@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Reactor.Utilities.Extensions;
 using System;
+using TheOtherRolesEdited.Modules;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -58,11 +59,12 @@ internal class CreateGameOptionsPatch
 
             modeButtonGS = Object.Instantiate(__instance.modeButtons[0], __instance.modeButtons[0].transform);
             modeButtonGS.name = "TORGUESSER";
-            changeButtonText(modeButtonGS, "赌怪模式");
+            changeButtonText(modeButtonGS, $"{ModTranslation.getString("Guesser")}");
             modeButtonGS.transform.SetLocalX(5.86f);
             modeButtonGS.OnClick.RemoveAllListeners();
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p => modeButtonGS.SelectButton(false))));
-            modeButtonGS.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText("在经典模式的基础上,每一位玩家都是赌怪的全新模式。")));
+            modeButtonGS.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("GuesserTip")}")));
+            modeButtonGS.OnClick.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("GuesserTip")}")));
             modeButtonGS.OnClick.AddListener((Action)(() =>
             {
                 TORMapOptions.gameMode = CustomGamemodes.Guesser;
@@ -76,12 +78,13 @@ internal class CreateGameOptionsPatch
 
             modeButtonHK = Object.Instantiate(modeButtonGS, __instance.modeButtons[0].transform);
             modeButtonHK.name = "TORHIDENSEEK";
-            changeButtonText(modeButtonHK, "捉迷藏模式");
+            changeButtonText(modeButtonHK, $"{ModTranslation.getString("HideNSeek")}");
             modeButtonHK.transform.SetLocalX(0);
             modeButtonHK.transform.SetLocalY(-0.9f);
             modeButtonHK.OnClick.RemoveAllListeners();
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p => modeButtonHK.SelectButton(false))));
-            modeButtonHK.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText("一个独立的新模式,猎人要在规定的时间内抓住所有躲藏者。")));
+            modeButtonHK.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("HideNSeekTip")}")));
+            modeButtonHK.OnClick.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("HideNSeekTip")}")));
             modeButtonHK.OnClick.AddListener((Action)(() =>
             {
                 TORMapOptions.gameMode = CustomGamemodes.HideNSeek;
@@ -95,11 +98,12 @@ internal class CreateGameOptionsPatch
 
             modeButtonPH = Object.Instantiate(modeButtonHK, __instance.modeButtons[0].transform);
             modeButtonPH.name = "TORPROPHUNT";
-            changeButtonText(modeButtonPH, "变形躲猫猫模式");
+            changeButtonText(modeButtonPH, $"{ModTranslation.getString("PropHunt")}");
             modeButtonPH.transform.SetLocalX(2.91f);
             modeButtonPH.OnClick.RemoveAllListeners();
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p => modeButtonPH.SelectButton(false))));
-            modeButtonPH.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText("一个独立的新模式,每个躲藏者可变换为地图上的任意物品,猎人需要识破他们的伪装并击杀掉他们。")));
+            modeButtonPH.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("PropHuntTip")}")));
+            modeButtonPH.OnClick.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("PropHuntTip")}")));
             modeButtonPH.OnClick.AddListener((Action)(() =>
             {
                 TORMapOptions.gameMode = CustomGamemodes.PropHunt;
@@ -134,11 +138,11 @@ internal class CreateGameOptionsPatch
                 case CustomGamemodes.Classic:
                     return DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameTypeClassic);
                 case CustomGamemodes.Guesser:
-                    return "赌怪模式";
+                    return $"{ModTranslation.getString("Guesser")}";
                 case CustomGamemodes.HideNSeek:
-                    return "捉迷藏模式";
+                    return $"{ModTranslation.getString("HideNSeek")}";
                 case CustomGamemodes.PropHunt:
-                    return "变形躲猫猫模式";
+                    return $"{ModTranslation.getString("PropHunt")}";
                 default:
                     return DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameTypeHideAndSeek);
             }

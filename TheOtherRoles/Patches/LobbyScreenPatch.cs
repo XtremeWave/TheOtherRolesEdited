@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using AmongUs.Data;
 using HarmonyLib;
 using InnerNet;
+using TheOtherRolesEdited.Modules;
 using TMPro;
 using UnityEngine;
 
@@ -61,11 +62,11 @@ public sealed class LobbyJoinBind
                 if (code != "")
                 {
                     code = DataManager.Settings.Gameplay.StreamerMode ? "<color=#F64343>****</color>" : code;
-                    LobbyText.GetComponent<TextMeshPro>().text = $"上一个房间: <color=#3ED1FE>{code}</color>   [LShift]";
+                    LobbyText.GetComponent<TextMeshPro>().text = $"{ModTranslation.getString("PrevLobby")}: <color=#3ED1FE>{code}</color>   [LShift]";
                 }
             }
 
-            if (code2 != "") LobbyText.GetComponent<TextMeshPro>().text += $"\n粘贴板: <color=#FEC73E>{code2Disp}</color>  [RShift]";
+            if (code2 != "") LobbyText.GetComponent<TextMeshPro>().text += $"\n{ModTranslation.getString("Clipboard")}: <color=#FEC73E>{code2Disp}</color>  [RShift]";
         }
     }
 }

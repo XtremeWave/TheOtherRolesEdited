@@ -31,7 +31,7 @@ namespace TheOtherRolesEdited.Modules {
             //FK button
             var textFK = buttonFK.transform.GetComponentInChildren<TMPro.TMP_Text>();
             __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
-                textFK.SetText("模组官网");
+                textFK.SetText($"{ModTranslation.getString("ModWebsite")}");
             })));
             PassiveButton passiveButtonFK = buttonFK.GetComponent<PassiveButton>();
             passiveButtonFK.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
@@ -59,7 +59,7 @@ namespace TheOtherRolesEdited.Modules {
             //QQ button
             var textQQ = buttonQQ.transform.GetComponentInChildren<TMPro.TMP_Text>();
             __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
-                textQQ.SetText("QQ群");
+                textQQ.SetText($"{ModTranslation.getString("QQGroup")}");
             })));
             PassiveButton passiveButtonQQ = buttonQQ.GetComponent<PassiveButton>();
             passiveButtonQQ.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
@@ -97,7 +97,7 @@ namespace TheOtherRolesEdited.Modules {
 
             var textCreditsButton = creditsButton.transform.GetComponentInChildren<TMPro.TMP_Text>();
             __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
-            textCreditsButton.SetText("TORE公告");
+            textCreditsButton.SetText($"{ModTranslation.getString("TOREcredits")}");
             })));
             PassiveButton passiveCreditsButton = creditsButton.GetComponent<PassiveButton>();
 
@@ -235,9 +235,9 @@ public static void addSceneChangeCallbacks() {
      }));
 
      template.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) => {
-         guesserButtonText.SetText("赌怪模式");
-         HideNSeekButtonText.SetText("捉迷藏模式");
-         PropHuntButtonText.SetText("变形躲猫猫模式");
+         guesserButtonText.SetText($"{ModTranslation.getString("Guesser")}");
+         HideNSeekButtonText.SetText($"{ModTranslation.getString("HideNSeek")}");
+         PropHuntButtonText.SetText($"{ModTranslation.getString("PropHunt")}");
      })));
  }));
 }

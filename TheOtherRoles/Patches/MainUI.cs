@@ -20,8 +20,11 @@ public static class MainUIPatch
         leftPanel.gameObject.FindChild<SpriteRenderer>("Divider").enabled = false;
 
         //移除搜索游戏按钮
-        __instance.findGameButton.transform.localPosition = new Vector3(10000f, 10000f, 0);
-        __instance.createGameButton.transform.localPosition = new Vector3(1.3862f, -0.1707f, 0);
+        var scaler = __instance.onlineButtonsContainer.GetChild(1);
+        scaler.GetChild(0).localPosition = new(-1f, 0.5f, 0f);//CreateLobby
+        scaler.GetChild(1).localPosition = new(1.5f, 0.5f, 0f);//JoinGame
+        scaler.GetChild(2).gameObject.SetActive(false);//FindGame
+        scaler.GetChild(3).gameObject.SetActive(false);//Line
 
         //移除自由模式
         /* var howToPlayButton = __instance.howToPlayButton;

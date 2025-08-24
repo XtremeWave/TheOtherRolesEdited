@@ -4,7 +4,7 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
-
+using TheOtherRolesEdited.Patches;
 using TheOtherRolesEdited.Utilities;
 
 namespace TheOtherRolesEdited.Modules {

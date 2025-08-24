@@ -3,6 +3,9 @@ using HarmonyLib;
 using System.Linq;
 using TheOtherRolesEdited.Utilities;
 using Hazel;
+using System.Collections.Generic;
+using UnityEngine;
+using AmongUs.Data;
 
 namespace TheOtherRolesEdited.Modules
 {
@@ -11,16 +14,59 @@ namespace TheOtherRolesEdited.Modules
     {
         public static bool isLover(this PlayerControl player) => !(player == null) && (player == Lovers.lover1 || player == Lovers.lover2);
 
+        [HarmonyPatch(typeof(ChatController), nameof(ChatController.Update))]
+        class ChatControllerUpdatePatch
+        {
+            public static int CurrentHistorySelection = -1;
+            public static void Prefix()
+            {
+                if (AmongUsClient.Instance.AmHost && DataManager.Settings.Multiplayer.ChatMode == InnerNet.QuickChatModes.QuickChatOnly)
+                    DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
+            }
+            public static void Postfix(ChatController __instance)
+            { 
+                if (!__instance.freeChatField.textArea.hasFocus) return;
+                __instance.freeChatField.textArea.characterLimit = AmongUsClient.Instance.AmHost ? 2000 : 1200;
+
+                if (!__instance.freeChatField.textArea.hasFocus) return;
+                if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.C))
+                    ClipboardHelper.PutClipboardString(__instance.freeChatField.textArea.text);
+                if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.V))
+                    __instance.freeChatField.textArea.SetText(__instance.freeChatField.textArea.text + GUIUtility.systemCopyBuffer);
+                if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.X))
+                {
+                    ClipboardHelper.PutClipboardString(__instance.freeChatField.textArea.text);
+                    __instance.freeChatField.textArea.SetText("");
+                }
+                if (Input.GetKeyDown(KeyCode.UpArrow) && SendChatPatch.ChatHistory.Count > 0)
+                {
+                    CurrentHistorySelection = Mathf.Clamp(--CurrentHistorySelection, 0, SendChatPatch.ChatHistory.Count - 1);
+                    __instance.freeChatField.textArea.SetText(SendChatPatch.ChatHistory[CurrentHistorySelection]);
+                }
+                if (Input.GetKeyDown(KeyCode.DownArrow) && SendChatPatch.ChatHistory.Count > 0)
+                {
+                    CurrentHistorySelection++;
+                    if (CurrentHistorySelection < SendChatPatch.ChatHistory.Count)
+                        __instance.freeChatField.textArea.SetText(SendChatPatch.ChatHistory[CurrentHistorySelection]);
+                    else __instance.freeChatField.textArea.SetText("");
+                }
+            }
+        }
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
         private static class SendChatPatch
         {
+            public static List<string> ChatHistory = new();
             static bool Prefix(ChatController __instance)
             {
+                var text = __instance.freeChatField.Text;
+                var handled = false;
 
-                string text = __instance.freeChatField.Text;
-                bool handled = false;
+                if (ChatHistory.Count == 0 || ChatHistory[^1] != text) ChatHistory.Add(text);
+                ChatControllerUpdatePatch.CurrentHistorySelection = ChatHistory.Count;
+
                 if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started)
                 {
+
                     if (text.ToLower().StartsWith("/kick "))
                     {
                         string playerName = text.Substring(6);

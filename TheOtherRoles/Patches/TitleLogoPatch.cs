@@ -8,8 +8,20 @@ using Object = UnityEngine.Object;
 using Assets.InnerNet;
 using AmongUs.GameOptions;
 using TheOtherRolesEdited.Modules;
+using Reactor.Utilities.Extensions;
+using System.Linq;
+using System;
+using Assets.CoreScripts;
+using Hazel;
+using System.Text;
+using Rewired.Utils.Platforms.Windows;
+using InnerNet;
+using Reactor.Networking.Rpc;
+using static TheOtherRolesEdited.DeadPlayer;
+using UnityEngine.Playables;
+using static Rewired.Glyphs.UnityUI.UnityUITextMeshProGlyphHelper;
 
-namespace TheOtherRolesEdited;
+namespace TheOtherRolesEdited.Modules;
 
 [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start)), HarmonyPriority(Priority.First)]
 internal class TitleLogoPatch
@@ -68,17 +80,17 @@ internal class TitleLogoPatch
         if (!(AULogo = GameObject.Find("LOGO-AU"))) return;
         var logoRenderer = AULogo.GetComponent<SpriteRenderer>();
         logoRenderer.sprite = LoadSprite("TheOtherRolesEdited.Resources.MainPhoto.TORE.png", 150f);
-        AULogo.transform.localPosition += new Vector3(-0.35f, 0.19f, 0);
+        AULogo.transform.localPosition += new Vector3(-0.35f, 0.28f, 0);
         AULogo.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
 
         if (!(BottomButtonBounds = GameObject.Find("BottomButtonBounds"))) return;
-        BottomButtonBounds.transform.localPosition += new Vector3(-0.35f, 0.68f, 0);
-        __instance.playButton.transform.localPosition += new Vector3(-0.35f, 0.68f, 0);
-        __instance.inventoryButton.transform.localPosition += new Vector3(-0.35f, 0.68f, 0);
-        __instance.shopButton.transform.localPosition += new Vector3(-0.35f, 0.68f, 0);
-        __instance.myAccountButton.transform.localPosition += new Vector3(-0.35f, 0.68f, 0);
-        __instance.newsButton.transform.localPosition += new Vector3(-0.35f, 0.68f, 0);
-        __instance.settingsButton.transform.localPosition += new Vector3(-0.35f, 0.68f, 0);
+        BottomButtonBounds.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
+        __instance.playButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
+        __instance.inventoryButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
+        __instance.shopButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
+        __instance.myAccountButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
+        __instance.newsButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
+        __instance.settingsButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
 
         if (!(RightPanel = GameObject.Find("RightPanel"))) return;
         var rpap = RightPanel.GetComponent<AspectPosition>();
@@ -86,7 +98,7 @@ internal class TitleLogoPatch
         RightPanelOp = RightPanel.transform.localPosition;
         RightPanel.transform.localPosition = RightPanelOp + new Vector3(10f, 0f, 0f);
         RightPanel.GetComponent<SpriteRenderer>().color = new(0f, 0.6f, 255f);
- 
+
         CloseRightButton = new GameObject("CloseRightPanelButton");
         CloseRightButton.transform.SetParent(RightPanel.transform);
         CloseRightButton.transform.localPosition = new Vector3(-4.78f, 1.3f, 1f);
@@ -109,7 +121,7 @@ internal class TitleLogoPatch
         Tint.transform.SetParent(RightPanel.transform);
         Tint.transform.localPosition = new Vector3(-0.0824f, 0.0513f, Tint.transform.localPosition.z);
         Tint.transform.localScale = new Vector3(1f, 1f, 1f);
-       
+
         var creditsScreen = __instance.creditsScreen;
         if (creditsScreen)
         {
@@ -121,7 +133,7 @@ internal class TitleLogoPatch
 
     }
 
-public static Dictionary<string, Sprite> CachedSprites = new();
+    public static Dictionary<string, Sprite> CachedSprites = new();
     public static Sprite LoadSprite(string path, float pixelsPerUnit = 1f)
     {
         try
@@ -154,15 +166,36 @@ public static Dictionary<string, Sprite> CachedSprites = new();
         }
         return null;
     }
-
+    [HarmonyPatch(typeof(GameSettingMenu))]
+    public class GameSettingMenuPatch
+    {
+        [HarmonyPatch(nameof(GameSettingMenu.Start)), HarmonyPrefix]
+        private static void SetDefaultButton(GameSettingMenu __instance)
+        {
+            //GameSettingsButton
+            __instance.GameSettingsButton.buttonText.color = Color.white;
+            __instance.GameSettingsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+            __instance.GameSettingsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+            __instance.GameSettingsButton.activeTextColor = Color.white;
+            __instance.GameSettingsButton.inactiveTextColor = Color.white;
+            __instance.GameSettingsButton.transform.localPosition = new Vector3(-2.96f, -0.857f, -2f);
+            //RoleSettingsButton
+            __instance.RoleSettingsButton.buttonText.color = Color.white;
+            __instance.RoleSettingsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+            __instance.RoleSettingsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+            __instance.RoleSettingsButton.activeTextColor = Color.white;
+            __instance.RoleSettingsButton.inactiveTextColor = Color.white;
+        }
+    }
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
     public static void Postfix(VersionShower __instance)
     {
-        __instance.text.gameObject.GetComponent<RectTransform>().transform.localPosition +=  new Vector3(-0.2f, 0f, 0f);
+        __instance.text.fontSize = 1.5f;
+        __instance.text.text = $"AmongUs v{DestroyableSingleton<ReferenceDataManager>.Instance.Refdata.userFacingVersion}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString}";
+        __instance.text.text += "\n" + string.Format(ModTranslation.getString("ToDateToday"), ModUpdater.Instance.GetDownloadCount() + 140); 
+        __instance.text.gameObject.GetComponent<RectTransform>().transform.localPosition += new Vector3(-0.2f, 0.252f, 0f);
         __instance.text.alignment = AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started ? TextAlignmentOptions.Bottom : TextAlignmentOptions.BottomLeft;
-        __instance.text.fontSize = 1.45f;
-        //__instance.text.gameObject.GetComponent<RectTransform>().sizeDelta = new(2.5f, 0.35f);
-        __instance.text.text = $"AmongUs v{DestroyableSingleton<ReferenceDataManager>.Instance.Refdata.userFacingVersion}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString}" ;
+        __instance.text.gameObject.GetComponent<RectTransform>().sizeDelta = new(2.5f, 0.9f);
     }
     static Sprite XtremeWaveSprite = LoadSprite("TheOtherRolesEdited.Resources.MainPhoto.XtremeWave.png", 1000f);
 
@@ -194,12 +227,12 @@ public static Dictionary<string, Sprite> CachedSprites = new();
         welcomeText.fontSize = 6.2f;
         welcomeText.autoSizeTextContainer = true;
         welcomeText.name = "welcome";
-        welcomeText.text =  $"{Helpers.GradientColorText("FF09B1", "09C5FF", $"welcome to the other roles edited")}";
+        welcomeText.text = $"{Helpers.GradientColorText("FF09B1", "09C5FF", $"{ModTranslation.getString("Welcome")}")}";
         welcomeText.DestroyChildren();
         welcomeText.DestroySubMeshObjects();
         welcomeText.alignment = TextAlignmentOptions.Center;
-        welcomeText.outlineColor = Color.black;
-        welcomeText.outlineWidth = 0.28f;
+        welcomeText.outlineColor = Color.white;
+        welcomeText.outlineWidth = 0.18f;
         welcomeText.transform.localPosition += new Vector3(-0.55f, -0.25f, 0f);
         welcomeText.transform.localScale = new(0.7f, 0.7f, 1f);
     }
@@ -236,5 +269,95 @@ public static Dictionary<string, Sprite> CachedSprites = new();
                 __instance.localCamera, AspectPosition.EdgeAlignments.RightTop,
                 new Vector3(0.4f, offset_y, __instance.localCamera.nearClipPlane + 0.1f));
         }
+    }
+    //https://github.com/KARPED1EM/TownOfNext
+    [HarmonyPatch(typeof(ServerDropdown))]
+    public static class ServerDropdownPatch
+    {
+        public static int CurrentPage = 1;
+        public static int MaxPage = 1;
+        public static int ButtonsPerPage = 4;
+        public static ServerListButton PreviousPageButton;
+        public static ServerListButton NextPageButton;
+        [HarmonyPatch(nameof(ServerDropdown.FillServerOptions)), HarmonyPostfix]
+        public static void FillServerOptions_Postfix(ServerDropdown __instance)
+        {
+            List<ServerListButton> serverListButton = __instance.ButtonPool.GetComponentsInChildren<ServerListButton>()
+                .Where(x => x.name != "PreviousPageButton" && x.name != "NextPageButton").OrderByDescending(x => x.transform.localPosition.y).ToList();
+            // 调整背景大小和位置
+            __instance.background.size = new Vector2(__instance.background.size.x, __instance.background.size.y / serverListButton.Count * (ButtonsPerPage + 2f));
+            __instance.background.transform.localPosition = new Vector3(0f, (1f - ButtonsPerPage * 0.5f) / 2, 0f);
+            // 调整服务器选项按钮位置
+            MaxPage = serverListButton.Count / ButtonsPerPage + 1;
+            if (CurrentPage > MaxPage) CurrentPage = MaxPage;
+            List<ServerListButton> currentPageButton = new();
+            var max = CurrentPage * ButtonsPerPage > serverListButton.Count ? serverListButton.Count : CurrentPage * ButtonsPerPage;
+            for (var i = (CurrentPage - 1) * ButtonsPerPage; i < max; i++) currentPageButton.Add(serverListButton[i]);
+            foreach (ServerListButton button in serverListButton) if (!currentPageButton.Contains(button)) button.gameObject.SetActive(false);
+            for (var i = 0; i < currentPageButton.Count; i++)
+            {
+                var button = currentPageButton[i];
+                button.transform.localPosition = new Vector3(0f, -1f + i * -0.5f, -1f);
+            }
+            // 创建翻页按钮
+            var template = serverListButton[0];
+            if (PreviousPageButton == null || PreviousPageButton.gameObject == null) PreviousPageButton = CreateServerListButton(template, "PreviousPageButton", $"{ModTranslation.getString("PreviousPageButton")}",
+                new Vector3(0f, -0.5f, -1f), () => { if (CurrentPage > 1) { CurrentPage--; RefreshServerOptions(__instance); } });
+            PreviousPageButton.gameObject.SetActive(true);
+            if (NextPageButton == null || NextPageButton.gameObject == null) NextPageButton = CreateServerListButton(template, "NextPageButton", $"{ModTranslation.getString("NextPageButton")}",
+                new Vector3(0f, -1f + ButtonsPerPage * -0.5f, -1f), () => { if (CurrentPage < MaxPage) { CurrentPage++; RefreshServerOptions(__instance); } });
+            NextPageButton.gameObject.SetActive(true);
+        }
+        public static ServerListButton CreateServerListButton(ServerListButton template, string name, string text, Vector3 position, Action onclickaction)
+        {
+            var button = Object.Instantiate(template, template.transform.parent);
+            button.name = name;
+            button.Text.text = text;
+            button.transform.localPosition = position;
+            button.Button.OnClick = new();
+            button.Button.OnClick.AddListener(onclickaction);
+            return button;
+        }
+        public static void RefreshServerOptions(ServerDropdown __instance)
+        {
+            foreach (ServerListButton button in __instance.ButtonPool.GetComponentsInChildren<ServerListButton>()) button.gameObject.SetActive(false);
+            __instance.FillServerOptions();
+        }
+    }
+}
+[HarmonyPatch(typeof(FreeChatInputField), nameof(FreeChatInputField.UpdateCharCount))]
+internal class UpdateCharCountPatch
+{
+    public static void Postfix(FreeChatInputField __instance)
+    {
+        int length = __instance.textArea.text.Length;
+        __instance.charCountText.SetText(length <= 0 ? $"{ModTranslation.getString("ThankYouForPlayingTORE")}" : $"{length}/{__instance.textArea.characterLimit}");
+        __instance.charCountText.enableWordWrapping = false;
+        if (length < (AmongUsClient.Instance.AmHost ? 888 : 444))
+            __instance.charCountText.color = Color.black;
+        else if (length < (AmongUsClient.Instance.AmHost ? 1111 : 777))
+            __instance.charCountText.color = new Color(1f, 1f, 0f, 1f);
+        else
+            __instance.charCountText.color = Color.red;
+    }
+}
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSendChat))]
+class RpcSendChatPatch
+{
+    public static bool Prefix(PlayerControl __instance, string chatText, ref bool __result)
+    {
+        if (string.IsNullOrWhiteSpace(chatText))
+        {
+            __result = false;
+            return false;
+        }
+        int return_count = PlayerControl.LocalPlayer.name.Count(x => x == '\n');
+        chatText = new StringBuilder(chatText).Insert(0, "\n", return_count).ToString();
+        if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
+            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(__instance, chatText);
+        if (chatText.Contains("who", StringComparison.OrdinalIgnoreCase))
+            DestroyableSingleton<UnityTelemetry>.Instance.SendWho();
+        __result = true;
+        return false;
     }
 }

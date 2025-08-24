@@ -25,7 +25,7 @@ using AmongUs.Data.Player;
 using AmongUs.GameOptions;
 using Rewired.Utils.Platforms.Windows;
 using Reactor.Patches;
-
+using System.Runtime.CompilerServices;
 
 namespace TheOtherRolesEdited
 {
@@ -38,10 +38,11 @@ namespace TheOtherRolesEdited
     {
         public const string Id = "TheOtherRolesEdited";
         public const string Name = "TORE";
-        public const string VersionString = "1.2.6";
+        public const string VersionString = "1.2.7";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";
+        public const string visit = "146";//此数据来自Github
         public static bool isChatCommand = false;
         public static bool VisibleTasksCount = false;
         public static uint betaDays = 0;  // amount of days for the build to be usable (0 for infinite!)
@@ -76,7 +77,7 @@ namespace TheOtherRolesEdited
             ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
             var regions = new IRegionInfo[] 
             {
-                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "https://player.fangkuai.fun", 433, false) })).CastFast<IRegionInfo>(),
+                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "https://player.fangkuai.fun", 443, false) })).CastFast<IRegionInfo>(),
                 new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://auhk.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", "https://auhk.fangkuai.fun", 443, false) })).CastFast<IRegionInfo>(),      
             };            
             IRegionInfo currentRegion = serverManager.CurrentRegion;
@@ -101,6 +102,8 @@ namespace TheOtherRolesEdited
         public override void Load() {
             Logger = Log;
             Instance = this;
+            ModTranslation.Load();
+            DevManager.Init();
             ReactorVersionShower.TextUpdated += text =>
             {
                 text.text = "";

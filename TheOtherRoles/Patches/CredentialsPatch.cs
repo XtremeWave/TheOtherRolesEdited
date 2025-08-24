@@ -9,10 +9,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using TheOtherRolesEdited;
 using TheOtherRolesEdited.CustomGameModes;
+using TheOtherRolesEdited.Modules;
 using TheOtherRolesEdited.Players;
 using TheOtherRolesEdited.Utilities;
 using TMPro;
 using UnityEngine;
+using static Il2CppSystem.Net.Http.Headers.Parser;
 using Color = UnityEngine.Color;
 
 namespace TheOtherRolesEdited.Patches
@@ -23,12 +25,12 @@ namespace TheOtherRolesEdited.Patches
         public static string fullCredentialsVersion =
 $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")}</size> v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}";
         public static string fullCredentials =
-            $@"<size=75%>{Helpers.GradientColorText("FFD700", "FF0000", $"TOR")}模组作者:<color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>EndOfFile</color>
+            $@"<size=75%>{Helpers.GradientColorText("FFD700", "FF0000", $"TOR")} 模组作者:<color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>EndOfFile</color>
 <color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>Mallöris</color> & <color=#FCCE03FF>Gendelo</color>
 美工:<color=#FCCE03FF>Bavari</color>
-{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Name}")}模组作者:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color>
+{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Name}")} 模组作者:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color>
 美工:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color>, <color=#FCCE03FF>尤路丽丝</color> & <color=#FCCE03FF>JMS</color>
-中文翻译:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color> & <color=#FCCE03FF>FangKuaiYa</color>";
+中文翻译:<color=#FCCE03FF>farewell</color> & <color=#FCCE03FF>FangKuaiYa</color>";
 
         [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
         internal static class PingTrackerPatch
@@ -40,7 +42,9 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
 
             static void Postfix(PingTracker __instance)
             {
+                var host = GameData.Instance.GetHost();
                 LobbyJoinBind.fontAssetPingTracker = __instance.text.font;
+                LogoPatch.fontAssetPingTracker = __instance.text.font;
                 /* if (!__instance.GetComponentInChildren<SpriteRenderer>())
                  {
                      var spriteObject = new GameObject("WIFI Sprite");
@@ -71,13 +75,13 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started)
                 {
                     string gameModeText = $"";
-                    if (HideNSeek.isHideNSeekGM) gameModeText = $"捉迷藏模式";
-                    else if (HandleGuesser.isGuesserGm) gameModeText = $"赌怪模式";
-                    else if (PropHunt.isPropHuntGM) gameModeText = $"变形躲猫猫模式";
+                    if (HideNSeek.isHideNSeekGM) gameModeText = $"{ModTranslation.getString("HideNSeek")}";
+                    else if (HandleGuesser.isGuesserGm) gameModeText = $"{ModTranslation.getString("Guesser")}";
+                    else if (PropHunt.isPropHuntGM) gameModeText = $"{ModTranslation.getString("PropHunt")}";
                     if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText) + "\n";
                     if (ModOption.DebugMode) gameModeText += "<color=#FF0000>(Debug Mode)</color>\n";
                     __instance.text.alignment = TextAlignmentOptions.TopRight;
-                    __instance.text.text = $"<size=130%>{Helpers.GradientColorText("00FFFF", "0000FF", $"TheOtherRolesEdited")}</size> v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}\n<size=100%>Modded by:<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>\n{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>       <color=#01A4F4>{fps}<size=40%>fps</size></color>\n{gameModeText}";
+                    __instance.text.text = $"<size=130%>{Helpers.GradientColorText("00FFFF", "0000FF", $"TheOtherRolesEdited")}</size> v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}\n<size=100%>Modded by:<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>\n{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>       <color=#01A4F4>{fps}<size=40%>fps</size></color>\n<size=80%>{gameModeText}</size>";
                     __instance.text.outlineColor = Color.black;
                     __instance.text.outlineWidth = 0.25f;
                     position.DistanceFromEdge = new Vector3(2.7f, 0.11f, 0);
@@ -85,23 +89,22 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 else
                 {
                     string gameModeText = $"";
-                    if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek) gameModeText = $"捉迷藏模式";
-                    else if (TORMapOptions.gameMode == CustomGamemodes.Guesser) gameModeText = $"赌怪模式";
-                    else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt) gameModeText = $"变形躲猫猫模式";
+                    if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek) gameModeText = $"{ModTranslation.getString("HideNSeek")}";
+                    else if (TORMapOptions.gameMode == CustomGamemodes.Guesser) gameModeText = $"{ModTranslation.getString("Guesser")}";
+                    else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt) gameModeText = $"{ModTranslation.getString("PropHunt")}";
                     if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText) + "\n";
                     if (ModOption.DebugMode) gameModeText += "<color=#FF0000>(Debug Mode)</color>\n";
-                    __instance.text.text = $"{fullCredentialsVersion}\n{gameModeText + fullCredentials}\n" + $"{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>        <color=#01A4F4>{fps}<size=40%>fps</size></color>" +
-                        $"\n  <size=80%><color=#FFDCB1>◈" + $"{XtremeGameData.GameStates.GetRegionName()}</color>";
+                    __instance.text.text = $"<size=80%>{fullCredentialsVersion}\n{gameModeText + fullCredentials}" + $"\n{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ping</size></color>        <color=#01A4F4>{fps}<size=40%>fps</size></color>" +
+                        $"\n<color=#FFDCB1>◈" + $"{XtremeGameData.GameStates.GetRegionName()}</color>";
                     __instance.text.outlineColor = Color.black;
                     __instance.text.outlineWidth = 0.25f;
                     position.DistanceFromEdge = new Vector3(0.5f, 0.11f);
-
                     try
                     {
                         var GameModeText = GameObject.Find("GameModeText")?.GetComponent<TextMeshPro>();
-                        GameModeText.text = gameModeText == "" ? (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek ? "官方躲猫猫" : "经典模式") : gameModeText;
+                        GameModeText.text = gameModeText == "" ? (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek ? $"{ModTranslation.getString("VanHideNSeek")}" : $"{ModTranslation.getString("Classic")}") : gameModeText;
                         var ModeLabel = GameObject.Find("ModeLabel")?.GetComponentInChildren<TextMeshPro>();
-                        ModeLabel.text = "游戏模式";
+                        ModeLabel.text = $"{ModTranslation.getString("GameMode")}";
                     }
                     catch { }
                 }
@@ -118,6 +121,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             public static Sprite banner2Sprite;
             public static GameObject motdObject;
             public static TextMeshPro motdText;
+            internal static TMP_FontAsset fontAssetPingTracker;
             static void Postfix(MainMenuManager __instance)
             {
                 var torLogo = new GameObject("bannerLogo_TOR");
@@ -125,6 +129,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 motdText = motdObject.AddComponent<TextMeshPro>();
                 motdText.alignment = TMPro.TextAlignmentOptions.Center;
                 motdText.fontSize *= 0.045f;
+                motdText.font = fontAssetPingTracker;
 
                 motdText.transform.SetParent(torLogo.transform);
                 motdText.enableWordWrapping = true;
@@ -135,8 +140,8 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 motdText.color = new Color(1, 53f / 255, 31f / 255);
                 Material mat = motdText.fontSharedMaterial;
                 mat.shaderKeywords = new string[] { "OUTLINE_ON" };
-                motdText.SetOutlineColor(Color.white);
-                motdText.SetOutlineThickness(0.095f);
+                motdText.SetOutlineColor(Color.black);
+                motdText.SetOutlineThickness(0.13f);
             }
         }
 
@@ -174,7 +179,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             public static async Task loadMOTDs()
             {
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync("https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd.txt");
+                HttpResponseMessage response = await client.GetAsync(Helpers.isChinese() ? "https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-SCN.txt" : "https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt");
                 response.EnsureSuccessStatusCode();
                 string motds = await response.Content.ReadAsStringAsync();
                 foreach (string line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries))

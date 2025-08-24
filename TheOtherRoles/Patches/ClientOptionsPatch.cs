@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using static UnityEngine.UI.Button;
 using Object = UnityEngine.Object;
 using Rewired.Utils.Platforms.Windows;
+using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches
 {
@@ -15,16 +16,16 @@ namespace TheOtherRolesEdited.Patches
     public static class ClientOptionsPatch
     {
         private static readonly SelectionBehaviour[] AllOptions = {
-            new("幽灵可以查看任务&其他", () => TORMapOptions.ghostsSeeInformation = TheOtherRolesEditedPlugin.GhostsSeeInformation.Value = !TheOtherRolesEditedPlugin.GhostsSeeInformation.Value, TheOtherRolesEditedPlugin.GhostsSeeInformation.Value,0),
-            new("幽灵可以看到地图上的管道", () => TORMapOptions.ghostsSeeVotes = TheOtherRolesEditedPlugin.GhostsSeeVotes.Value = !TheOtherRolesEditedPlugin.GhostsSeeVotes.Value, TheOtherRolesEditedPlugin.GhostsSeeVotes.Value,0),
-            new("幽灵可以看到职业", () => TORMapOptions.ghostsSeeRoles = TheOtherRolesEditedPlugin.GhostsSeeRoles.Value = !TheOtherRolesEditedPlugin.GhostsSeeRoles.Value, TheOtherRolesEditedPlugin.GhostsSeeRoles.Value,0),
-            new("幽灵可以看到附加职业", () => TORMapOptions.ghostsSeeModifier = TheOtherRolesEditedPlugin.GhostsSeeModifier.Value = !TheOtherRolesEditedPlugin.GhostsSeeModifier.Value, TheOtherRolesEditedPlugin.GhostsSeeModifier.Value,0),
-            new("显示角色摘要", () => TORMapOptions.showRoleSummary = TheOtherRolesEditedPlugin.ShowRoleSummary.Value = !TheOtherRolesEditedPlugin.ShowRoleSummary.Value, TheOtherRolesEditedPlugin.ShowRoleSummary.Value,0),
-            new("显示颜色类型亮/暗", () => TORMapOptions.showLighterDarker = TheOtherRolesEditedPlugin.ShowLighterDarker.Value = !TheOtherRolesEditedPlugin.ShowLighterDarker.Value, TheOtherRolesEditedPlugin.ShowLighterDarker.Value,0),
-            new("在地图上显示通风口", () => TORMapOptions.ShowVentsOnMap = TheOtherRolesEditedPlugin.ShowVentsOnMap.Value = !TheOtherRolesEditedPlugin.ShowVentsOnMap.Value, TheOtherRolesEditedPlugin.ShowVentsOnMap.Value,0),
-            new("显示聊天通知", () => TORMapOptions.ShowChatNotifications = TheOtherRolesEditedPlugin.ShowChatNotifications.Value = !TheOtherRolesEditedPlugin.ShowChatNotifications.Value, TheOtherRolesEditedPlugin.ShowChatNotifications.Value,0),
-            new("启用模组光标", () => TORMapOptions.toggleCursor = TheOtherRolesEditedPlugin.ToggleCursor.Value = !TheOtherRolesEditedPlugin.ToggleCursor.Value, TheOtherRolesEditedPlugin.ToggleCursor.Value,1),
-              new("启用模组音效", () =>  {
+            new($"{ModTranslation.getString("Options1")}", () => TORMapOptions.ghostsSeeInformation = TheOtherRolesEditedPlugin.GhostsSeeInformation.Value = !TheOtherRolesEditedPlugin.GhostsSeeInformation.Value, TheOtherRolesEditedPlugin.GhostsSeeInformation.Value,0),
+            new($"{ModTranslation.getString("Options2")}", () => TORMapOptions.ghostsSeeVotes = TheOtherRolesEditedPlugin.GhostsSeeVotes.Value = !TheOtherRolesEditedPlugin.GhostsSeeVotes.Value, TheOtherRolesEditedPlugin.GhostsSeeVotes.Value,0),
+            new($"{ModTranslation.getString("Options3")}", () => TORMapOptions.ghostsSeeRoles = TheOtherRolesEditedPlugin.GhostsSeeRoles.Value = !TheOtherRolesEditedPlugin.GhostsSeeRoles.Value, TheOtherRolesEditedPlugin.GhostsSeeRoles.Value,0),
+            new($"{ModTranslation.getString("Options4")}", () => TORMapOptions.ghostsSeeModifier = TheOtherRolesEditedPlugin.GhostsSeeModifier.Value = !TheOtherRolesEditedPlugin.GhostsSeeModifier.Value, TheOtherRolesEditedPlugin.GhostsSeeModifier.Value,0),
+            new($"{ModTranslation.getString("Options5")}", () => TORMapOptions.showRoleSummary = TheOtherRolesEditedPlugin.ShowRoleSummary.Value = !TheOtherRolesEditedPlugin.ShowRoleSummary.Value, TheOtherRolesEditedPlugin.ShowRoleSummary.Value,0),
+            new($"{ModTranslation.getString("Options6")}", () => TORMapOptions.showLighterDarker = TheOtherRolesEditedPlugin.ShowLighterDarker.Value = !TheOtherRolesEditedPlugin.ShowLighterDarker.Value, TheOtherRolesEditedPlugin.ShowLighterDarker.Value,0),
+            new($"{ModTranslation.getString("Options7")}", () => TORMapOptions.ShowVentsOnMap = TheOtherRolesEditedPlugin.ShowVentsOnMap.Value = !TheOtherRolesEditedPlugin.ShowVentsOnMap.Value, TheOtherRolesEditedPlugin.ShowVentsOnMap.Value,0),
+            new($"{ModTranslation.getString("Options8")}", () => TORMapOptions.ShowChatNotifications = TheOtherRolesEditedPlugin.ShowChatNotifications.Value = !TheOtherRolesEditedPlugin.ShowChatNotifications.Value, TheOtherRolesEditedPlugin.ShowChatNotifications.Value,0),
+            new($"{ModTranslation.getString("Options9")}", () => TORMapOptions.toggleCursor = TheOtherRolesEditedPlugin.ToggleCursor.Value = !TheOtherRolesEditedPlugin.ToggleCursor.Value, TheOtherRolesEditedPlugin.ToggleCursor.Value,1),
+              new($"{ModTranslation.getString("Options10")}", () =>  {
                 TORMapOptions.enableSoundEffects = TheOtherRolesEditedPlugin.EnableSoundEffects.Value = !TheOtherRolesEditedPlugin.EnableSoundEffects.Value;
                 if (!TORMapOptions.enableSoundEffects) SoundEffectsManager.stopAll();
                  return TORMapOptions.enableSoundEffects;
@@ -33,10 +34,11 @@ namespace TheOtherRolesEdited.Patches
 
         private static GameObject popUp;
         private static TextMeshPro titleText;
-
+        private static TextMeshPro titleTextTitle;
         private static ToggleButtonBehaviour buttonPrefab;
+        private static ToggleButtonBehaviour moreOptions;
+        private static List<ToggleButtonBehaviour> modButtons = new();
         private static Vector3? _origin;
-  
 
         [HarmonyPostfix]
 
@@ -95,6 +97,20 @@ namespace TheOtherRolesEdited.Patches
 
             popUp.SetActive(false);
         }
+        public static void updateTranslations()
+        {
+            if (titleTextTitle)
+                titleTextTitle.text = ModTranslation.getString("moreOptionsText");
+
+            if (moreOptions)
+                moreOptions.Text.text = ModTranslation.getString("modOptionsText");
+
+            for (int i = 0; i < AllOptions.Length; i++)
+            {
+                if (i >= modButtons.Count) break;
+                modButtons[i].Text.text = ModTranslation.getString(AllOptions[i].Title);
+            }
+        }
 
         private static void InitializeMoreButton(OptionsMenuBehaviour __instance)
         {
@@ -113,7 +129,7 @@ namespace TheOtherRolesEdited.Patches
             moreOptions.transform.localScale = new Vector3(0.66f, 1, 1);
 
             moreOptions.gameObject.SetActive(true);
-            moreOptions.Text.text = "模组设置...";
+            moreOptions.Text.text = ModTranslation.getString("moreOptionsText");
             moreOptions.Text.transform.localScale = new Vector3(1 / 0.66f, 1, 1);
             var moreOptionsButton = moreOptions.GetComponent<PassiveButton>();
             moreOptionsButton.OnClick = new ButtonClickedEvent();
@@ -155,7 +171,7 @@ namespace TheOtherRolesEdited.Patches
             var title = Object.Instantiate(titleText, popUp.transform);
             title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.3f;
             title.gameObject.SetActive(true);
-            title.text = "更多设置...";
+            title.text =ModTranslation.getString("modOptionsText");
             title.name = "TitleText";
         }
 
