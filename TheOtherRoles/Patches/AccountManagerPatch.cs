@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using BepInEx.Unity.IL2CPP.Utils;
+using HarmonyLib;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -23,7 +25,7 @@ public static class UpdateFriendCodeUIPatch
 
         string credentialsText = $"<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color> \u00a9 2025 ";
         credentialsText += "\t\t\t";
-        string versionText = $"{Helpers.GradientColorText("00BFFF", "0000FF", $"TORE")} - v{TheOtherRolesEditedPlugin.Version.ToString() +  (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}";
+        string versionText = $"{Helpers.GradientColorText("00BFFF", "0000FF", $"TORE")} - v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}";
         credentialsText += versionText;
 
         var friendCode = GameObject.Find("FriendCode");

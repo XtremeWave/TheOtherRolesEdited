@@ -282,7 +282,7 @@ namespace TheOtherRolesEdited
                     if (p == Warlock.curseVictim)
                         roleName = Helpers.cs(Warlock.color, "(被诅咒) ") + roleName;
                     if (p == Ninja.ninjaMarked)
-                        roleName = Helpers.cs(Ninja.color, "(被选定为目标) ") + roleName;
+                        roleName = Helpers.cs(Ninja.color, "(被刺客选定为目标) ") + roleName;
                     if (Pursuer.blankedList.Contains(p) && !p.Data.IsDead)
                         roleName = Helpers.cs(Pursuer.color, "(被塞入空包弹) ") + roleName;
                     if (Witch.futureSpelled.Contains(p) && !MeetingHud.Instance) // This is already displayed in meetings!
@@ -292,7 +292,7 @@ namespace TheOtherRolesEdited
                     if (Arsonist.dousedPlayers.Contains(p))
                         roleName = Helpers.cs(Arsonist.color, "♨ ") + roleName;
                     if (p == Arsonist.arsonist)
-                        roleName = roleName + Helpers.cs(Arsonist.color, $" ({CachedPlayer.AllPlayers.Count(x => { return x.PlayerControl != Arsonist.arsonist && !x.Data.IsDead && !x.Data.Disconnected && !Arsonist.dousedPlayers.Any(y => y.PlayerId == x.PlayerId); })} left)");
+                        roleName = roleName + Helpers.cs(Arsonist.color, $" ({CachedPlayer.AllPlayers.Count(x => { return x.PlayerControl != Arsonist.arsonist && !x.Data.IsDead && !x.Data.Disconnected && !Arsonist.dousedPlayers.Any(y => y.PlayerId == x.PlayerId); })} 个)");
                     if (p == Jackal.fakeSidekick)
                         roleName = Helpers.cs(Sidekick.color, $" (跟班)") + roleName;
 

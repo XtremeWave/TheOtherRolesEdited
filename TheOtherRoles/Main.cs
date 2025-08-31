@@ -38,11 +38,10 @@ namespace TheOtherRolesEdited
     {
         public const string Id = "TheOtherRolesEdited";
         public const string Name = "TORE";
-        public const string VersionString = "1.2.7";
+        public const string VersionString = "1.2.8";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";
-        public const string visit = "146";//此数据来自Github
         public static bool isChatCommand = false;
         public static bool VisibleTasksCount = false;
         public static uint betaDays = 0;  // amount of days for the build to be usable (0 for infinite!)
@@ -102,15 +101,12 @@ namespace TheOtherRolesEdited
         public override void Load() {
             Logger = Log;
             Instance = this;
-            ModTranslation.Load();
-            DevManager.Init();
             ReactorVersionShower.TextUpdated += text =>
             {
                 text.text = "";
             };
 
             _ = Helpers.checkBeta(); // Exit if running an expired beta
-            _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
 
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
             GhostsSeeInformation = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
@@ -131,32 +127,13 @@ namespace TheOtherRolesEdited
             defaultRegions = ServerManager.DefaultRegions;
             // Removes vanilla Servers
             ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
-            UpdateRegions();
+
+            Harmony.PatchAll(typeof(LoadPatch));
 
             // Reactor Credits (future use?)
             // Reactor.Utilities.ReactorCredits.Register("TheOtherRolesEdited", VersionString, betaDays > 0, location => location == Reactor.Utilities.ReactorCredits.Location.PingTracker);
 
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
-            Harmony.PatchAll();
-            
-            CustomOptionHolder.Load();
-            CustomColors.Load();
-            CustomHatManager.LoadHats();
-            if (ToggleCursor.Value) Helpers.enableCursor(true);
-            if (BepInExUpdater.UpdateRequired)
-            {
-                AddComponent<BepInExUpdater>();
-                return;
-            }
-
-            AddComponent<ModUpdater>();
-
-            EventUtility.Load();
-            SubmergedCompatibility.Initialize();
-            MainMenuPatch.addSceneChangeCallbacks();
-            _ = RoleInfo.loadReadme();
-            AddToKillDistanceSetting.addKillDistance();
-            TheOtherRolesEditedPlugin.Logger.LogInfo("Loading TORE completed!");
         }
     }
     internal class ModOption

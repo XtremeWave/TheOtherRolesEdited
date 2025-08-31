@@ -12,8 +12,8 @@ public class LobbyStartPatch
         if (Paint != null) return;
         Paint = Object.Instantiate(__instance.transform.FindChild("Leftbox").gameObject, __instance.transform);
         Paint.name = "TheOtherRolesEdited Lobby Paint";
-        Paint.transform.localPosition = new Vector3(0.329f,4.11f,-10.5f);
+        Paint.transform.localPosition = new Vector3(0.069f,3.85f,-10.5f);
         SpriteRenderer renderer = Paint.GetComponent<SpriteRenderer>();
-        renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-logo.png", 290f);
+        renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-LTS.png", 280f);
     }
 }

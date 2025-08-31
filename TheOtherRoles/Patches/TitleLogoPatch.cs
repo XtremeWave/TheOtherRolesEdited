@@ -6,20 +6,11 @@ using System.Reflection;
 using TMPro;
 using Object = UnityEngine.Object;
 using Assets.InnerNet;
-using AmongUs.GameOptions;
-using TheOtherRolesEdited.Modules;
-using Reactor.Utilities.Extensions;
 using System.Linq;
 using System;
 using Assets.CoreScripts;
-using Hazel;
 using System.Text;
-using Rewired.Utils.Platforms.Windows;
 using InnerNet;
-using Reactor.Networking.Rpc;
-using static TheOtherRolesEdited.DeadPlayer;
-using UnityEngine.Playables;
-using static Rewired.Glyphs.UnityUI.UnityUITextMeshProGlyphHelper;
 
 namespace TheOtherRolesEdited.Modules;
 
@@ -30,7 +21,6 @@ internal class TitleLogoPatch
     public static GameObject ModStamp;
     public static GameObject AULogo;
     public static GameObject BottomButtonBounds;
-    public static GameObject AmongUsLogo;
     public static GameObject Ambience;
     private static TextMeshPro welcomeText;
     public static GameObject Starfield;
@@ -69,14 +59,9 @@ internal class TitleLogoPatch
 
         if (!(ModStamp = GameObject.Find("ModStamp"))) return;
         ModStamp.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        if (!(ModStamp = GameObject.Find("ModStamp"))) return;
         var ModStapRenderer = ModStamp.GetComponent<SpriteRenderer>();
         ModStapRenderer.sprite = LoadSprite("TheOtherRolesEdited.Resources.MainPhoto.ModStamp.png", 150f);
-
-        if (!(AmongUsLogo = GameObject.Find("AmongUsLogo"))) return;
-        var AmongUsLogos = AmongUsLogo.GetComponent<SpriteRenderer>();
-        AmongUsLogos.sprite = LoadSprite("TheOtherRolesEdited.Resources.MainPhoto.TORE-logo.png", 150f);
-
+     
         if (!(AULogo = GameObject.Find("LOGO-AU"))) return;
         var logoRenderer = AULogo.GetComponent<SpriteRenderer>();
         logoRenderer.sprite = LoadSprite("TheOtherRolesEdited.Resources.MainPhoto.TORE.png", 150f);
@@ -130,7 +115,6 @@ internal class TitleLogoPatch
             var closeButton = creditsScreen.transform.FindChild("CloseButton");
             closeButton?.gameObject.SetActive(false);
         }
-
     }
 
     public static Dictionary<string, Sprite> CachedSprites = new();
@@ -192,8 +176,8 @@ internal class TitleLogoPatch
     {
         __instance.text.fontSize = 1.5f;
         __instance.text.text = $"AmongUs v{DestroyableSingleton<ReferenceDataManager>.Instance.Refdata.userFacingVersion}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString}";
-        __instance.text.text += "\n" + string.Format(ModTranslation.getString("ToDateToday"), ModUpdater.Instance.GetDownloadCount() + 140); 
-        __instance.text.gameObject.GetComponent<RectTransform>().transform.localPosition += new Vector3(-0.2f, 0.252f, 0f);
+        __instance.text.text += "\n" + string.Format(ModTranslation.getString("ToDateToday"), ModUpdater.Instance.GetDownloadCount() + 162); 
+        __instance.text.gameObject.GetComponent<RectTransform>().transform.localPosition += new Vector3(-0.2f, 0.272f, 0f);
         __instance.text.alignment = AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started ? TextAlignmentOptions.Bottom : TextAlignmentOptions.BottomLeft;
         __instance.text.gameObject.GetComponent<RectTransform>().sizeDelta = new(2.5f, 0.9f);
     }
@@ -237,6 +221,7 @@ internal class TitleLogoPatch
         welcomeText.transform.localScale = new(0.7f, 0.7f, 1f);
     }
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
+   
     public static class GameStartManagePatch
     {
         public static void Postfix(GameStartManager __instance)
@@ -359,5 +344,82 @@ class RpcSendChatPatch
             DestroyableSingleton<UnityTelemetry>.Instance.SendWho();
         __result = true;
         return false;
+    }
+}
+[HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
+public static class GameStartManagerUpdatePatch
+{
+    public static void Prefix(GameStartManager __instance)
+    {
+        foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.ToArray())
+        {
+            try
+            {
+                Helpers.playerById(GameData.Instance.GetPlayerByClient(client).PlayerId).cosmetics.nameText.text = $"{client.PlayerName} {client.GetPlatform()}";
+            }
+            catch
+            { }
+        }
+    }
+    public static string GetPlatform(this ClientData clientData)
+    {
+        try
+        {
+            var color = "";
+            var name = "";
+            string text;
+            switch (clientData.PlatformData.Platform)
+            {
+                case Platforms.StandaloneEpicPC:
+                    color = "#905CDA";
+                    name = "Itch";
+                    break;
+                case Platforms.StandaloneSteamPC:
+                    color = "#4391CD";
+                    name = "Steam";
+                    break;
+                case Platforms.StandaloneMac:
+                    color = "#e3e3e3";
+                    name = "Mac.";
+                    break;
+                case Platforms.StandaloneWin10:
+                    color = "#FFF88D";
+                    name = "Windows";
+                    break;
+                case Platforms.StandaloneItch:
+                    color = "#E35F5F";
+                    name = "Itch";
+                    break;
+                case Platforms.IPhone:
+                    color = "#e3e3e3";
+                    name = "IPhone";
+                    break;
+                case Platforms.Android:
+                    color = "#5DE2E7";
+                    name = "Android";
+                    break;
+                case Platforms.Switch:
+                    name = "<color=#00B2FF>Nintendo</color><color=#ff0000>Switch</color>";
+                    break;
+                case Platforms.Xbox:
+                    color = "#07ff00";
+                    name = "Xbox";
+                    break;
+                case Platforms.Playstation:
+                    color = "#0014b4";
+                    name = "PlayStation";
+                    break;
+            }
+
+            if (color != "" && name != "")
+                text = $"<color={color}>{name}</color>";
+            else
+                text = name;
+            return text;
+        }
+        catch
+        {
+            return "";
+        }
     }
 }

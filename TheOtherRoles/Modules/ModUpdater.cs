@@ -203,6 +203,23 @@ namespace TheOtherRolesEdited.Modules
             var template = GameObject.Find("ExitGameButton");
             if (!template) return;
 
+            //手动更新
+            var buttonUPDATE = UnityEngine.Object.Instantiate(template, template.transform.parent);
+            buttonUPDATE.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.253f, 0.379f);
+            buttonUPDATE.transform.localScale = new Vector3(0.99f, 1f, 0);
+            var textFK = buttonUPDATE.transform.GetComponentInChildren<TMPro.TMP_Text>();
+            StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
+                textFK.SetText($"{ModTranslation.getString("UpdateWay2")}");
+            })));
+            PassiveButton passiveButtonUPDATE = buttonUPDATE.GetComponent<PassiveButton>();
+            passiveButtonUPDATE.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
+            passiveButtonUPDATE.OnClick = new Button.ButtonClickedEvent();
+            passiveButtonUPDATE.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://tore.fangkuai.fun/#download")));
+            passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
+            passiveButtonUPDATE.activeSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
+            Color originalColorpassiveButtonUPDATE = passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color;
+            passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonUPDATE * 0.6f;
+
             var button = Instantiate(template, null);
             var buttonTransform = button.transform;
             button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.788f, 0.04f);
@@ -219,22 +236,14 @@ namespace TheOtherRolesEdited.Modules
             Color originalColorfreePlayButton = passiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
             passiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorfreePlayButton * 0.6f;
             var text = button.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            string t = "一键更新";
+            string t = $"{ModTranslation.getString("UpdateWay1")}";
             StartCoroutine(Effects.Lerp(0.1f, (System.Action<float>)(p => text.SetText(t))));
             passiveButton.OnMouseOut.AddListener((Action)(() => text.color = Color.white));
             passiveButton.OnMouseOver.AddListener((Action)(() => text.color = Color.white));
             var announcement = $"<size=150%>请更新至TheOtherRolesEdited{latestRelease.Tag}的最新版本</size>\n{latestRelease.Description}";
             var mgr = FindObjectOfType<MainMenuManager>(true);
             if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "更新TORE", date: latestRelease.PublishedAt));
-            showPopUp = false;
-            
-            var BGLogo = new GameObject("Update_TORE");
-            BGLogo.transform.SetParent(GameObject.Find("RightPanel").transform, false);
-            BGLogo.transform.localPosition = new Vector3(0.9605f, -2.0005f, 4.8782f);
-            BGLogo.transform.localScale = new Vector3(0.3964f,0.3964f,1f);
-            ModUpdateBG = BGLogo.AddComponent<SpriteRenderer>();
-            ModUpdateBG.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Update.png", 100f);
-            
+            showPopUp = false;            
         }
 
         [HideFromIl2Cpp]

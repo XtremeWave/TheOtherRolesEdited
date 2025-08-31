@@ -45,6 +45,22 @@ public class ModNewsHistory
         // 创建新公告时，不能删除旧公告   
         {
             {
+                // TORE v1.2.8
+                var news = new ModNews
+                {
+                    Number = 100010,
+                    Title = $"TheOtherRolesEdited  v1.2.8",
+                    SubTitle = "开学啦！！",
+                    ShortTitle = $"★TORE",
+                    Text = "<size=100%>欢迎来到 TORE v1.2.8.适配Among us v2025.4.15s/v16.1.0</size>\n"
+                        + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
+                        + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
+                        + "\n<b>更新内容</b>\n · 新增轮抽选职职业底图\n · 新增轮抽选职随机回合(by:方块)\n · 新增Loading界面\n · 新增游戏设备检测\n · 修复BUG若干\n · 修复翻译问题\n · <s>我还更新了版本号</s>",
+                    Date = "2025-8-31T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
+            {
                 // TORE v1.2.7
                 var news = new ModNews
                 {
@@ -52,11 +68,11 @@ public class ModNewsHistory
                     Title = $"TheOtherRolesEdited  v1.2.7",
                     SubTitle = "时间回溯！！",
                     ShortTitle = $"★TORE",
-                    Text = "<size=100%>欢迎来到 TORE v1.2.6.适配Among us v2025.4.15s/v16.1.0</size>\n"
+                    Text = "<size=100%>欢迎来到 TORE v1.2.7.适配Among us v2025.4.15s/v16.1.0</size>\n"
                         + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
                         + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
-                        + "\n<b>更新内容</b>\n · 新增切换服务器上下页按钮\n · 新增DownloadCount\n · 修改在线游戏的UI\n · 新增语言-英语(部分)"
-                        + "\n<b>新增技能</b>\n · <B>时间之主</B>新增主动回溯时间的技能(在技能期间可以复活玩家)",
+                        + "\n<b>更新内容</b>\n · 新增切换服务器上下页面按钮\n · 新增DownloadCount\n · 新增聊天框【复制】【粘贴】【剪切】快捷键\n · 新增聊天框查看历史记录（使用键盘上下键）\n · 新增语言:【英文】切换方式为[设置→Date→语言选择→选择English]\n · 删除了一些没用的UI\n · 删除/xw指令\n · 删除违禁词检测更改为政治敏感词检测\n · 修改在线游戏的UI\n · 修改MOTD的字体"
+                        + "\n<b>新增技能</b>\n · 时间之主新增主动回溯技能(可以复活在此期间被击杀的船员)",
                     Date = "2025-8-24T00:00:00Z"
                 };
                 AllModNews.Add(news);

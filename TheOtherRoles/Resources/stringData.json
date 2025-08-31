@@ -218,5 +218,13 @@
     "Prophunt": {
         "0": "PropHunt\nSetting",
         "13": "变形躲猫猫\n设置"
+    },
+    "UpdateWay1": {
+        "0": "One-Click Update",
+        "13": "一键更新"
+    },
+    "UpdateWay2": {
+        "0": "Manual Update",
+        "13": "手动更新"
     }
 }

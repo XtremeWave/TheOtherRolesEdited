@@ -104,19 +104,26 @@ namespace TheOtherRolesEdited.Patches {
             }
         }
 
-        public static void bendTimeUpdate() {
-            if (TimeMaster.isRewinding) {
-                if (localPlayerPositions.Count > 0) {
+        public static void bendTimeUpdate()
+        {
+            if (TimeMaster.isRewinding)
+            {
+                if (localPlayerPositions.Count > 0)
+                {
                     // Set position
                     var next = localPlayerPositions[0];
-                    if (next.Item2 == true) {
+                    if (next.Item2 == true)
+                    {
                         // Exit current vent if necessary
-                        if (PlayerControl.LocalPlayer.inVent) {
-                            foreach (Vent vent in MapUtilities.CachedShipStatus.AllVents) {
+                        if (PlayerControl.LocalPlayer.inVent)
+                        {
+                            foreach (Vent vent in MapUtilities.CachedShipStatus.AllVents)
+                            {
                                 bool canUse;
                                 bool couldUse;
                                 vent.CanUse(PlayerControl.LocalPlayer.Data, out canUse, out couldUse);
-                                if (canUse) {
+                                if (canUse)
+                                {
                                     PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(vent.Id);
                                     vent.SetButtons(false);
                                 }
@@ -125,10 +132,12 @@ namespace TheOtherRolesEdited.Patches {
                         // Set position
                         PlayerControl.LocalPlayer.transform.position = next.Item1;
                     }
-                    else if (localPlayerPositions.Any(x => x.Item2 == true)) {
+                    else if (localPlayerPositions.Any(x => x.Item2 == true))
+                    {
                         PlayerControl.LocalPlayer.transform.position = next.Item1;
                     }
-                    if (SubmergedCompatibility.IsSubmerged) {
+                    if (SubmergedCompatibility.IsSubmerged)
+                    {
                         SubmergedCompatibility.ChangeFloor(next.Item1.y > -7);
                     }
 
@@ -136,12 +145,14 @@ namespace TheOtherRolesEdited.Patches {
 
                     if (localPlayerPositions.Count > 1) localPlayerPositions.RemoveAt(0); // Skip every second position to rewinde twice as fast, but never skip the last position
                 }
-                else {
+                else
+                {
                     TimeMaster.isRewinding = false;
                     PlayerControl.LocalPlayer.moveable = true;
                 }
             }
-            else {
+            else
+            {
                 while (localPlayerPositions.Count >= Mathf.Round(TimeMaster.rewindTime / Time.fixedDeltaTime)) localPlayerPositions.RemoveAt(localPlayerPositions.Count - 1);
                 localPlayerPositions.Insert(0, new Tuple<Vector3, bool>(PlayerControl.LocalPlayer.transform.position, PlayerControl.LocalPlayer.CanMove)); // CanMove = CanMove
             }

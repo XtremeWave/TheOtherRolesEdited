@@ -1,17 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using HarmonyLib;
 using Hazel;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using System.Collections;
-using TheOtherRolesEdited.Patches;
-using static TheOtherRolesEdited.TheOtherRolesEdited;
-using UnityEngine.UI;
 using Reactor.Utilities.Extensions;
+using TheOtherRolesEdited.Patches;
 using TMPro;
-using TheOtherRolesEdited.Utilities;
+using UnityEngine;
+using UnityEngine.UI;
+using static TheOtherRolesEdited.TheOtherRolesEdited;
 using Object = UnityEngine.Object;
 
 namespace TheOtherRolesEdited.Modules
@@ -28,14 +26,11 @@ namespace TheOtherRolesEdited.Modules
         private static List<ActionButton> buttons = new List<ActionButton>();
         private static TMPro.TextMeshPro feedText;
         public static List<byte> alreadyPicked = new();
-        public static TextMeshPro buttonText;
         public static IEnumerator CoSelectRoles(IntroCutscene __instance)
         {
             if (!isEnabled) yield break;
 
-            if (CustomOptionHolder.draftModeCanChat.getBool())
-                FastDestroyableSingleton<HudManager>.Instance.Chat.SetVisible(true);
-
+            if (CustomOptionHolder.draftModeCanChat.getBool()) HudManager.Instance.Chat.SetVisible(true);
             isRunning = true;
             SoundEffectsManager.play("draft", volume: 1f, true, true);
             alreadyPicked.Clear();
@@ -52,7 +47,7 @@ namespace TheOtherRolesEdited.Modules
             feedText.fontSize = 3f;
             feedText.enableAutoSizing = false;
             __instance.TeamTitle.transform.localPosition = __instance.TeamTitle.transform.localPosition + new Vector3(1f, 0f);
-            __instance.TeamTitle.text = "当前选择:";
+            __instance.TeamTitle.text = $"{Helpers.cs(Color.red, "<size=300%>欢迎来到轮抽选职!</size>")}";
             __instance.BackgroundBar.enabled = false;
             __instance.TeamTitle.transform.localScale = new Vector3(0.25f, 0.25f, 1f);
             __instance.TeamTitle.autoSizeTextContainer = true;
@@ -60,13 +55,6 @@ namespace TheOtherRolesEdited.Modules
             __instance.TeamTitle.fontSize = 5;
             __instance.TeamTitle.alignment = TMPro.TextAlignmentOptions.Top;
             __instance.ImpostorText.gameObject.SetActive(false);
-            var scroller = feedText.gameObject.AddComponent<Scroller>();
-            scroller.allowX = false;
-            scroller.allowY = true;
-            scroller.active = true;
-            scroller.velocity = new Vector2(0, 0);
-            scroller.ContentYBounds = new FloatRange(0, (feedText.text.Count() - 12) * (0.25f));
-            scroller.enabled = true;
             GameObject.Find("BackgroundLayer")?.SetActive(false);
             foreach (var player in UnityEngine.Object.FindObjectsOfType<PoolablePlayer>())
             {
@@ -82,6 +70,8 @@ namespace TheOtherRolesEdited.Modules
                 sendPickOrder();
             }
 
+            yield return CoShowRandomOrderAnimation(__instance);
+
             while (pickOrder.Count == 0)
             {
                 yield return null;
@@ -93,6 +83,7 @@ namespace TheOtherRolesEdited.Modules
                 timer = 0;
                 float maxTimer = CustomOptionHolder.draftModeTimeToChoose.getFloat();
                 string playerText = "";
+                int currentPlayerNumber = PlayerControl.AllPlayerControls.Count - pickOrder.Count + 1;
                 while (timer < maxTimer || !picked)
                 {
                     if (pickOrder.Count == 0)
@@ -131,7 +122,7 @@ namespace TheOtherRolesEdited.Modules
 
                         // enable pick, wait for pick
                         Color youColor = timer - (int)timer > 0.5 ? Color.red : Color.yellow;
-                        playerText = Helpers.cs(youColor, "你!");
+                        playerText = $"玩家 {currentPlayerNumber} (你!)";
                         // Available Roles:
                         List<RoleInfo> availableRoles = new();
                         foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos)
@@ -248,7 +239,7 @@ namespace TheOtherRolesEdited.Modules
                                 availableRoles.Add(RoleInfo.impostor);
                             else
                                 availableRoles.Add(RoleInfo.crewmate);
-                            TheOtherRolesEditedPlugin.Logger.LogWarning("轮抽选职:触发回退，没有剩余角色可选，强制添加基础伪装者和船员职业");
+                            TheOtherRolesEditedPlugin.Logger.LogWarning("轮抽选职: 没有剩余的角色可以选择. 强制增添船员/内鬼职业");
                         }
 
                         List<RoleInfo> originalAvailable = new(availableRoles);
@@ -265,111 +256,162 @@ namespace TheOtherRolesEdited.Modules
                         }
 
                         if (timer >= maxTimer)
+                        {
                             sendPick((byte)originalAvailable.OrderBy(_ => Guid.NewGuid()).First().roleId);
+                        }
 
 
                         if (GameObject.Find("RoleButton") == null)
                         {
                             SoundEffectsManager.play("timemasterShield");
-                            var i = 0;
-                            var buttonsPerRow = 4;
-                            var lastRow = availableRoles.Count / buttonsPerRow;
-                            var buttonsInLastRow = availableRoles.Count % buttonsPerRow;
+                            int i = 0;
+                            int buttonsPerRow = 4;
+                            int lastRow = availableRoles.Count / buttonsPerRow;
+                            int buttonsInLastRow = availableRoles.Count % buttonsPerRow;
 
-                            foreach (var roleInfo in availableRoles)
+                            foreach (RoleInfo roleInfo in availableRoles)
                             {
                                 float row = i / buttonsPerRow;
                                 float col = i % buttonsPerRow;
-                                if (buttonsInLastRow != 0 && row == lastRow) col += (buttonsPerRow - buttonsInLastRow) / 2f;
+                                if (buttonsInLastRow != 0 && row == lastRow)
+                                {
+                                    col += (buttonsPerRow - buttonsInLastRow) / 2f;
+                                }
                                 // planned rows: maximum of 4, hence the following calculation for rows as well:
                                 row += (4 - lastRow - 1) / 2f;
+                                float extraYOffset = buttons.Count >= 4 ? 2f : 0f;
 
-                                ActionButton actionButton = Object.Instantiate(HudManager.Instance.KillButton,
-                                    __instance.TeamTitle.transform);
+                                ActionButton actionButton = UnityEngine.Object.Instantiate(HudManager.Instance.KillButton, __instance.TeamTitle.transform);
                                 actionButton.gameObject.SetActive(true);
                                 actionButton.gameObject.name = "RoleButton";
-                                actionButton.transform.localPosition = new Vector3(-8.4f + col * 5.5f, -10 - row * 3f);
+                                actionButton.transform.localPosition = new Vector3(-8.4f + col * 5.5f, (-10 - row * 3f - extraYOffset) + 1f);
                                 actionButton.transform.localScale = new Vector3(2f, 2f);
                                 actionButton.SetCoolDown(0, 0);
-                                var textHolder = new GameObject("textHolder");
-                                buttonText = textHolder.AddComponent<TextMeshPro>();
-                                buttonText.text = roleInfo.name.Replace(" ", "\n");
-                                buttonText.horizontalAlignment = HorizontalAlignmentOptions.Center;
-                                buttonText.fontSize = 5;
+                                GameObject textHolder = new GameObject("textHolder");
+                                var text = textHolder.AddComponent<TMPro.TextMeshPro>();
+                                text.text = $"<b>{roleInfo.name}</b>";
+                                text.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
+                                text.fontSize = 4;
                                 textHolder.layer = actionButton.gameObject.layer;
-                                buttonText.color = roleInfo.color;
+                                text.outlineWidth = 0.1f;
+                                text.outlineColor = Color.black;
+                                text.color = roleInfo.color;
                                 textHolder.transform.SetParent(actionButton.transform, false);
-                                textHolder.transform.localPosition =
-                                    new Vector3(0, buttonText.text.Contains("\n") ? -1.975f : -2.2f, -1);
-                                var actionButtonGameObject = actionButton.gameObject;
-                                var actionButtonRenderer = actionButton.graphic;
-                                var actionButtonMat = actionButtonRenderer.material;
+                                textHolder.transform.localPosition = new Vector3(0, -3.075f, -1);
+                                GameObject buttonSprite = new GameObject("buttonSprite");
+                                var sprite = buttonSprite.AddComponent<SpriteRenderer>();
+                                sprite.sprite =
+                                    roleInfo.isImpostor ?
+                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDarft.DraftRoleCardImpostor.png", 250f) :
+                                    roleInfo.isNeutral ?
+                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDarft.DraftRoleCardNeutral.png", 250f) :
+                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDarft.DraftRoleCardCrew.png", 250f);
+                                buttonSprite.layer = actionButton.gameObject.layer;
+                                buttonSprite.transform.SetParent(actionButton.transform, false);
+                                buttonSprite.transform.localPosition = new Vector3(0, 0.025f, -1);
 
-                                var button = actionButton.GetComponent<PassiveButton>();
+                                PassiveButton button = actionButton.GetComponent<PassiveButton>();
                                 button.OnClick = new Button.ButtonClickedEvent();
-                                button.OnClick.AddListener((Action)(() => { sendPick((byte)roleInfo.roleId); }));
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f,
-                                    new Action<float>(p => { actionButton.OverrideText(""); })));
+                                button.OnClick.AddListener((Action)(() => {
+                                    sendPick((byte)roleInfo.roleId);
+                                }));
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
+                                    actionButton.OverrideText("");
+                                })));
                                 buttons.Add(actionButton);
                                 i++;
                             }
+                        }
 
-                            if (GameObject.Find("RandomButton") == null && availableRoles.Count > 1)
+                        if (GameObject.Find("RandomButton") == null && availableRoles.Count > 1)
+                        {
+                            int lastButtonIndex = availableRoles.Count - 1;
+                            int buttonsPerRow = 4;
+
+                            int lastRow = lastButtonIndex / buttonsPerRow;
+                            int lastColumn = lastButtonIndex % buttonsPerRow;
+
+                            int randomRow;
+                            int randomColumn;
+                            if (lastColumn == buttonsPerRow - 1)
                             {
-                                float row = (availableRoles.Count + 1) / buttonsPerRow;
-                                float col = (availableRoles.Count + 1) % buttonsPerRow;
-                                if (buttonsInLastRow != 0 && row == lastRow) col += (buttonsPerRow - buttonsInLastRow) / 2f;
-                                row += (4 - lastRow - 1) / 2f;
-
-                                ActionButton randomButton = Object.Instantiate(HudManager.Instance.KillButton,
-                                    __instance.TeamTitle.transform);
-                                randomButton.gameObject.SetActive(true);
-                                randomButton.gameObject.name = "RandomButton";
-                                randomButton.transform.localPosition = new Vector3(-8.4f + col * 5.5f, -10 - row * 3f);
-                                randomButton.transform.localScale = new Vector3(2f, 2f);
-                                randomButton.SetCoolDown(0, 0);
-                                randomButton.buttonLabelText.gameObject.SetActive(false);
-
-                                var randomTextHolder = new GameObject("randomTextHolder");
-                                var randomText = randomTextHolder.AddComponent<TextMeshPro>();
-                                randomText.text = $"随机";
-                                randomText.horizontalAlignment = HorizontalAlignmentOptions.Center;
-                                randomText.fontSize = 5;
-                                randomTextHolder.layer = randomButton.gameObject.layer;
-                                randomText.color = Color.green;
-                                randomTextHolder.transform.SetParent(randomButton.transform, false);
-                                randomTextHolder.transform.localPosition = new Vector3(0, buttonText.text.Contains("\n") ? -1.975f : -2.2f, -1);
-
-                                var randomPassiveButton = randomButton.GetComponent<PassiveButton>();
-                                randomPassiveButton.OnClick = new Button.ButtonClickedEvent();
-                                randomPassiveButton.OnClick.AddListener((Action)(() => {
-                                    var randomRole = availableRoles.OrderBy(_ => Guid.NewGuid()).First();
-                                    sendPick((byte)randomRole.roleId);
-                                }));
-
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f,
-                                    new Action<float>(p => {
-                                        randomButton.graphic.material.SetFloat("_Desat", p % 0.5f * 2f);
-                                    })));
-
-                                buttons.Add(randomButton);
+                                randomRow = lastRow + 1;
+                                randomColumn = 0;
                             }
+                            else
+                            {
+                                randomRow = lastRow;
+                                randomColumn = lastColumn + 1;
+                            }
+
+                            int buttonsInLastRow = availableRoles.Count % buttonsPerRow;
+                            if (buttonsInLastRow != 0 && randomRow == lastRow)
+                            {
+                                randomColumn += (int)((buttonsPerRow - buttonsInLastRow) / 2f);
+                            }
+
+                            float rowOffset = (4 - randomRow - 1) / 2f;
+                            float extraYOffset = buttons.Count >= 4 ? 2f : 0f;
+
+                            ActionButton randomButton = Object.Instantiate(HudManager.Instance.KillButton, __instance.TeamTitle.transform);
+                            randomButton.gameObject.SetActive(true);
+                            randomButton.gameObject.name = "RandomButton";
+                            randomButton.transform.localPosition = new Vector3(
+                                (-8f + randomColumn * 5.5f) + 2f,
+                                (-10 - randomRow * 3f - rowOffset * 3f) + 1f - extraYOffset,
+                                0
+                            );
+                            randomButton.transform.localScale = new Vector3(2f, 2f);
+                            randomButton.SetCoolDown(0, 0);
+                            randomButton.buttonLabelText.gameObject.SetActive(false);
+
+                            var randomTextHolder = new GameObject("randomTextHolder");
+                            var randomText = randomTextHolder.AddComponent<TextMeshPro>();
+                            randomText.text = "<b>随机</b>";
+                            randomText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                            randomText.fontSize = 4;
+                            randomTextHolder.layer = randomButton.gameObject.layer;
+                            randomText.outlineWidth = 0.1f;
+                            randomText.outlineColor = Color.black;
+                            randomText.color = Color.green;
+                            randomTextHolder.transform.SetParent(randomButton.transform, false);
+                            randomTextHolder.transform.localPosition = new Vector3(0, -3.075f, -1);
+                            GameObject buttonSprite = new GameObject("buttonSprite");
+                            var sprite = buttonSprite.AddComponent<SpriteRenderer>();
+                            sprite.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDarft.DraftRoleCardRandom.png", 250f);
+                            buttonSprite.layer = randomButton.gameObject.layer;
+                            buttonSprite.transform.SetParent(randomButton.transform, false);
+                            buttonSprite.transform.localPosition = new Vector3(0, 0.025f, -1);
+
+                            var randomPassiveButton = randomButton.GetComponent<PassiveButton>();
+                            randomPassiveButton.OnClick.AddListener((Action)(() =>
+                            {
+                                var randomRole = availableRoles.OrderBy(_ => Guid.NewGuid()).Random();
+                                sendPick((byte)randomRole.roleId);
+                            }));
+
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f,
+                                new Action<float>(p =>
+                                {
+                                    randomButton.graphic.material.SetFloat("_Desat", p % 0.5f * 2f);
+                                })));
+
+                            buttons.Add(randomButton);
                         }
                     }
                     else
                     {
-                        int currentPick = PlayerControl.AllPlayerControls.Count - pickOrder.Count + 1;
-                        playerText = $"匿名玩家 {currentPick}";
+                        playerText = $"玩家 {currentPlayerNumber}";
                         HudManager.Instance.FullScreen.color = Color.black;
                     }
-                    __instance.TeamTitle.text = $"{Helpers.cs(Color.white, "<size=280%>欢迎来到轮抽选职模式!</size>")}\n\n\n<size=200%>当前选择:</size>\n\n\n<size=250%>{playerText}</size>";
+                    __instance.TeamTitle.text = $"{Helpers.cs(Color.red, "<size=300%>欢迎来到轮抽选职!</size>")}\n\n\n<color=#FFFFFF> <size=200%>当前正在选择的玩家:</size>\n\n<size=250%>{playerText}</size>";
                     int waitMore = pickOrder.IndexOf(PlayerControl.LocalPlayer.PlayerId);
                     string waitMoreText = "";
                     if (waitMore > 0)
                     {
-                        waitMoreText = $" (再等 {waitMore} 个回合后到你的回合)";
+                        waitMoreText = $" (再等 {waitMore} 个回合到你的回合)";
                     }
-                    __instance.TeamTitle.text += $"\n\n{waitMoreText}\n正在选择... {(int)(maxTimer + 1 - timer)}\n {(SoundManager.MusicVolume > -80 ? "♫ 音乐: Ultimate Superhero 3 - Kenët & Rez ♫" : "")}";
+                    __instance.TeamTitle.text += $"\n\n{waitMoreText}\n正在选择中... {(int)(maxTimer + 1 - timer)}\n {(SoundManager.MusicVolume > -80 ? "♫ 音乐: Ultimate Superhero 3 - Kenët & Rez ♫" : "")}</color>";
                     yield return null;
                 }
             }
@@ -394,9 +436,85 @@ namespace TheOtherRolesEdited.Modules
 
             SoundEffectsManager.stop("draft");
             isRunning = false;
+            if (CustomOptionHolder.draftModeCanChat.getBool() && !(PlayerControl.LocalPlayer.isLover() && CustomOptionHolder.modifierLoverEnableChat.getBool()))
+                HudManager.Instance.Chat.SetVisible(false);
             yield break;
         }
 
+        private static IEnumerator CoShowRandomOrderAnimation(IntroCutscene __instance)
+        {
+            var titleText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
+            titleText.text = "<color=red>随机抽取回合...</color>";
+            titleText.transform.localPosition = new Vector3(0, 2f, -10f);
+            titleText.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
+            titleText.alignment = TMPro.TextAlignmentOptions.Center;
+
+            var numberText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
+            numberText.text = "0";
+            numberText.transform.localPosition = new Vector3(0, 0.5f, -10f);
+            numberText.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+            numberText.alignment = TMPro.TextAlignmentOptions.Center;
+            numberText.color = Color.white;
+
+            while (pickOrder.Count == 0)
+            {
+                yield return null;
+            }
+
+            int playerIndex = pickOrder.IndexOf(PlayerControl.LocalPlayer.PlayerId);
+            int playerNumber = playerIndex + 1;
+
+            float animationTime = 3.5f;
+            float timer = 0f;
+            System.Random random = new System.Random();
+            float lastChangeTime = 0f;
+            float changeInterval = 0.15f;
+
+            while (timer < animationTime)
+            {
+                timer += Time.deltaTime;
+
+                if (timer < animationTime - 1.0f)
+                {
+                    if (timer - lastChangeTime > changeInterval)
+                    {
+                        lastChangeTime = timer;
+                        int randomNumber = random.Next(1, PlayerControl.AllPlayerControls.Count + 1);
+                        numberText.text = randomNumber.ToString();
+                    }
+                }
+                else
+                {
+                    float progress = (timer - (animationTime - 1.0f)) / 1.0f;
+                    if (progress > 0.7f)
+                    {
+                        numberText.text = playerNumber.ToString();
+                    }
+                    else if (progress > 0.3f)
+                    {
+                        if (timer - lastChangeTime > changeInterval * 2f)
+                        {
+                            lastChangeTime = timer;
+                            int randomNumber = random.Next(
+                                Math.Max(1, playerNumber - 2),
+                                Math.Min(PlayerControl.AllPlayerControls.Count + 1, playerNumber + 3));
+                            numberText.text = randomNumber.ToString();
+                        }
+                    }
+                }
+
+                yield return null;
+            }
+
+            numberText.text = playerNumber.ToString();
+
+            titleText.text = "<color=red>你抽到的回合是:</color>";
+
+            yield return new WaitForSeconds(2f);
+
+            titleText.gameObject.Destroy();
+            numberText.gameObject.Destroy();
+        }
         public static void receivePick(byte playerId, byte roleId)
         {
             if (!isEnabled) return;
@@ -410,6 +528,7 @@ namespace TheOtherRolesEdited.Modules
                 RoleInfo roleInfo = RoleInfo.allRoleInfos.First(x => (byte)x.roleId == roleId);
                 string roleString = Helpers.cs(roleInfo.color, roleInfo.name);
                 int roleLength = roleInfo.name.Length;  // Not used for now, but stores the amount of charactes of the roleString.
+
                 if (!CustomOptionHolder.draftModeShowRoles.getBool() && !(playerId == PlayerControl.LocalPlayer.PlayerId))
                 {
                     roleString = "未知职业";
@@ -425,11 +544,12 @@ namespace TheOtherRolesEdited.Modules
                     roleString = Helpers.cs(Palette.Blue, "中立职业");
                     roleLength = "中立职业".Length;
                 }
-                else if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && roleInfo.isNeutral && roleInfo.isImpostor && !(playerId == PlayerControl.LocalPlayer.PlayerId))
+                else if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && !roleInfo.isImpostor && !roleInfo.isNeutral && !(playerId == PlayerControl.LocalPlayer.PlayerId))
                 {
-                    roleString = Helpers.cs(Palette.Blue, "船员职业");
+                    roleString = Helpers.cs(Color.white, "船员职业");
                     roleLength = "船员职业".Length;
                 }
+
                 string line = $"{(playerId == PlayerControl.LocalPlayer.PlayerId ? "你" : alreadyPicked.Count)}:";
                 line = line + string.Concat(Enumerable.Repeat(" ", 6 - line.Length)) + roleString;
                 feedText.text += line + "\n";
@@ -455,6 +575,7 @@ namespace TheOtherRolesEdited.Modules
             buttons.Clear();
         }
 
+
         public static void sendPickOrder()
         {
             pickOrder = PlayerControl.AllPlayerControls.ToArray().Select(x => x.PlayerId).OrderBy(_ => Guid.NewGuid()).ToList().ToList();
@@ -478,3 +599,4 @@ namespace TheOtherRolesEdited.Modules
         }
     }
 }
+//copy from fangkuai

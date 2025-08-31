@@ -24,9 +24,9 @@ namespace TheOtherRolesEdited.Modules {
             var buttonFK = UnityEngine.Object.Instantiate(template, template.transform.parent);
             var buttonGH = UnityEngine.Object.Instantiate(template, template.transform.parent);
             buttonQQ.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.43f);
-            buttonBG.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.389f, 0.328f);
+            buttonBG.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.39f, 0.3f);
             buttonFK.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.36f);
-            buttonGH.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.36f);
+            buttonGH.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.36f); 
 
             //FK button
             var textFK = buttonFK.transform.GetComponentInChildren<TMPro.TMP_Text>();
@@ -89,6 +89,7 @@ namespace TheOtherRolesEdited.Modules {
             passiveButtonBG.activeSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonQQ * 0f;
             passiveButtonBG.OnMouseOut.AddListener((Action)(() => textBG.color = Color.white));
             passiveButtonBG.OnMouseOver.AddListener((Action)(() => textBG.color = Color.red));
+
 
             // TOR credits button
              if (template == null) return;

@@ -13,7 +13,9 @@ namespace TheOtherRolesEdited;
 
 public class HatsLoader : MonoBehaviour
 {
-    private bool isRunning;
+    internal bool isRunning;
+    public int totalFilesToDownload;
+    public int downloadedFiles;
 
     public void FetchHats()
     {
@@ -57,10 +59,13 @@ public class HatsLoader : MonoBehaviour
         if (EventUtility.isEnabled) UnregisteredHats.AddRange(CustomHatManager.loadHorseHats());
 
         TheOtherRolesEditedPlugin.Logger.LogMessage($"I'll download {toDownload.Count} hat files");
+        totalFilesToDownload = toDownload.Count;
+        downloadedFiles = 0;
 
         foreach (var fileName in toDownload)
         {
             yield return CoDownloadHatAsset(fileName);
+            downloadedFiles++;
         }
 
         isRunning = false;
