@@ -163,12 +163,7 @@ internal class TitleLogoPatch
             __instance.GameSettingsButton.activeTextColor = Color.white;
             __instance.GameSettingsButton.inactiveTextColor = Color.white;
             __instance.GameSettingsButton.transform.localPosition = new Vector3(-2.96f, -0.857f, -2f);
-            //RoleSettingsButton
-            __instance.RoleSettingsButton.buttonText.color = Color.white;
-            __instance.RoleSettingsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
-            __instance.RoleSettingsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
-            __instance.RoleSettingsButton.activeTextColor = Color.white;
-            __instance.RoleSettingsButton.inactiveTextColor = Color.white;
+            //__instance.MenuDescriptionText.text = "1";
         }
     }
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
@@ -176,7 +171,7 @@ internal class TitleLogoPatch
     {
         __instance.text.fontSize = 1.5f;
         __instance.text.text = $"AmongUs v{DestroyableSingleton<ReferenceDataManager>.Instance.Refdata.userFacingVersion}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString}";
-        __instance.text.text += "\n" + string.Format(ModTranslation.getString("ToDateToday"), ModUpdater.Instance.GetDownloadCount() + 162); 
+        __instance.text.text += "\n" + string.Format(ModTranslation.getString("ToDateToday"), TheOtherRolesEditedPlugin.ModUsageCount); 
         __instance.text.gameObject.GetComponent<RectTransform>().transform.localPosition += new Vector3(-0.2f, 0.272f, 0f);
         __instance.text.alignment = AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started ? TextAlignmentOptions.Bottom : TextAlignmentOptions.BottomLeft;
         __instance.text.gameObject.GetComponent<RectTransform>().sizeDelta = new(2.5f, 0.9f);

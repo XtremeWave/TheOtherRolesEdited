@@ -13,9 +13,7 @@ public class CreditsControllerPatch
         var TeamList = new List<string>()
             {
 
-                $"★slok★",
                 $"★喜★",
-                $"★方块★",
                 $"★{TheOtherRolesEditedPlugin.Dev}★",
                 $"★Elinmei★",
                 $"★Zxylem★",
@@ -40,14 +38,14 @@ public class CreditsControllerPatch
 
         var devList = new List<string>()
             {
-                $"{TheOtherRolesEditedPlugin.Dev} - 开发者({Helpers.GradientColorText("00BFFF", "0000FF", $"TheOtherRolesEdited")})",
-                $"Eisbison - 开发者(<color=#FF0000>TheOtherRoles</color>)",
+                $"{TheOtherRolesEditedPlugin.Dev} - 开发者",
+                $"方块 - 开发者 || 服务器支持",
                 $"尤路丽丝 - 美工",
                 $"JMS - 美工",
             };
         var translatorList = new List<string>()
             {
-                $"方块 - 贡献者",
+                $"Imp11 - 贡献者",
                 $"Elinmei - 贡献者",
             };
         var acList = new List<string>()
@@ -66,7 +64,7 @@ public class CreditsControllerPatch
                 $"A master",
                 $"TAIKonguo",
                 $"Elinmei",
-                $"Imp11",
+                $"宇航员",
                 $"...",
             };
 

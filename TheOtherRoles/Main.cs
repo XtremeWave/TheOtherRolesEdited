@@ -26,6 +26,8 @@ using AmongUs.GameOptions;
 using Rewired.Utils.Platforms.Windows;
 using Reactor.Patches;
 using System.Runtime.CompilerServices;
+using UnityEngine.Networking;
+using System.Threading.Tasks;
 
 namespace TheOtherRolesEdited
 {
@@ -38,7 +40,7 @@ namespace TheOtherRolesEdited
     {
         public const string Id = "TheOtherRolesEdited";
         public const string Name = "TORE";
-        public const string VersionString = "1.2.8";
+        public const string VersionString = "1.2.9";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";
@@ -66,12 +68,43 @@ namespace TheOtherRolesEdited
         public static ConfigEntry<string> Ip { get; set; }
         public static ConfigEntry<ushort> Port { get; set; }
         public static ConfigEntry<string> ShowPopUpVersion { get; set; }
+        public static int ModUsageCount { get; set; } = 0;
         public static ConfigEntry<bool> ToggleCursor { get; set; }
         public static List<PlayerControl> JoinedPlayer = new();
         public static Sprite ModStamp;
         public static IRegionInfo[] defaultRegions;
         // This is part of the Mini.RegionInstaller, Licensed under GPLv3
         // file="RegionInstallPlugin.cs" company="miniduikboot">
+        private async void SendModUsageRequest()
+        {
+            try
+            {
+                string url = "https://player.fangkuai.fun/api/modusage/register?modName=TheOtherRolesEdited";
+                var request = UnityWebRequest.Get(url);
+
+                var operation = request.SendWebRequest();
+
+                while (!operation.isDone)
+                    await Task.Delay(100);
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    if (int.TryParse(request.downloadHandler.text, out int count))
+                    {
+                        ModUsageCount = count;
+                        Logger.LogInfo($"Mod usage count: {count}");
+                    }
+                }
+                else
+                {
+                    Logger.LogError($"Failed to register mod: {request.error}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Error sending mod usage request: {ex.Message}");
+            }
+        }
         public static void UpdateRegions() {
             ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
             var regions = new IRegionInfo[] 
@@ -97,8 +130,8 @@ namespace TheOtherRolesEdited
                 serverManager.SetRegion(currentRegion);
             }
         }
-
         public override void Load() {
+            SendModUsageRequest();
             Logger = Log;
             Instance = this;
             ReactorVersionShower.TextUpdated += text =>

@@ -28,9 +28,9 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             $@"<size=75%>{Helpers.GradientColorText("FFD700", "FF0000", $"TOR")} 模组作者:<color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>EndOfFile</color>
 <color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>Mallöris</color> & <color=#FCCE03FF>Gendelo</color>
 美工:<color=#FCCE03FF>Bavari</color>
-{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Name}")} 模组作者:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color>
+{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Name}")} 模组作者:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color> & <color=#FCCE03FF>FangKuaiYa</color>
 美工:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color>, <color=#FCCE03FF>尤路丽丝</color> & <color=#FCCE03FF>JMS</color>
-中文翻译:<color=#FCCE03FF>farewell</color> & <color=#FCCE03FF>FangKuaiYa</color>";
+中文翻译:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color> & <color=#FCCE03FF>FangKuaiYa</color>";
 
         [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
         internal static class PingTrackerPatch

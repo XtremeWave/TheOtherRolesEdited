@@ -11,7 +11,7 @@ namespace TheOtherRolesEdited;
 [HarmonyPatch(typeof(SplashManager), nameof(SplashManager.Update))]
 public static class LoadPatch
 {
-    static Sprite logoSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner.png", 140f);
+    static Sprite logoSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner2.png", 140f);
     static TMPro.TextMeshPro loadText = null!;
     public static string LoadingText { set { loadText.text = value; } }
     static IEnumerator CoLoadTheOtherRoles(SplashManager __instance)
@@ -61,6 +61,9 @@ public static class LoadPatch
             yield return new WaitForSeconds(0.5f);
             loadText.text = "正在加载模组帽子...";
             CustomHatManager.LoadHats();
+            yield return new WaitForSeconds(0.5f);
+            loadText.text = "正在加载模组音效...";
+            SoundEffectsManager.Load();
 
             var hatsLoader = CustomHatManager.Loader;
             float downloadStartTime = Time.time;

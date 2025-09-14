@@ -45,6 +45,22 @@ public class ModNewsHistory
         // 创建新公告时，不能删除旧公告   
         {
             {
+                // TORE v1.2.9
+                var news = new ModNews
+                {
+                    Number = 100011,
+                    Title = $"TheOtherRolesEdited  v1.2.9",
+                    SubTitle = "派蒙启动！！",
+                    ShortTitle = $"★TORE",
+                    Text = "<size=100%>欢迎来到 TORE v1.2.9.适配Among us v2025.9.9s/v17.0.0</size>\n"
+                        + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
+                        + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
+                        + "\n<b>更新内容</b>\n · 适配到v17.0.0版本\n · 修复勒索者技能无法使用的问题\n · 新增模组使用次数计数器(fangkuai服务器)\n · 修正设置UI\n · 修复BUG若干\n · 我真的好喜欢这次派蒙的皮肤<s>主要是因为免费</s>",
+                    Date = "2025-9-14T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
+            {
                 // TORE v1.2.8
                 var news = new ModNews
                 {
@@ -55,7 +71,7 @@ public class ModNewsHistory
                     Text = "<size=100%>欢迎来到 TORE v1.2.8.适配Among us v2025.4.15s/v16.1.0</size>\n"
                         + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
                         + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
-                        + "\n<b>更新内容</b>\n · 新增轮抽选职职业底图\n · 新增轮抽选职随机回合(by:方块)\n · 新增Loading界面\n · 新增游戏设备检测\n · 修复BUG若干\n · 修复翻译问题\n · <s>我还更新了版本号</s>",
+                        + "\n<b>更新内容</b>\n · 新增轮抽选职职业底图\n · 新增轮抽选职随机回合(by:方块)\n · 新增Loading界面\n · 新增游戏设备检测\n · 新增手动更新按钮\n · 修复BUG若干\n · 删除更新背景提示\n · <s>我还更新了版本号</s>",
                     Date = "2025-8-31T00:00:00Z"
                 };
                 AllModNews.Add(news);

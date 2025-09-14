@@ -443,19 +443,6 @@ namespace TheOtherRolesEdited
                 GameOptionsMenuStartPatch.currentTabs[tabNum].SetActive(true);
                 GameOptionsMenuStartPatch.currentButtons[tabNum].SelectButton(true);
             }
-            else
-            {
-                foreach (var button in GameOptionsMenuStartPatch.currentButtons)
-                {
-                    if (button != null && button.gameObject != null)
-                    {
-                        UnityEngine.Object.Destroy(button.gameObject);
-                    }
-                }
-                GameOptionsMenuStartPatch.currentButtons.Clear();
-                GameOptionsMenuStartPatch.currentGOMs.Clear();
-                GameOptionsMenuStartPatch.allButtonBackground.Destroy();
-            }
         }
     }
 
@@ -513,6 +500,7 @@ namespace TheOtherRolesEdited
     }
 
 
+
     [HarmonyPatch(typeof(LobbyViewSettingsPane), nameof(LobbyViewSettingsPane.Awake))]
     class LobbyViewSettingsPatch
     {
@@ -543,7 +531,6 @@ namespace TheOtherRolesEdited
                 currentButtonTypes.Add(optionType);
             }
         }
-
 
         public static void Postfix(LobbyViewSettingsPane __instance)
         {
@@ -607,6 +594,7 @@ namespace TheOtherRolesEdited
                 __instance.settingsInfo[j].gameObject.Destroy();
             }
             __instance.settingsInfo.Clear();
+
 
             float num = 1.44f;
             int i = 0;
@@ -896,6 +884,8 @@ namespace TheOtherRolesEdited
                     CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                     categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 20);
                     categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
+                    //categoryHeaderMasked.Title.outlineColor = Color.white;
+                    //categoryHeaderMasked.Title.outlineWidth = 0.2f;
                     categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, -2f);
                     num -= 0.63f;
@@ -918,11 +908,12 @@ namespace TheOtherRolesEdited
                     textMeshPro.fontMaterial.SetFloat("_Stencil", (float)20);
                 }
 
-                  var stringOption = optionBehaviour as StringOption;
+                var stringOption = optionBehaviour as StringOption;
                 stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
                 stringOption.TitleText.text = option.name;
-                if (option.isHeader && option.heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier)) {
-                    stringOption.TitleText.text = ModTranslation.getString("SpawnChance");
+                if (option.isHeader && option.heading == "" && (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier))
+                {
+                    stringOption.TitleText.text = "随机机率";
                 }
                 if (stringOption.TitleText.text.Length > 25)
                     stringOption.TitleText.fontSize = 2.2f;
@@ -937,77 +928,56 @@ namespace TheOtherRolesEdited
                 menu.scrollBar.SetYBoundsMax(-num - 1.65f);
             }
 
-            for (int i = 0; i < menu.Children.Count; i++) {
+            for (int i = 0; i < menu.Children.Count; i++)
+            {
                 OptionBehaviour optionBehaviour = menu.Children[i];
-                if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost) {
+                if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost)
+                {
                     optionBehaviour.SetAsPlayer();
                 }
             }
         }
 
-
         private static void removeVanillaTabs(GameSettingMenu __instance)
         {
-            GameObject.Find("What Is This?").transform.localPosition = new Vector3(-0.1f, -0.1872f, -1f);
             GameObject.Find("GamePresetButton")?.Destroy();
-            //GameObject.Find("RoleSettingsButton")?.Destroy();
-            var GameSettingsButton = GameObject.Find("GameSettingsButton");
-            if (GameSettingsButton.GetComponent<PassiveButton>().IsSelected()) return;
-            GameSettingsButton.GetComponent<PassiveButton>().SelectButton(true);
-            GameSettingsButton.transform.GetChild(3).GetComponent<SpriteRenderer>().color = Color.blue;
-            GameSettingsButton.transform.GetChild(3).GetChild(0).gameObject.SetActive(true);;
-            var roleSettingsButton = GameObject.Find("RoleSettingsButton");
-            roleSettingsButton?.GetComponent<PassiveButton>().OnClick.RemoveAllListeners();
-            roleSettingsButton?.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() =>
-            {
-                if (roleSettingsButton.GetComponent<PassiveButton>().IsSelected()) return;
-                createSettingButtons(__instance);
-                __instance.ChangeTab(3, false);
-                roleSettingsButton.GetComponent<PassiveButton>().SelectButton(true);
-                roleSettingsButton.transform.GetChild(3).GetComponent<SpriteRenderer>().color = Color.blue;
-                roleSettingsButton.transform.GetChild(3).GetChild(0).gameObject.SetActive(true);
+            GameObject.Find("RoleSettingsButton")?.Destroy();
+            GameObject.Find("PanelSprite")?.Destroy();
+            GameObject.Find("What Is This?").transform.localPosition = new Vector3(-0.1f, 1.1f, 0f);
+            GameObject.Find("PanelSprite").transform.localPosition = new Vector3(1111f, 11111f, -1f);
+            GameObject.Find("GamePresetButton").transform.localPosition = new Vector3(1111f, 11111f, -1f);
+            GameObject.Find("RoleSettingsButton").transform.localPosition = new Vector3(1111f, 11111f, -1f);
+            GameObject.Find("GameSettingsLabel").transform.localPosition = new Vector3(4.8601f, -2.5787f, 0f);
+            GameObject.Find("GameSettingsLabel").transform.localScale = new Vector3(0.8f, 0.8f, 0f);
 
-                allButtonBackground = GameObject.Instantiate(__instance.RoleSettingsTab.roleSettingsTabButtonOrigin.button.gameObject, GameObject.Find("LeftPanel").transform);
-                allButtonBackground.GetComponent<PassiveButton>().transform.GetChild(2).gameObject.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.AllButtonBackground.png", 100f);
-                allButtonBackground.GetComponent<PassiveButton>().transform.GetChild(3).gameObject.SetActive(false);
-                allButtonBackground.name = "All Button Background";
-                allButtonBackground.GetComponent<PassiveButton>().enabled = false;
-                allButtonBackground.transform.localPosition = new Vector3(1.41f, 1.658f, -12f);
-            }));
+            var GameSettingsButton = GameObject.Find("GameSettingsButton");
+            GameSettingsButton.transform.GetChild(3).GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
             __instance.ChangeTab(1, false);
         }
 
-        public static void createCustomButton(GameSettingMenu __instance, int targetMenu, string buttonName, string buttonText = "", Color buttonColor = default, bool isMainButton = false)
+        public static void createCustomButton(GameSettingMenu __instance, int targetMenu, string buttonName, string buttonText, string descriptionText)
         {
             var leftPanel = GameObject.Find("LeftPanel");
-            var buttonTemplate = __instance.RoleSettingsTab.AllButton;
+            var buttonTemplate = GameObject.Find("GameSettingsButton");
+            if (targetMenu == 3)
+            {
+                buttonTemplate.transform.localPosition -= Vector3.up * 1.3f;
+                buttonTemplate.transform.localScale *= Vector2.one * 0.80f;
+            }
             var torSettingsButton = GameObject.Find(buttonName);
             if (torSettingsButton == null)
             {
-                torSettingsButton = GameObject.Instantiate(buttonTemplate.gameObject, leftPanel.transform);
-                if (isMainButton)
-                    torSettingsButton.transform.localPosition = new Vector3(-1.2f, 1.67f, -13f);
-                else
-                    torSettingsButton.transform.localPosition = new Vector3(-0.4f + (0.8f * (targetMenu - 4)), 1.67f, -13f);
+                torSettingsButton = GameObject.Instantiate(buttonTemplate, leftPanel.transform);
+                torSettingsButton.transform.localPosition += Vector3.up * 0.5f * (targetMenu - 2);
                 torSettingsButton.name = buttonName;
-                
-                if (!isMainButton && buttonColor != default)
-                {
-                    __instance.StartCoroutine(Effects.Lerp(2f, new Action<float>(p =>
-                    {
-                        torSettingsButton.GetComponent<PassiveButton>().transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = buttonColor;
-                        torSettingsButton.GetComponent<PassiveButton>().transform.GetChild(1).gameObject.GetComponent<SpriteRenderer>().color = buttonColor;
-                        torSettingsButton.GetComponent<PassiveButton>().transform.GetChild(2).gameObject.GetComponent<SpriteRenderer>().color = buttonColor;
-                        torSettingsButton.GetComponent<PassiveButton>().transform.GetChild(3).gameObject.GetComponent<TextMeshPro>().text = buttonText;
-                    })));
-                }
+                __instance.StartCoroutine(Effects.Lerp(2f, new Action<float>(p => { torSettingsButton.transform.FindChild("FontPlacer").GetComponentInChildren<TextMeshPro>().text = buttonText; })));
                 var torSettingsPassiveButton = torSettingsButton.GetComponent<PassiveButton>();
                 torSettingsPassiveButton.OnClick.RemoveAllListeners();
                 torSettingsPassiveButton.OnClick.AddListener((System.Action)(() =>
                 {
+                    __instance.MenuDescriptionText.text = descriptionText;
                     __instance.ChangeTab(targetMenu, false);
                 }));
-
                 torSettingsPassiveButton.OnMouseOut.RemoveAllListeners();
                 torSettingsPassiveButton.OnMouseOver.RemoveAllListeners();
                 torSettingsPassiveButton.SelectButton(false);
@@ -1045,95 +1015,70 @@ namespace TheOtherRolesEdited
                 relevantOptions = relevantOptions.Where(x => !(new List<int> { 310, 311, 312, 313, 314, 315, 316, 317, 318 }).Contains(x.id)).ToList();
             createSettings(torSettingsGOM, relevantOptions);
         }
-        private static void createSettingButtons(GameSettingMenu __instance)
-        {
-            // Handle different gamemodes and tabs needed therein.
-            var next = 3;
-            if (TORMapOptions.gameMode == CustomGamemodes.Guesser || TORMapOptions.gameMode == CustomGamemodes.Classic)
-            {
-                // create TOR settings
-                createCustomButton(__instance, next++, "TORSettings", "", default, true);
-                // Guesser if applicable
-                if (TORMapOptions.gameMode == CustomGamemodes.Guesser)
-                {
-                    createCustomButton(__instance, next++, "GuesserSettings", $"{ModTranslation.getString("GuesserSettings")}", Color.yellow);
-                }
-
-                // IMp
-                createCustomButton(__instance, next++, "ImpostorSettings", $"{ModTranslation.getString("ImpostorSettings")}", Palette.ImpostorRed);
-
-                // Neutral
-                createCustomButton(__instance, next++, "NeutralSettings", $"{ModTranslation.getString("NeutralSettings")}", Color.gray);
-                // Crew
-                createCustomButton(__instance, next++, "CrewmateSettings", $"{ModTranslation.getString("CrewmateSettings")}", Palette.CrewmateBlue);
-                // Modifier
-                createCustomButton(__instance, next++, "ModifierSettings", $"{ModTranslation.getString("ModifierSettings")}", Color.yellow);
-            }
-            else if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
-            {
-                // create Main HNS settings
-                createCustomButton(__instance, next++, "HideNSeekMain", $"{ModTranslation.getString("HideNSeekMain")}", Color.blue);
-                // create HNS Role settings
-                createCustomButton(__instance, next++, "HideNSeekRoles", $"{ModTranslation.getString("HideNSeekRoles")}", Color.blue);
-            }
-            else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
-            {
-                createCustomButton(__instance, next++, "PropHunt", $"{ModTranslation.getString("Prophunt")}", Color.yellow);
-            }
-        }
-
         private static void createSettingTabs(GameSettingMenu __instance)
         {
             // Handle different gamemodes and tabs needed therein.
+            int next = 3;
             if (TORMapOptions.gameMode == CustomGamemodes.Guesser || TORMapOptions.gameMode == CustomGamemodes.Classic)
             {
+
                 // create TOR settings
+                createCustomButton(__instance, next++, "TORSettings", "TORE设置", "为 TheOtherRolesEdited 大厅编辑的常规设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.General, "TORSettings");
-                // Guesser if applicable
+                // Guesser if applicableng 
                 if (TORMapOptions.gameMode == CustomGamemodes.Guesser)
                 {
+                    createCustomButton(__instance, next++, "GuesserSettings", "赌怪模式设置", "TheOtherRolesEdited 模组的<color=#F3D10B>赌怪模式</color>设置。");
                     createGameOptionsMenu(__instance, CustomOptionType.Guesser, "GuesserSettings");
                 }
-
                 // IMp
+                createCustomButton(__instance, next++, "ImpostorSettings", "内鬼职业设置", "TheOtherRolesEdited 模组的<color=#FF1111>内鬼</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.Impostor, "ImpostorSettings");
 
                 // Neutral
+                createCustomButton(__instance, next++, "NeutralSettings", "中立职业设置", "TheOtherRolesEdited 模组的<color=#525F5F>中立</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.Neutral, "NeutralSettings");
                 // Crew
+                createCustomButton(__instance, next++, "CrewmateSettings", "船员职业设置", "TheOtherRolesEdited 模组的<color=#5DE2E7>船员</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.Crewmate, "CrewmateSettings");
                 // Modifier
+                createCustomButton(__instance, next++, "ModifierSettings", "附加职业设置", "TheOtherRolesEdited 模组的<color=#F3D10B>附加</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.Modifier, "ModifierSettings");
+
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
             {
                 // create Main HNS settings
+                createCustomButton(__instance, next++, "HideNSeekMain", "捉迷藏模式设置", "TheOtherRolesEdited 模组的<color=#F30BD5>捉迷藏模式</color>主要设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.HideNSeekMain, "HideNSeekMain");
                 // create HNS Role settings
+                createCustomButton(__instance, next++, "HideNSeekRoles", "捉迷藏职业设置", "TheOtherRolesEdited 模组的<color=#F30BB1>捉迷藏模式</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.HideNSeekRoles, "HideNSeekRoles");
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
             {
-                createGameOptionsMenu(__instance, CustomOptionType.PropHunt, "PropHuntSetting");
+                createCustomButton(__instance, next++, "PropHunt", "变形躲猫猫模式设置", "TheOtherRolesEdited 模组的<color=#0772FF>变形躲猫猫模式</color>主要设置。");
+                createGameOptionsMenu(__instance, CustomOptionType.PropHunt, "PropHunt");
             }
         }
     }
 
-   [HarmonyPatch(typeof(StringOption), nameof(StringOption.Initialize))]
-    public class StringOptionEnablePatch {
-        public static bool Prefix(StringOption __instance) {
+    [HarmonyPatch(typeof(StringOption), nameof(StringOption.Initialize))]
+    public class StringOptionEnablePatch
+    {
+        public static bool Prefix(StringOption __instance)
+        {
             CustomOption option = CustomOption.options.FirstOrDefault(option => option.optionBehaviour == __instance);
             if (option == null) return true;
 
-            __instance.OnValueChanged = new Action<OptionBehaviour>((o) => {});
+            __instance.OnValueChanged = new Action<OptionBehaviour>((o) => { });
             //__instance.TitleText.text = option.name;
             __instance.Value = __instance.oldValue = option.selection;
             __instance.ValueText.text = option.selections[option.selection].ToString();
-            
+
             return false;
         }
     }
-
 
     [HarmonyPatch(typeof(StringOption), nameof(StringOption.Increase))]
     public class StringOptionIncreasePatch
@@ -1234,11 +1179,12 @@ namespace TheOtherRolesEdited
         {
             // find options children with quantity
             var children = CustomOption.options.Where(o => o.parent == customOption);
-            var quantity = children.Where(o => o.name.Contains("数量")).ToList(); if (customOption.getSelection() == 0) return "";
+            var quantity = children.Where(o => o.name.Contains("Quantity")).ToList();
+            if (customOption.getSelection() == 0) return "";
             if (quantity.Count == 1) return $" ({quantity[0].getQuantity()})";
             if (customOption == CustomOptionHolder.modifierLover)
             {
-                return " (1 " + "邪恶概率:" + $" {CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10}%)";
+                return $" (邪恶概率: {CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10}%)";
             }
             return "";
         }
@@ -1260,6 +1206,7 @@ namespace TheOtherRolesEdited
                 options = options.Where(x => (x.type == CustomOption.CustomOptionType.HideNSeekMain || x.type == CustomOption.CustomOptionType.HideNSeekRoles));
             else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
                 options = options.Where(x => (x.type == CustomOption.CustomOptionType.PropHunt));
+
             foreach (var option in options)
             {
                 if (option.parent == null)
@@ -1268,7 +1215,6 @@ namespace TheOtherRolesEdited
                     if (type == CustomOption.CustomOptionType.Modifier) line += buildModifierExtras(option);
                     sb.AppendLine(line);
                 }
-
                 else if (option.parent.getSelection() > 0 || option.invertedParent && option.parent.getSelection() == 0)
                 {
                     if (option.id == 103) //Deputy
@@ -1276,10 +1222,9 @@ namespace TheOtherRolesEdited
                     else if (option.id == 224) //Sidekick
                         sb.AppendLine($"- {Helpers.cs(Sidekick.color, "跟班")}: {option.selections[option.selection].ToString()}");
                     else if (option.id == 358) //Prosecutor
-                        sb.AppendLine($"- {Helpers.cs(Lawyer.color, "监察官")}: {option.selections[option.selection].ToString()}");
+                        sb.AppendLine($"- {Helpers.cs(Lawyer.color, "检察官")}: {option.selections[option.selection].ToString()}");
                 }
             }
-
             if (headerOnly) return sb.ToString();
             else sb = new StringBuilder();
 
@@ -1299,27 +1244,24 @@ namespace TheOtherRolesEdited
                 {
                     if (option == CustomOptionHolder.crewmateRolesCountMin)
                     {
-                        var optionName =
-                            CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "船员职业");
+                        var optionName = CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "船员职业");
                         var min = CustomOptionHolder.crewmateRolesCountMin.getSelection();
                         var max = CustomOptionHolder.crewmateRolesCountMax.getSelection();
-                        var optionValue = "";
+                        string optionValue = "";
                         if (CustomOptionHolder.crewmateRolesFill.getBool())
                         {
-                            var crewCount = PlayerControl.AllPlayerControls.Count -
-                                            GameOptionsManager.Instance.currentGameOptions.NumImpostors;
-                            var minNeutral = CustomOptionHolder.neutralRolesCountMin.getSelection();
-                            var maxNeutral = CustomOptionHolder.neutralRolesCountMax.getSelection();
+                            var crewCount = PlayerControl.AllPlayerControls.Count - GameOptionsManager.Instance.currentGameOptions.NumImpostors;
+                            int minNeutral = CustomOptionHolder.neutralRolesCountMin.getSelection();
+                            int maxNeutral = CustomOptionHolder.neutralRolesCountMax.getSelection();
                             if (minNeutral > maxNeutral) minNeutral = maxNeutral;
                             min = crewCount - maxNeutral;
                             max = crewCount - minNeutral;
                             if (min < 0) min = 0;
                             if (max < 0) max = 0;
-                            optionValue = "填充:";
+                            optionValue = "填充: ";
                         }
-
                         if (min > max) min = max;
-                        optionValue += min == max ? $"{max}" : $"{min} - {max}";
+                        optionValue += (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
                     }
                     else if (option == CustomOptionHolder.neutralRolesCountMin)
@@ -1328,19 +1270,17 @@ namespace TheOtherRolesEdited
                         var min = CustomOptionHolder.neutralRolesCountMin.getSelection();
                         var max = CustomOptionHolder.neutralRolesCountMax.getSelection();
                         if (min > max) min = max;
-                        var optionValue = min == max ? $"{max}" : $"{min} - {max}";
+                        var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
                     }
                     else if (option == CustomOptionHolder.impostorRolesCountMin)
                     {
-                        var optionName =
-                            CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "内鬼职业");
+                        var optionName = CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "内鬼职业");
                         var min = CustomOptionHolder.impostorRolesCountMin.getSelection();
                         var max = CustomOptionHolder.impostorRolesCountMax.getSelection();
-                        if (max > GameOptionsManager.Instance.currentGameOptions.NumImpostors)
-                            max = GameOptionsManager.Instance.currentGameOptions.NumImpostors;
+                        if (max > GameOptionsManager.Instance.currentGameOptions.NumImpostors) max = GameOptionsManager.Instance.currentGameOptions.NumImpostors;
                         if (min > max) min = max;
-                        var optionValue = min == max ? $"{max}" : $"{min} - {max}";
+                        var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
                     }
                     else if (option == CustomOptionHolder.modifiersCountMin)
@@ -1349,14 +1289,12 @@ namespace TheOtherRolesEdited
                         var min = CustomOptionHolder.modifiersCountMin.getSelection();
                         var max = CustomOptionHolder.modifiersCountMax.getSelection();
                         if (min > max) min = max;
-                        var optionValue = min == max ? $"{max}" : $"{min} - {max}";
+                        var optionValue = (min == max) ? $"{max}" : $"{min} - {max}";
                         sb.AppendLine($"{optionName}: {optionValue}");
                     }
-                    else if (option == CustomOptionHolder.crewmateRolesCountMax ||
-                             option == CustomOptionHolder.neutralRolesCountMax ||
-                             option == CustomOptionHolder.impostorRolesCountMax ||
-                             option == CustomOptionHolder.modifiersCountMax)
+                    else if ((option == CustomOptionHolder.crewmateRolesCountMax) || (option == CustomOptionHolder.neutralRolesCountMax) || (option == CustomOptionHolder.impostorRolesCountMax) || option == CustomOptionHolder.modifiersCountMax)
                     {
+                        continue;
                     }
                     else
                     {
@@ -1374,7 +1312,7 @@ namespace TheOtherRolesEdited
             if (vanillaSettings == "")
                 vanillaSettings = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(PlayerControl.AllPlayerControls.Count);
             int counter = TheOtherRolesEditedPlugin.optionsPage;
-            string hudString = counter != 0 && !hideExtras ? Helpers.cs(DateTime.Now.Second % 2 == 0 ? Color.white : Color.red, "(使用鼠标滚轮查看更多...)\n\n") : "";
+            string hudString = counter != 0 && !hideExtras ? Helpers.cs(DateTime.Now.Second % 2 == 0 ? Color.white : Color.red, "(使用滚轮查看更多...)\n\n") : "";
 
             if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
             {
@@ -1383,10 +1321,10 @@ namespace TheOtherRolesEdited
                 switch (counter)
                 {
                     case 0:
-                        hudString += "第 1 页: 捉迷藏设置 \n\n" + buildOptionsOfType(CustomOption.CustomOptionType.HideNSeekMain, false);
+                        hudString += "第1页:捉迷藏设置 \n\n" + buildOptionsOfType(CustomOption.CustomOptionType.HideNSeekMain, false);
                         break;
                     case 1:
-                        hudString += "第 2 页: 捉迷藏职业设置 \n\n" + buildOptionsOfType(CustomOption.CustomOptionType.HideNSeekRoles, false);
+                        hudString += "第2页:捉迷藏职业设置  \n\n" + buildOptionsOfType(CustomOption.CustomOptionType.HideNSeekRoles, false);
                         break;
                 }
             }
@@ -1396,7 +1334,7 @@ namespace TheOtherRolesEdited
                 switch (counter)
                 {
                     case 0:
-                        hudString += "第 1 页: 变形躲猫猫设置 \n\n" + buildOptionsOfType(CustomOption.CustomOptionType.PropHunt, false);
+                        hudString += "第1页:躲猫猫设置 \n\n" + buildOptionsOfType(CustomOption.CustomOptionType.PropHunt, false);
                         break;
                 }
             }
@@ -1406,30 +1344,29 @@ namespace TheOtherRolesEdited
                 switch (counter)
                 {
                     case 0:
-                        hudString += (!hideExtras ? "" : "第 1 页: 游戏设置 \n\n") + vanillaSettings;
+                        hudString += (!hideExtras ? "" : "第1页:游戏设置 \n\n") + vanillaSettings;
                         break;
                     case 1:
-                        hudString += "第 2 页: TORE设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.General, false);
+                        hudString += "第2页:TheOtherRolesEdited设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.General, false);
                         break;
                     case 2:
-                        hudString += "第 3 页: 主职业和附加职业概率 \n" + buildRoleOptions();
+                        hudString += "第3页:TheOtherRolesEdited职业设置 \n" + buildRoleOptions();
                         break;
                     case 3:
-                        hudString += "第 4 页: 内鬼职业设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.Impostor, false);
+                        hudString += "第4页:内鬼职业设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.Impostor, false);
                         break;
                     case 4:
-                        hudString += "第 5 页: 中立职业设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.Neutral, false);
+                        hudString += "第5页:中立职业设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.Neutral, false);
                         break;
                     case 5:
-                        hudString += "第 6 页: 船员职业设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.Crewmate, false);
+                        hudString += "第6页:船员职业设置\n" + buildOptionsOfType(CustomOption.CustomOptionType.Crewmate, false);
                         break;
                     case 6:
-                        hudString += "第 7 页: 附加职业设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.Modifier, false);
+                        hudString += "第7页:附加职业设置 \n" + buildOptionsOfType(CustomOption.CustomOptionType.Modifier, false);
                         break;
                 }
             }
-
-            if (!hideExtras || counter != 0) hudString += $"\n 使用数字键或左shift键查看更多 ({counter + 1}/{maxPage})";
+            if (!hideExtras || counter != 0) hudString += $"\n 使用左Shift键或数字键查看更多... ({counter + 1}/{maxPage})";
             return hudString;
         }
 
@@ -1441,7 +1378,6 @@ namespace TheOtherRolesEdited
             __result = buildAllOptions(vanillaSettings: __result);
         }
     }
-
 
     [HarmonyPatch]
     public class AddToKillDistanceSetting
@@ -1535,7 +1471,6 @@ namespace TheOtherRolesEdited
         {
             LegacyGameOptions.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
             LegacyGameOptions.KillDistanceStrings = new(new string[] { "很短", "短", "中", "长" });
-
         }
 
         [HarmonyPatch(typeof(StringGameSetting), nameof(StringGameSetting.GetValueString))]
@@ -1593,6 +1528,7 @@ namespace TheOtherRolesEdited
             if (TheOtherRolesEditedPlugin.optionsPage >= LegacyGameOptionsPatch.maxPage) TheOtherRolesEditedPlugin.optionsPage = 0;
         }
     }
+
 
 
     //This class is taken and adapted from Town of Us Reactivated, https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/CustomOption/Patches.cs, Licensed under GPLv3
