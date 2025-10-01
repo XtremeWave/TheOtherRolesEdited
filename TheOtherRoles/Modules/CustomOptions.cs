@@ -950,6 +950,7 @@ namespace TheOtherRolesEdited
             GameObject.Find("GameSettingsLabel").transform.localPosition = new Vector3(4.8601f, -2.5787f, 0f);
             GameObject.Find("GameSettingsLabel").transform.localScale = new Vector3(0.8f, 0.8f, 0f);
 
+
             var GameSettingsButton = GameObject.Find("GameSettingsButton");
             GameSettingsButton.transform.GetChild(3).GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
             __instance.ChangeTab(1, false);

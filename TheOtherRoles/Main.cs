@@ -40,7 +40,7 @@ namespace TheOtherRolesEdited
     {
         public const string Id = "TheOtherRolesEdited";
         public const string Name = "TORE";
-        public const string VersionString = "1.2.9";
+        public const string VersionString = "1.3.0";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";
@@ -79,7 +79,7 @@ namespace TheOtherRolesEdited
         {
             try
             {
-                string url = "https://player.fangkuai.fun/api/modusage/register?modName=TheOtherRolesEdited";
+                string url = "https://player.amongusclub.cn/api/modusage/register?modName=TheOtherRolesEdited";
                 var request = UnityWebRequest.Get(url);
 
                 var operation = request.SendWebRequest();
@@ -109,8 +109,8 @@ namespace TheOtherRolesEdited
             ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
             var regions = new IRegionInfo[] 
             {
-                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "https://player.fangkuai.fun", 443, false) })).CastFast<IRegionInfo>(),
-                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://auhk.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", "https://auhk.fangkuai.fun", 443, false) })).CastFast<IRegionInfo>(),      
+                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "https://player.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
+                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://auhk.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", "https://auhk.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),      
             };            
             IRegionInfo currentRegion = serverManager.CurrentRegion;
             Logger.LogInfo($"Adding {regions.Length} regions");
@@ -138,9 +138,17 @@ namespace TheOtherRolesEdited
             {
                 text.text = "";
             };
+#if PC
+            if (BepInExUpdater.UpdateRequired)
+            {
+                AddComponent<BepInExUpdater>();
+                return;
+            }
 
             _ = Helpers.checkBeta(); // Exit if running an expired beta
+            _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
 
+#endif
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
             GhostsSeeInformation = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);

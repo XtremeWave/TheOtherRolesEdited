@@ -91,7 +91,6 @@ public static class MainUIPatch
         __instance.myAccountButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorMyAccount * 0.6f;
         __instance.myAccountButton.activeTextColor = Color.white;
         __instance.myAccountButton.inactiveTextColor = Color.white;
-        __instance.accountButtons.transform.position += new Vector3(0f, 0f, -1f);
 
         __instance.settingsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.255f, 0.482f, 1f);
         __instance.settingsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.255f, 0.482f, 2f, 0.8f);
@@ -107,7 +106,7 @@ public static class MainUIPatch
         __instance.quitButton.activeTextColor = Color.white;
         __instance.quitButton.inactiveTextColor = Color.white;
         __instance.quitButton.transform.localPosition += new Vector3(0.03f, 0f, 0);
-        __instance.quitButton.transform.localScale = new Vector3(0.838f, 0.84f, 0);
+        __instance.quitButton.transform.localScale = new Vector3(0.87f, 0.85f, 0);
 
         __instance.creditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
         __instance.creditsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
@@ -116,7 +115,6 @@ public static class MainUIPatch
         __instance.creditsButton.activeTextColor = Color.white;
         __instance.creditsButton.inactiveTextColor = Color.white;
         __instance.creditsButton.transform.localPosition += new Vector3(-0.03f, 0f, 0);
-        __instance.creditsButton.transform.localScale = new Vector3(0.803f, 0.84f, 0);
 
         __instance.freePlayButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0.191f, 255f);
         __instance.freePlayButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 255f, 0.8f);

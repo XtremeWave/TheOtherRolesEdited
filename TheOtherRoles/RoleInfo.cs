@@ -359,7 +359,7 @@ namespace TheOtherRolesEdited
         public static async Task loadReadme() {
             if (ReadmePage == "") {
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync("https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/XtremeWave/TheOtherRolesEdited/master/README.md");
+                HttpResponseMessage response = await client.GetAsync("https://ghproxy.amongusclub.cn/https://raw.githubusercontent.com/XtremeWave/TheOtherRolesEdited/master/README.md");
                 response.EnsureSuccessStatusCode();
                 string httpres = await response.Content.ReadAsStringAsync();
                 ReadmePage = httpres;

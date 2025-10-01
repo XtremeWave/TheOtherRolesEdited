@@ -12,13 +12,22 @@ namespace TheOtherRolesEdited;
 public static class LoadPatch
 {
     static Sprite logoSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner2.png", 140f);
+    static Sprite bgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Loading-BG.png", 100f);
     static TMPro.TextMeshPro loadText = null!;
+
+    private static float _scaleSpeed = 0.4f;    // 缩放动画速度（值越大越快）
+    private static float _scaleRange = 0.15f;   // 缩放幅度（0.15 = 最大放大15%）
+    private static Coroutine _scaleCoroutine;   // 用于存储缩放协程，方便后续停止
+
     public static string LoadingText { set { loadText.text = value; } }
+
     static IEnumerator CoLoadTheOtherRoles(SplashManager __instance)
     {
-        var logo = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedLogo", null, new Vector3(0, 0.5f, -5f));
+        var logo = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedLogo", null, new Vector3(0, 0.5f, -15f));
         logo.sprite = logoSprite;
 
+        var bg = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedBG", null, new Vector3(0, 0.5f, -10f));
+        bg.sprite = bgSprite;
 
         float p = 1f;
         while (p > 0f)
@@ -31,6 +40,21 @@ public static class LoadPatch
         }
         logo.color = Color.white;
         logo.transform.localScale = Vector3.one;
+
+        float q = 1f;
+        while (q > 0f)
+        {
+            q -= Time.deltaTime * 3.8f;
+            float alpha = 1 - q;
+            bg.color = Color.white.AlphaMultiplied(alpha);
+            bg.transform.localScale = Vector3.one * (q * q * 0.012f + 1f);
+            yield return null;
+        }
+        bg.color = Color.white;
+        bg.transform.localScale = Vector3.one;
+
+        Vector3 originalLogoScale = logo.transform.localScale;
+        _scaleCoroutine = __instance.StartCoroutine(ScaleLoop(logo.transform, originalLogoScale).WrapToIl2Cpp());
 
         loadText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
         loadText.transform.localPosition = new(0f, -0.28f, -10f);
@@ -50,9 +74,11 @@ public static class LoadPatch
             loadText.text = "正在加载服务器...";
             TheOtherRolesEditedPlugin.UpdateRegions();
             yield return new WaitForSeconds(0.5f);
+#if PC
             loadText.text = "加载Harmony Patch...";
             TheOtherRolesEditedPlugin.Instance.Harmony.PatchAll();
             yield return new WaitForSeconds(0.5f);
+#endif
             loadText.text = "正在构建设置...";
             CustomOptionHolder.Load();
             yield return new WaitForSeconds(0.5f);
@@ -64,7 +90,7 @@ public static class LoadPatch
             yield return new WaitForSeconds(0.5f);
             loadText.text = "正在加载模组音效...";
             SoundEffectsManager.Load();
-
+#if PC
             var hatsLoader = CustomHatManager.Loader;
             float downloadStartTime = Time.time;
             int lastDownloadedCount = 0;
@@ -109,10 +135,12 @@ public static class LoadPatch
                 loadText.text = "帽子加载成功!";
                 yield return new WaitForSeconds(0.5f);
             }
-
+#endif
             loadText.text = "尝试加载模组光标...";
             if (TheOtherRolesEditedPlugin.ToggleCursor.Value) Helpers.enableCursor(true);
             yield return new WaitForSeconds(0.5f);
+
+#if PC
             if (BepInExUpdater.UpdateRequired)
             {
                 loadText.text = "正在更新BepInEx...";
@@ -120,6 +148,7 @@ public static class LoadPatch
                 yield return new WaitForSeconds(0.5f);
                 yield return null;
             }
+#endif
             loadText.text = "正在加载模组更新...";
             TheOtherRolesEditedPlugin.Instance.AddComponent<ModUpdater>();
             yield return new WaitForSeconds(0.5f);
@@ -140,6 +169,7 @@ public static class LoadPatch
 
             TheOtherRolesEditedPlugin.Logger.LogInfo("Loading TORE completed!");
         }
+
         loadText.text = "加载完成";
         for (int i = 0; i < 3; i++)
         {
@@ -148,8 +178,13 @@ public static class LoadPatch
             loadText.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.03f);
         }
-
         GameObject.Destroy(loadText.gameObject);
+
+        if (_scaleCoroutine != null)
+        {
+            __instance.StopCoroutine(_scaleCoroutine);
+            logo.transform.localScale = Vector3.one; 
+        }
 
         p = 1f;
         while (p > 0f)
@@ -160,9 +195,19 @@ public static class LoadPatch
         }
         logo.color = Color.clear;
 
-
         __instance.sceneChanger.AllowFinishLoadingScene();
         __instance.startedSceneLoad = true;
+    }
+
+    private static IEnumerator ScaleLoop(Transform targetTransform, Vector3 originalScale)
+    {
+        while (true) 
+        {
+            float pingPongValue = Mathf.PingPong(Time.time * _scaleSpeed, 1f);
+            float currentScaleRatio = 1f + (pingPongValue * _scaleRange);
+            targetTransform.localScale = originalScale * currentScaleRatio;
+            yield return null; 
+        }
     }
 
     static bool loadedTheOtherRoles = false;
@@ -173,7 +218,6 @@ public static class LoadPatch
             loadedTheOtherRoles = true;
             __instance.StartCoroutine(CoLoadTheOtherRoles(__instance).WrapToIl2Cpp());
         }
-
         return false;
     }
 }

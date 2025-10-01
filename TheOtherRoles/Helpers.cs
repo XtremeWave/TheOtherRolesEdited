@@ -781,6 +781,7 @@ namespace TheOtherRolesEdited {
             return (long)value;
         }
 
+#if PC
         public static async Task checkBeta() {
             if (TheOtherRolesEditedPlugin.betaDays > 0) {
                 TheOtherRolesEditedPlugin.Logger.LogMessage($"Beta check");
@@ -809,6 +810,7 @@ namespace TheOtherRolesEdited {
                 } else TheOtherRolesEditedPlugin.Logger.LogMessage($"Beta will remain runnable for {TheOtherRolesEditedPlugin.betaDays - (now - compileTime)?.TotalDays} days!");
             }
         }
+#endif
 
         public static bool hasImpVision(NetworkedPlayerInfo player) {
             return player.Role.IsImpostor

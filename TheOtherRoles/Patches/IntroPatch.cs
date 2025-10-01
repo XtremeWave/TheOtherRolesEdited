@@ -14,7 +14,12 @@ using static TheOtherRolesEdited.TheOtherRolesEdited;
 
 namespace TheOtherRolesEdited.Patches
 {
-    [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
+#if PC
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
+#endif
+#if ANDROID
+    [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin))]
+#endif
     class IntroCutsceneOnDestroyPatch
     {
         public static PoolablePlayer playerPrefab;
@@ -124,7 +129,8 @@ namespace TheOtherRolesEdited.Patches
                     player.moveable = false;
                     player.NetTransform.Halt();
                     HideNSeek.timer = HideNSeek.hunterWaitingTime;
-                    FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(HideNSeek.hunterWaitingTime, new Action<float>((p) => {
+                    FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(HideNSeek.hunterWaitingTime, new Action<float>((p) =>
+                    {
                         if (p == 1f)
                         {
                             player.moveable = true;
@@ -494,7 +500,13 @@ namespace TheOtherRolesEdited.Patches
             }
         }
 
+
+#if PC
         [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__41), nameof(IntroCutscene._ShowRole_d__41.MoveNext))]
+#endif
+#if ANDROID
+        [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__40), nameof(IntroCutscene._ShowRole_d__40.MoveNext))]
+#endif
         class SetUpRoleTextPatch
         {
             static int seed = 0;
@@ -541,6 +553,7 @@ namespace TheOtherRolesEdited.Patches
                         __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color, $"\n 你的警长是 {Sheriff.sheriff?.Data?.PlayerName ?? ""}");
                 }
             }
+#if PC
             public static bool Prefix(IntroCutscene._ShowRole_d__41 __instance)
             {
                 seed = rnd.Next(5000);
@@ -550,52 +563,65 @@ namespace TheOtherRolesEdited.Patches
                 return true;
             }
         }
+#endif
 
-        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
-        class BeginCrewmatePatch
-        {
-            public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
+#if ANDROID
+            public static bool Prefix(IntroCutscene._ShowRole_d__40 __instance)
             {
-                setupIntroTeamIcons(__instance, ref teamToDisplay);
+                seed = rnd.Next(5000);
+                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
+                    SetRoleTexts(__instance.__4__this);
+                })));
+                return true;
+            }
+        }
+#endif
+            [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
+            class BeginCrewmatePatch
+            {
+                public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
+                {
+                    setupIntroTeamIcons(__instance, ref teamToDisplay);
+                }
+
+                public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
+                {
+                    setupIntroTeam(__instance, ref teamToDisplay);
+                }
             }
 
-            public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
+            [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginImpostor))]
+            class BeginImpostorPatch
             {
-                setupIntroTeam(__instance, ref teamToDisplay);
+                public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
+                {
+                    setupIntroTeamIcons(__instance, ref yourTeam);
+                }
+
+                public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
+                {
+                    setupIntroTeam(__instance, ref yourTeam);
+                }
             }
         }
 
-        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginImpostor))]
-        class BeginImpostorPatch
-        {
-            public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
-            {
-                setupIntroTeamIcons(__instance, ref yourTeam);
+        /* Horses are broken since 2024.3.5 - keeping this code in case they return.
+         * [HarmonyPatch(typeof(AprilFoolsMode), nameof(AprilFoolsMode.ShouldHorseAround))]
+        public static class ShouldAlwaysHorseAround {
+            public static bool Prefix(ref bool __result) {
+                __result = EventUtility.isEnabled && !EventUtility.disableEventMode;
+                return false;
             }
+        }*/
 
-            public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
+        [HarmonyPatch(typeof(AprilFoolsMode), nameof(AprilFoolsMode.ShouldShowAprilFoolsToggle))]
+        public static class ShouldShowAprilFoolsToggle
+        {
+            public static void Postfix(ref bool __result)
             {
-                setupIntroTeam(__instance, ref yourTeam);
+                __result = __result || EventUtility.isEventDate || EventUtility.canBeEnabled;  // Extend it to a 7 day window instead of just 1st day of the Month
             }
         }
     }
 
-    /* Horses are broken since 2024.3.5 - keeping this code in case they return.
-     * [HarmonyPatch(typeof(AprilFoolsMode), nameof(AprilFoolsMode.ShouldHorseAround))]
-    public static class ShouldAlwaysHorseAround {
-        public static bool Prefix(ref bool __result) {
-            __result = EventUtility.isEnabled && !EventUtility.disableEventMode;
-            return false;
-        }
-    }*/
-
-    [HarmonyPatch(typeof(AprilFoolsMode), nameof(AprilFoolsMode.ShouldShowAprilFoolsToggle))]
-    public static class ShouldShowAprilFoolsToggle
-    {
-        public static void Postfix(ref bool __result)
-        {
-            __result = __result || EventUtility.isEventDate || EventUtility.canBeEnabled;  // Extend it to a 7 day window instead of just 1st day of the Month
-        }
-    }
-}
 
