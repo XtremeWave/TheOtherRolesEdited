@@ -462,7 +462,7 @@ namespace TheOtherRolesEdited {
             if (Utilities.EventUtility.canBeEnabled) enableEventMode = CustomOption.Create(Types.General, cs(Color.green, "启用特别模式"), true, null, true, heading: "特别模式");
             
             isDraftMode = CustomOption.Create(Types.General, cs(Color.yellow, "启用轮抽选职模式"), false, null, true, null, "轮抽选职");
-            draftModeAmountOfChoices = CustomOption.Create(Types.General, cs(Color.yellow, "最大可选职业数量"), 5f, 2f, 3f, 1f, isDraftMode, false);
+            draftModeAmountOfChoices = CustomOption.Create(Types.General, cs(Color.yellow, "最大可选职业数量"), 5f, 2f, 15f, 1f, isDraftMode, false);
             draftModeTimeToChoose = CustomOption.Create(Types.General, cs(Color.yellow, "单人选择时常"), 5f, 3f, 20f, 1f, isDraftMode, false);
             draftModeCanChat = CustomOption.Create(Types.General, cs(Color.yellow, "轮抽选职时可以聊天"), false, isDraftMode, false);
             draftModeShowRoles = CustomOption.Create(Types.General, cs(Color.yellow, "显示已选择过的职业"), false, isDraftMode, false);

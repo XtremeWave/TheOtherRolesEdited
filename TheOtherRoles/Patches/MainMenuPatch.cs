@@ -18,7 +18,7 @@ namespace TheOtherRolesEdited.Modules {
         private static AnnouncementPopUp popUp;
         private static void Prefix(MainMenuManager __instance) {
             SoundEffectsManager.Load();
-            var template = GameObject.Find("CreditsButton");
+            var template = GameObject.Find("ExitGameButton");
             var buttonQQ = UnityEngine.Object.Instantiate(template, template.transform.parent);
             var buttonBG = UnityEngine.Object.Instantiate(template, template.transform.parent);
             var buttonFK = UnityEngine.Object.Instantiate(template, template.transform.parent);
@@ -81,7 +81,7 @@ namespace TheOtherRolesEdited.Modules {
             PassiveButton passiveButtonBG = buttonBG.GetComponent<PassiveButton>();
             passiveButtonBG.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
             passiveButtonBG.OnClick = new Button.ButtonClickedEvent();
-            passiveButtonBG.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://amongusclub.cn/")));
+            passiveButtonBG.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://fangkuai.fun/")));
             passiveButtonBG.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f);
             passiveButtonBG.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f);
             Color originalColorpassiveButtonBG = passiveButtonQQ.inactiveSprites.GetComponent<SpriteRenderer>().color;

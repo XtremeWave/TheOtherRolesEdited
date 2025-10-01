@@ -179,7 +179,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             public static async Task loadMOTDs()
             {
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(Helpers.isChinese() ? "https://ghproxy.amongusclub.cn/https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-SCN.txt" : "https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt");
+                HttpResponseMessage response = await client.GetAsync(Helpers.isChinese() ? "https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-SCN.txt" : "https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt");
                 response.EnsureSuccessStatusCode();
                 string motds = await response.Content.ReadAsStringAsync();
                 foreach (string line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries))
