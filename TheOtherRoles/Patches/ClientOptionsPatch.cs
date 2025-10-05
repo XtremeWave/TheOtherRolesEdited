@@ -7,7 +7,6 @@ using TMPro;
 using UnityEngine.Events;
 using static UnityEngine.UI.Button;
 using Object = UnityEngine.Object;
-using Rewired.Utils.Platforms.Windows;
 using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches
@@ -25,7 +24,7 @@ namespace TheOtherRolesEdited.Patches
             new($"{ModTranslation.getString("Options7")}", () => TORMapOptions.ShowVentsOnMap = TheOtherRolesEditedPlugin.ShowVentsOnMap.Value = !TheOtherRolesEditedPlugin.ShowVentsOnMap.Value, TheOtherRolesEditedPlugin.ShowVentsOnMap.Value,0),
             new($"{ModTranslation.getString("Options8")}", () => TORMapOptions.ShowChatNotifications = TheOtherRolesEditedPlugin.ShowChatNotifications.Value = !TheOtherRolesEditedPlugin.ShowChatNotifications.Value, TheOtherRolesEditedPlugin.ShowChatNotifications.Value,0),
             new($"{ModTranslation.getString("Options9")}", () => TORMapOptions.toggleCursor = TheOtherRolesEditedPlugin.ToggleCursor.Value = !TheOtherRolesEditedPlugin.ToggleCursor.Value, TheOtherRolesEditedPlugin.ToggleCursor.Value,1),
-              new($"{ModTranslation.getString("Options10")}", () =>  {
+            new($"{ModTranslation.getString("Options10")}", () =>  {
                 TORMapOptions.enableSoundEffects = TheOtherRolesEditedPlugin.EnableSoundEffects.Value = !TheOtherRolesEditedPlugin.EnableSoundEffects.Value;
                 if (!TORMapOptions.enableSoundEffects) SoundEffectsManager.stopAll();
                  return TORMapOptions.enableSoundEffects;

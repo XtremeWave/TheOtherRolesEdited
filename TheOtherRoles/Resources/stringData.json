@@ -75,6 +75,10 @@
         "0": "Mod Website",
         "13": "模组官网"
     },
+    "StarLight": {
+        "0": "SL Website",
+        "13": "星光官网"
+    },
     "QQGroup": {
         "0": "QQ Group",
         "13": "QQ群"
@@ -188,36 +192,40 @@
         "13": "随机机率:"
     },
     "GuesserSettings": {
-        "0": "Guesser\nSettings:",
-        "13": "赌怪\n模式设置"
+        "0": "Guesser Settings",
+        "13": "赌怪模式设置"
+    },
+    "ModSettings": {
+        "0": "Mod Settings",
+        "13": "模组设置"
     },
     "ImpostorSettings": {
-        "0": "Impostor\nSettings",
-        "13": "内鬼\n设置"
+        "0": "Impostor Settings",
+        "13": "内鬼职业设置"
     },
     "NeutralSettings": {
-        "0": "Neutral\nSettings",
-        "13": "中立\n设置"
+        "0": "Neutral Settings",
+        "13": "中立职业设置"
     },
     "CrewmateSettings": {
-        "0": "Crewmate\nSettings",
-        "13": "船员\n设置"
+        "0": "Crewmate Settings",
+        "13": "船员职业设置"
     },
     "ModifierSettings": {
-        "0": "Modifier\nSettings",
-        "13": "附加\n设置"
+        "0": "Modifier Settings",
+        "13": "附加职业设置"
     },
     "HideNSeekMain": {
-        "0": "HideNSeekMain\nSetting",
-        "13": "捉迷藏\n设置"
+        "0": "HideNSeek Main Settings",
+        "13": "捉迷藏设置"
     },
     "HideNSeekRoles": {
-        "0": "HideNSeek Roles\nSetting",
-        "13": "捉迷藏\n职业设置"
+        "0": "HideNSeek Roles Settings",
+        "13": "捉迷藏职业设置"
     },
     "Prophunt": {
-        "0": "PropHunt\nSetting",
-        "13": "变形躲猫猫\n设置"
+        "0": "PropHunt Settings",
+        "13": "变形躲猫猫设置"
     },
     "UpdateWay1": {
         "0": "One-Click Update",
@@ -226,5 +234,9 @@
     "UpdateWay2": {
         "0": "Manual Update",
         "13": "手动更新"
+    },
+    "playerText": {
+        "0": "player {0}",
+        "13": "玩家 {0}"
     }
 }

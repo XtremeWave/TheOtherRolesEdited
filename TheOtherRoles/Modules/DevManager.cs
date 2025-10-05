@@ -33,7 +33,7 @@ public static class DevManager
         DevUserList.Add(new(code: "dazedkiosk#9538", color: "#00FFFF", tag: $"{ModTranslation.getString("Dev")}||{ModTranslation.getString("ServerHost")}"));//方块
         DevUserList.Add(new(code: "aideproof#8388", color: "#00FFFF", tag: $"{ModTranslation.getString("Con")}||毒液npy"));//Elinmei
         DevUserList.Add(new(code: "adoswish#5144", color: "#FF44FF", tag: $"{ModTranslation.getString("Tester")}"));//汪泽宇
-        DevUserList.Add(new(code: "heappotted#1406", color: "#ffff67", tag: $"{ModTranslation.getString("Art")}"));//汪泽宇
+        DevUserList.Add(new(code: "heappotted#1406", color: "#ffff67", tag: $"{ModTranslation.getString("Art")}"));//米色
         DevUserList.Add(new(code: "squishyhod#5187", color: "#FF44FF", tag: $"哈哈哥[测逝圆]"));//哈哈哥
         //  空白的例子   DevUserList.Add(new(code: "xxxxxx#0000", color: "#000000", tag: ""));
     }

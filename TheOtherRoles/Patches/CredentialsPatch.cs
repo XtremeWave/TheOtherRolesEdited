@@ -14,6 +14,7 @@ using TheOtherRolesEdited.Players;
 using TheOtherRolesEdited.Utilities;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using static Il2CppSystem.Net.Http.Headers.Parser;
 using Color = UnityEngine.Color;
 
@@ -175,11 +176,11 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                     currentIndex = (currentIndex + 1) % motds.Count;
                 }
             }
-
+#if PC
             public static async Task loadMOTDs()
             {
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(Helpers.isChinese() ? "https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-SCN.txt" : "https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt");
+                HttpResponseMessage response = await client.GetAsync(Helpers.isChinese() ? "https://ghproxy.amongusclub.cn/https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-SCN.txt" : "https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt");
                 response.EnsureSuccessStatusCode();
                 string motds = await response.Content.ReadAsStringAsync();
                 foreach (string line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries))
@@ -188,6 +189,31 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                 }
                 //感谢方块服务器的支持！
             }
+#else
+            public static Task loadMOTDs()
+            {
+                string url = "https://ghproxy.amongusclub.cn/https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-SCN.txt";
+                var request = UnityWebRequest.Get(url);
+                request.SendWebRequest();
+
+                // Wait for the request to complete
+                while (!request.isDone) { }
+
+                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    TheOtherRolesEditedPlugin.Logger.LogError($"Couldn't fetch mod news from Server: {request.error}");
+                    return Task.CompletedTask;
+                }
+
+                string motdsText = request.downloadHandler.text;
+                foreach (string line in motdsText.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    motds.Add(line.Trim());
+                }
+
+                return Task.CompletedTask;
+            }
+#endif
         }
     }
 }

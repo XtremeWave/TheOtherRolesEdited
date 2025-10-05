@@ -10,6 +10,7 @@ using TheOtherRolesEdited.Players;
 using TheOtherRolesEdited.Utilities;
 using TheOtherRolesEdited;
 using Il2CppSystem.Data.Common;
+using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches
 {
@@ -98,6 +99,13 @@ namespace TheOtherRolesEdited.Patches
                 string message = "";
                 foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.ToArray())
                 {
+                    try
+                    {
+                        Helpers.playerById(GameData.Instance.GetPlayerByClient(client).PlayerId).cosmetics.nameText.text = $"{client.PlayerName} {client.GetPlatform()}";
+                    }
+                    catch
+                    { }
+
                     if (client.Character == null) continue;
                     else if (!playerVersions.ContainsKey(client.Id))
                     {
@@ -106,8 +114,8 @@ namespace TheOtherRolesEdited.Patches
                     }
                     else
                     {
-                        PlayerVersion PV = playerVersions[client.Id];
-                        int diff = TheOtherRolesEditedPlugin.Version.CompareTo(PV.version);
+                        var PV = playerVersions[client.Id];
+                        var diff = TheOtherRolesEditedPlugin.Version.CompareTo(PV.version);
                         if (diff > 0)
                         {
                             message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} 使用了较旧版本的 The Other Roles Edited (v{playerVersions[client.Id].version.ToString()})\n</color>";
@@ -118,11 +126,13 @@ namespace TheOtherRolesEdited.Patches
                             message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} 使用了较新版本的 The Other Roles Edited (v{playerVersions[client.Id].version.ToString()})\n</color>";
                             versionMismatch = true;
                         }
+                        //为了兼容手机端这个就不用留了
+                        /*
                         else if (!PV.GuidMatches())
                         { // version presumably matches, check if Guid matches
                             message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} 使用了其他 TOR 系列分支模组 v{playerVersions[client.Id].version.ToString()} <size=30%>({PV.guid.ToString()})</size>\n</color>";
                             versionMismatch = true;
-                        }
+                        }*/
                     }
                 }
 
@@ -185,7 +195,6 @@ namespace TheOtherRolesEdited.Patches
                 }
 
                 // Client update with handshake infos
-
                 else
                 {
                     if (!playerVersions.ContainsKey(AmongUsClient.Instance.HostId) || TheOtherRolesEditedPlugin.Version.CompareTo(playerVersions[AmongUsClient.Instance.HostId].version) != 0)
@@ -307,7 +316,7 @@ namespace TheOtherRolesEdited.Patches
 
                         PlayerVersion PV = playerVersions[client.Id];
                         int diff = TheOtherRolesEditedPlugin.Version.CompareTo(PV.version);
-                        if (diff != 0 || !PV.GuidMatches())
+                        if (diff != 0/*|| !PV.GuidMatches()*/)
                         {
                             continueStart = false;
                             break;
@@ -393,11 +402,10 @@ namespace TheOtherRolesEdited.Patches
                 this.version = version;
                 this.guid = guid;
             }
-
-            public bool GuidMatches()
+           /* public bool GuidMatches()
             {
                 return Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.Equals(this.guid);
-            }
+            }*/
         }
     }
 }

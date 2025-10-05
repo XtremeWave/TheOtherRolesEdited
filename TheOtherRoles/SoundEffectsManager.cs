@@ -9,13 +9,10 @@ using Reactor.Utilities.Extensions;
 
 namespace TheOtherRolesEdited
 {
-    // Class to preload all audio/sound effects that are contained in the embedded resources.
-    // The effects are made available through the soundEffects Dict / the get and the play methods.
     public static class SoundEffectsManager
 
     {
         private static Dictionary<string, AudioClip> soundEffects = new();
-        //private static List<AudioSource> currentSources = new();
 
         public static void Load()
         {
@@ -23,16 +20,11 @@ namespace TheOtherRolesEdited
             Assembly assembly = Assembly.GetExecutingAssembly();
             string[] resourceNames = assembly.GetManifestResourceNames();
 
-            /* Old way of loading .raw files. Left here for reference -Gendelo
-            foreach (string resourceName in resourceNames)
-            {
-                if (resourceName.Contains("TheOtherRoles.Resources.SoundEffects.") && (resourceName.Contains(".raw") || resourceName.Contains(".ogg")))
-                {
-                    soundEffects.Add(resourceName, Helpers.loadAudioClipFromResources(resourceName));
-                }
-            }*/
-
-            var resourceBundle = assembly.GetManifestResourceStream("TheOtherRolesEdited.Resources.SoundEffects.toraudio");
+#if PC
+            var resourceBundle = assembly.GetManifestResourceStream("TheOtherRolesEdited.Resources.SoundEffects.toraudio_Win");
+#else
+            var resourceBundle = assembly.GetManifestResourceStream("TheOtherRolesEdited.Resources.SoundEffects.toraudio_Android");
+#endif
             var assetBundle = AssetBundle.LoadFromMemory(resourceBundle.ReadFully());
             foreach (var f in assetBundle.GetAllAssetNames())
             {
@@ -44,8 +36,6 @@ namespace TheOtherRolesEdited
 
         public static AudioClip get(string path)
         {
-            // Convenience: As as SoundEffects are stored in the same folder, allow using just the name as well
-            //if (!path.Contains(".")) path = "TheOtherRoles.Resources.SoundEffects." + path + ".raw";
             if (!path.Contains("assets")) path = "assets/audio/" + path.ToLower() + ".ogg";
             AudioClip returnValue;
             return soundEffects.TryGetValue(path, out returnValue) ? returnValue : null;
@@ -60,7 +50,6 @@ namespace TheOtherRolesEdited
             if (Constants.ShouldPlaySfx() && clipToPlay != null)
             {
                 AudioSource source = SoundManager.Instance.PlaySound(clipToPlay, false, volume, audioMixer: musicChannel ? SoundManager.Instance.MusicChannel : null);
-                //currentSources.Add(source);
                 source.loop = loop;
                 return source;
             }
@@ -83,7 +72,6 @@ namespace TheOtherRolesEdited
                 TheOtherRolesEditedPlugin.Logger.LogMessage("source is null");
                 return;
             }
-            //currentSources.Add(source);
             source.loop = loop;
             HudManager.Instance.StartCoroutine(Effects.Lerp(maxDuration, new Action<float>((p) => {
                 if (source != null)
@@ -93,7 +81,6 @@ namespace TheOtherRolesEdited
                         source.Stop();
                         try
                         {
-                            //currentSources.Remove(source);
                             source.Destroy();
                         }
                         catch { }
@@ -135,13 +122,6 @@ namespace TheOtherRolesEdited
             }
             catch { }
 
-            /*try {
-                foreach (var source in currentSources) {
-                    source?.Stop();
-                }
-                currentSources.Clear();
-            }
-            catch { }*/
         }
     }
 }

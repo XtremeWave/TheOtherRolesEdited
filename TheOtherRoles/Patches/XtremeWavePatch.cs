@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using AmongUs.Data;
-using Rewired.Utils.Platforms.Windows;
 using UnityEngine;
 using TheOtherRolesEdited.Players;
 using System.Linq;

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿#if PC
+using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -126,3 +127,4 @@ public class CreditsControllerPatch
         }
     }
 }
+#endif

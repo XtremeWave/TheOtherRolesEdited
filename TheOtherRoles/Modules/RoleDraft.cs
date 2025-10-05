@@ -25,7 +25,10 @@ namespace TheOtherRolesEdited.Modules
         private static float timer = 0f;
         private static List<ActionButton> buttons = new List<ActionButton>();
         private static TMPro.TextMeshPro feedText;
-        public static List<byte> alreadyPicked = new();
+        public static Dictionary<byte, (byte roleId, bool isRandom, bool disconnected)> playerPicks = new();
+        public static Dictionary<byte, string> playerDisplayNames = new();
+        private static List<byte> initialPickOrder = new(); // 保存初始选择顺序
+
         public static IEnumerator CoSelectRoles(IntroCutscene __instance)
         {
             if (!isEnabled) yield break;
@@ -33,21 +36,18 @@ namespace TheOtherRolesEdited.Modules
             if (CustomOptionHolder.draftModeCanChat.getBool()) HudManager.Instance.Chat.SetVisible(true);
             isRunning = true;
             SoundEffectsManager.play("draft", volume: 1f, true, true);
-            alreadyPicked.Clear();
+            playerPicks.Clear();
+            playerDisplayNames.Clear();
+            initialPickOrder.Clear();
+
+            foreach (var player in PlayerControl.AllPlayerControls)
+            {
+                playerDisplayNames[player.PlayerId] = player.Data.PlayerName;
+            }
+
             bool playedAlert = false;
-            feedText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
-            var aspectPosition = feedText.gameObject.AddComponent<AspectPosition>();
-            aspectPosition.Alignment = AspectPosition.EdgeAlignments.LeftTop;
-            aspectPosition.DistanceFromEdge = new Vector2(1.62f, 1.2f);
-            aspectPosition.AdjustPosition();
-            feedText.transform.localScale = new Vector3(0.6f, 0.6f, 1);
-            feedText.text = "<size=200%>玩家的选择:</size>\n\n";
-            feedText.alignment = TMPro.TextAlignmentOptions.TopLeft;
-            feedText.autoSizeTextContainer = true;
-            feedText.fontSize = 3f;
-            feedText.enableAutoSizing = false;
             __instance.TeamTitle.transform.localPosition = __instance.TeamTitle.transform.localPosition + new Vector3(1f, 0f);
-            __instance.TeamTitle.text = $"{Helpers.cs(Color.red, "<size=300%>欢迎来到轮抽选职!</size>")}";
+            __instance.TeamTitle.text = $"{Helpers.cs(Color.red, "<size=300%>欢迎来到轮抽选角!</size>")}";
             __instance.BackgroundBar.enabled = false;
             __instance.TeamTitle.transform.localScale = new Vector3(0.25f, 0.25f, 1f);
             __instance.TeamTitle.autoSizeTextContainer = true;
@@ -77,6 +77,15 @@ namespace TheOtherRolesEdited.Modules
                 yield return null;
             }
 
+            initialPickOrder = new List<byte>(pickOrder);
+
+            foreach (var playerId in pickOrder)
+            {
+                playerPicks[playerId] = (0, false, false);
+            }
+
+            UpdateFeedText();
+
             while (pickOrder.Count > 0)
             {
                 picked = false;
@@ -84,12 +93,34 @@ namespace TheOtherRolesEdited.Modules
                 float maxTimer = CustomOptionHolder.draftModeTimeToChoose.getFloat();
                 string playerText = "";
                 int currentPlayerNumber = PlayerControl.AllPlayerControls.Count - pickOrder.Count + 1;
+
+                while (pickOrder.Count > 0 && Helpers.playerById(pickOrder[0])?.Data?.Disconnected == true)
+                {
+                    var disconnectedPlayerId = pickOrder[0];
+                    playerPicks[disconnectedPlayerId] = (0, false, true);
+                    pickOrder.RemoveAt(0);
+                    UpdateFeedText();
+                }
+
+                if (pickOrder.Count == 0) break;
+
                 while (timer < maxTimer || !picked)
                 {
                     if (pickOrder.Count == 0)
                         break;
                     // wait for pick
                     timer += Time.deltaTime;
+
+                    var currentPlayer = Helpers.playerById(pickOrder[0]);
+                    if (currentPlayer?.Data?.Disconnected == true)
+                    {
+                        var disconnectedPlayerId = pickOrder[0];
+                        playerPicks[disconnectedPlayerId] = (0, false, true);
+                        pickOrder.RemoveAt(0);
+                        UpdateFeedText();
+                        break;
+                    }
+
                     if (PlayerControl.LocalPlayer.PlayerId == pickOrder[0])
                     {
                         if (!playedAlert)
@@ -122,7 +153,7 @@ namespace TheOtherRolesEdited.Modules
 
                         // enable pick, wait for pick
                         Color youColor = timer - (int)timer > 0.5 ? Color.red : Color.yellow;
-                        playerText = $"玩家 {currentPlayerNumber} (你!)";
+                        playerText = $"玩家 {currentPlayerNumber}(你！)";
                         // Available Roles:
                         List<RoleInfo> availableRoles = new();
                         foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos)
@@ -148,10 +179,10 @@ namespace TheOtherRolesEdited.Modules
                             if (roleInfo.roleId == RoleId.Prosecutor && (CustomOptionHolder.lawyerIsProsecutorChance.getSelection() == 0 || CustomOptionHolder.lawyerSpawnRate.getSelection() == 0)) continue;
                             if (roleInfo.roleId == RoleId.Lawyer && (CustomOptionHolder.lawyerIsProsecutorChance.getSelection() == 10 || CustomOptionHolder.lawyerSpawnRate.getSelection() == 0)) continue;
                             if (TORMapOptions.gameMode == CustomGamemodes.Guesser && (roleInfo.roleId == RoleId.EvilGuesser || roleInfo.roleId == RoleId.NiceGuesser)) continue;
-                            if (alreadyPicked.Contains((byte)roleInfo.roleId) && roleInfo.roleId != RoleId.Crewmate) continue;
+                            if (playerPicks.Values.Any(x => x.roleId == (byte)roleInfo.roleId) && roleInfo.roleId != RoleId.Crewmate) continue;
                             if (CustomOptionHolder.crewmateRolesFill.getBool() && roleInfo.roleId == RoleId.Crewmate) continue;
 
-                            int impsPicked = alreadyPicked.Where(x => RoleInfo.roleInfoById[(RoleId)x].isImpostor).Count();
+                            int impsPicked = playerPicks.Count(x => RoleInfo.roleInfoById[(RoleId)x.Value.roleId].isImpostor);
 
                             // Hanlde forcing of 100% roles for impostors
                             if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
@@ -162,7 +193,7 @@ namespace TheOtherRolesEdited.Modules
                                 int impsLeft = pickOrder.Where(x => Helpers.playerById(x).Data.Role.IsImpostor).Count();
                                 int imps100 = roleData.impSettings.Where(x => x.Value == 10).Count();
                                 if (imps100 > impsMax) imps100 = impsMax;
-                                int imps100Picked = alreadyPicked.Where(x => roleData.impSettings.GetValueSafe(x) == 10).Count();
+                                int imps100Picked = playerPicks.Count(x => roleData.impSettings.GetValueSafe(x.Value.roleId) == 10);
                                 if (imps100 - imps100Picked >= impsLeft && !(roleData.impSettings.Where(x => x.Value == 10 && x.Key == (byte)roleInfo.roleId).Count() > 0)) continue;
                                 if (impsMin - impsPicked >= impsLeft && roleInfo.roleId == RoleId.Impostor) continue;
                                 if (impsPicked >= impsMax && roleInfo.roleId != RoleId.Impostor) continue;
@@ -172,8 +203,8 @@ namespace TheOtherRolesEdited.Modules
                             else
                             {
                                 // No more neutrals possible!
-                                int neutralsPicked = alreadyPicked.Where(x => RoleInfo.roleInfoById[(RoleId)x].isNeutral).Count();
-                                int crewPicked = alreadyPicked.Count - impsPicked - neutralsPicked;
+                                int neutralsPicked = playerPicks.Count(x => RoleInfo.roleInfoById[(RoleId)x.Value.roleId].isNeutral);
+                                int crewPicked = playerPicks.Count - impsPicked - neutralsPicked;
                                 int neutralsMax = CustomOptionHolder.neutralRolesCountMax.getSelection();
                                 int neutralsMin = CustomOptionHolder.neutralRolesCountMin.getSelection();
                                 int neutrals100 = roleData.neutralSettings.Where(x => x.Value == 10).Count();
@@ -202,11 +233,11 @@ namespace TheOtherRolesEdited.Modules
                                     allowAnyNeutral = true;
                                 // Handle 100% Roles PER Faction.
 
-                                int neutrals100Picked = alreadyPicked.Where(x => roleData.neutralSettings.GetValueSafe(x) == 10).Count();
+                                int neutrals100Picked = playerPicks.Count(x => roleData.neutralSettings.GetValueSafe(x.Value.roleId) == 10);
                                 if (neutrals100 > neutralsMax) neutrals100 = neutralsMax;
 
                                 int crew100 = roleData.crewSettings.Where(x => x.Value == 10).Count();
-                                int crew100Picked = alreadyPicked.Where(x => roleData.crewSettings.GetValueSafe(x) == 10).Count();
+                                int crew100Picked = playerPicks.Count(x => roleData.crewSettings.GetValueSafe(x.Value.roleId) == 10);
                                 if (neutrals100 > neutralsMax) neutrals100 = neutralsMax;
 
                                 if (crew100 > maxCrew) crew100 = maxCrew;
@@ -220,14 +251,13 @@ namespace TheOtherRolesEdited.Modules
                             bool blocked = false;
                             foreach (var blockedRoleId in CustomOptionHolder.blockedRolePairings)
                             {
-                                if (alreadyPicked.Contains(blockedRoleId.Key) && blockedRoleId.Value.ToList().Contains((byte)roleInfo.roleId))
+                                if (playerPicks.Values.Any(x => x.roleId == blockedRoleId.Key) && blockedRoleId.Value.ToList().Contains((byte)roleInfo.roleId))
                                 {
                                     blocked = true;
                                     break;
                                 }
                             }
                             if (blocked) continue;
-
 
                             availableRoles.Add(roleInfo);
                         }
@@ -239,7 +269,7 @@ namespace TheOtherRolesEdited.Modules
                                 availableRoles.Add(RoleInfo.impostor);
                             else
                                 availableRoles.Add(RoleInfo.crewmate);
-                            TheOtherRolesEditedPlugin.Logger.LogWarning("轮抽选职: 没有剩余的角色可以选择. 强制增添船员/内鬼职业");
+                            TheOtherRolesEditedPlugin.Logger.LogWarning("Draft Mode: Fallback triggered, because no roles were left. Forced addition of basegame Imp/Crewmate");
                         }
 
                         List<RoleInfo> originalAvailable = new(availableRoles);
@@ -259,7 +289,6 @@ namespace TheOtherRolesEdited.Modules
                         {
                             sendPick((byte)originalAvailable.OrderBy(_ => Guid.NewGuid()).First().roleId);
                         }
-
 
                         if (GameObject.Find("RoleButton") == null)
                         {
@@ -302,10 +331,10 @@ namespace TheOtherRolesEdited.Modules
                                 var sprite = buttonSprite.AddComponent<SpriteRenderer>();
                                 sprite.sprite =
                                     roleInfo.isImpostor ?
-                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDarft.DraftRoleCardImpostor.png", 250f) :
+                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDraft.DraftRoleCardImpostor.png", 250f) :
                                     roleInfo.isNeutral ?
-                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDarft.DraftRoleCardNeutral.png", 250f) :
-                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDarft.DraftRoleCardCrew.png", 250f);
+                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDraft.DraftRoleCardNeutral.png", 250f) :
+                                    Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDraft.DraftRoleCardCrew.png", 250f);
                                 buttonSprite.layer = actionButton.gameObject.layer;
                                 buttonSprite.transform.SetParent(actionButton.transform, false);
                                 buttonSprite.transform.localPosition = new Vector3(0, 0.025f, -1);
@@ -314,6 +343,7 @@ namespace TheOtherRolesEdited.Modules
                                 button.OnClick = new Button.ButtonClickedEvent();
                                 button.OnClick.AddListener((Action)(() => {
                                     sendPick((byte)roleInfo.roleId);
+                                    ShowLocalPlayerSelection(__instance, (byte)roleInfo.roleId);
                                 }));
                                 HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
                                     actionButton.OverrideText("");
@@ -378,7 +408,7 @@ namespace TheOtherRolesEdited.Modules
                             randomTextHolder.transform.localPosition = new Vector3(0, -3.075f, -1);
                             GameObject buttonSprite = new GameObject("buttonSprite");
                             var sprite = buttonSprite.AddComponent<SpriteRenderer>();
-                            sprite.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDarft.DraftRoleCardRandom.png", 250f);
+                            sprite.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDraft.DraftRoleCardRandom.png", 250f);
                             buttonSprite.layer = randomButton.gameObject.layer;
                             buttonSprite.transform.SetParent(randomButton.transform, false);
                             buttonSprite.transform.localPosition = new Vector3(0, 0.025f, -1);
@@ -387,7 +417,8 @@ namespace TheOtherRolesEdited.Modules
                             randomPassiveButton.OnClick.AddListener((Action)(() =>
                             {
                                 var randomRole = availableRoles.OrderBy(_ => Guid.NewGuid()).Random();
-                                sendPick((byte)randomRole.roleId);
+                                sendPick((byte)randomRole.roleId, true);
+                                ShowLocalPlayerSelection(__instance, (byte)randomRole.roleId);
                             }));
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f,
@@ -404,7 +435,7 @@ namespace TheOtherRolesEdited.Modules
                         playerText = $"玩家 {currentPlayerNumber}";
                         HudManager.Instance.FullScreen.color = Color.black;
                     }
-                    __instance.TeamTitle.text = $"{Helpers.cs(Color.red, "<size=300%>欢迎来到轮抽选职!</size>")}\n\n\n<color=#FFFFFF> <size=200%>当前正在选择的玩家:</size>\n\n<size=250%>{playerText}</size>";
+                    __instance.TeamTitle.text = $"{Helpers.cs(Color.red, "<size=300%>欢迎来到轮抽选角!</size>")}\n\n\n<color=#FFFFFF> <size=200%>当前正在选择的玩家:</size>\n\n<size=250%>{playerText}</size>";
                     int waitMore = pickOrder.IndexOf(PlayerControl.LocalPlayer.PlayerId);
                     string waitMoreText = "";
                     if (waitMore > 0)
@@ -434,6 +465,9 @@ namespace TheOtherRolesEdited.Modules
                 yield return null;
             }
 
+            if (selectionDisplay != null && selectionDisplay.gameObject != null)
+                selectionDisplay.gameObject.Destroy();
+
             SoundEffectsManager.stop("draft");
             isRunning = false;
             if (CustomOptionHolder.draftModeCanChat.getBool() && !(PlayerControl.LocalPlayer.isLover() && CustomOptionHolder.modifierLoverEnableChat.getBool()))
@@ -441,10 +475,141 @@ namespace TheOtherRolesEdited.Modules
             yield break;
         }
 
+        private static void UpdateFeedText()
+        {
+            if (feedText == null) return;
+
+            string newText = $"<size=200%>玩家的选择:</size>\n\n";
+            int playerNumber = 1;
+
+            var pickedPlayers = playerPicks
+                .Where(x => x.Value.roleId != 0 && !pickOrder.Contains(x.Key))
+                .OrderBy(x => initialPickOrder.IndexOf(x.Key))
+                .ToList();
+
+            foreach (var kvp in pickedPlayers)
+            {
+                var playerId = kvp.Key;
+                var (roleId, isRandom, disconnected) = kvp.Value;
+
+                string statusText;
+                if (disconnected)
+                {
+                    statusText = Helpers.cs(Color.gray,"断连");
+                }
+                else
+                {
+                    var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == roleId);
+                    if (roleInfo != null)
+                    {
+                        statusText = GetRoleDisplayString(playerId, roleInfo, isRandom);
+                    }
+                    else
+                    {
+                        statusText = Helpers.cs(Color.white,"未知");
+                    }
+                }
+
+                string playerPrefix = playerId == PlayerControl.LocalPlayer.PlayerId ?
+                    Helpers.cs(Color.yellow, "你") :
+                    $"{playerNumber}";
+
+                newText += $"{string.Format(ModTranslation.getString("playerText"), playerPrefix)}: {statusText}\n"; playerNumber++;
+            }
+
+            foreach (var playerId in pickOrder)
+            {
+                string statusText = Helpers.cs(Color.yellow, "等待选择中...");
+
+                string playerPrefix = playerId == PlayerControl.LocalPlayer.PlayerId ?
+                    Helpers.cs(Color.yellow, "你") :
+                    $"{playerNumber}";
+
+                newText += $"{string.Format(ModTranslation.getString("playerText"), playerPrefix)}: {statusText}\n";
+                playerNumber++;
+            }
+
+            feedText.text = newText;
+        }
+
+        private static string GetRoleDisplayString(byte playerId, RoleInfo roleInfo, bool isRandom)
+        {
+            if (!CustomOptionHolder.draftModeShowRoles.getBool())
+            {
+                return Helpers.cs(Color.white,"未知职业");
+            }
+
+            if (CustomOptionHolder.draftModeHideRandomRoles.getBool() && isRandom)
+            {
+                return Helpers.cs(Color.green,"随机职业");
+            }
+
+            if (CustomOptionHolder.draftModeHideImpRoles.getBool() && roleInfo.isImpostor)
+            {
+                return Helpers.cs(Palette.ImpostorRed,"内鬼职业");
+            }
+
+            if (CustomOptionHolder.draftModeHideNeutralRoles.getBool() && roleInfo.isNeutral)
+            {
+                return Helpers.cs(Palette.Blue, "中立职业");
+            }
+
+            if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && !roleInfo.isImpostor && !roleInfo.isNeutral)
+            {
+                return Helpers.cs(Color.white,"船员职业");
+            }
+
+            return Helpers.cs(roleInfo.color, roleInfo.name);
+        }
+
+        private static GameObject selectionDisplay;
+
+        private static void ShowLocalPlayerSelection(IntroCutscene __instance, byte roleId)
+        {
+            var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == roleId);
+            if (roleInfo == null) return;
+
+            if (selectionDisplay != null && selectionDisplay.gameObject != null)
+                selectionDisplay.gameObject.Destroy();
+
+            selectionDisplay = Object.Instantiate(HudManager.Instance.KillButton.gameObject, __instance.TeamTitle.transform);
+            selectionDisplay.gameObject.SetActive(true);
+            selectionDisplay.gameObject.name = "FinalSelection";
+            selectionDisplay.transform.localPosition = new Vector3(0, -13.5f, -10f);
+            selectionDisplay.transform.localScale = new Vector3(2f, 2f);
+            selectionDisplay.GetComponent<KillButton>().SetCoolDown(0, 0);
+            selectionDisplay.GetComponent<KillButton>().enabled = false;
+            selectionDisplay.GetComponent<KillButton>().buttonLabelText.gameObject.SetActive(false);
+
+            GameObject textHolder = new GameObject("finalSelectionText");
+            var text = textHolder.AddComponent<TMPro.TextMeshPro>();
+            text.text = $"<b>{roleInfo.name}</b>";
+            text.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
+            text.fontSize = 6;
+            textHolder.layer = selectionDisplay.gameObject.layer;
+            text.outlineWidth = 0.2f;
+            text.outlineColor = Color.black;
+            text.color = roleInfo.color;
+            textHolder.transform.SetParent(selectionDisplay.transform, false);
+            textHolder.transform.localPosition = new Vector3(0, -3.15f, -1);
+
+            GameObject cardSprite = new GameObject("finalSelectionCard");
+            var sprite = cardSprite.AddComponent<SpriteRenderer>();
+            sprite.sprite = roleInfo.isImpostor ?
+                Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDraft.DraftRoleCardImpostor.png", 250f) :
+                roleInfo.isNeutral ?
+               Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDraft.DraftRoleCardNeutral.png", 250f) :
+               Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RoleDraft.DraftRoleCardCrew.png", 250f);
+            cardSprite.layer = selectionDisplay.gameObject.layer;
+            cardSprite.transform.SetParent(selectionDisplay.transform, false);
+            cardSprite.transform.localPosition = new Vector3(0, 0, -1);
+            cardSprite.transform.localScale = new Vector3(1.2f, 1.2f, 1f);
+        }
+
         private static IEnumerator CoShowRandomOrderAnimation(IntroCutscene __instance)
         {
             var titleText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
-            titleText.text = "<color=red>随机抽取回合...</color>";
+            titleText.text = "<color=red>正在随机挑选顺序...</color>";
             titleText.transform.localPosition = new Vector3(0, 2f, -10f);
             titleText.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
             titleText.alignment = TMPro.TextAlignmentOptions.Center;
@@ -508,64 +673,51 @@ namespace TheOtherRolesEdited.Modules
 
             numberText.text = playerNumber.ToString();
 
-            titleText.text = "<color=red>你抽到的回合是:</color>";
+            titleText.text = $"<color=red>你选择的顺序为:</color>";
 
             yield return new WaitForSeconds(2f);
 
             titleText.gameObject.Destroy();
             numberText.gameObject.Destroy();
+
+            feedText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
+            var aspectPosition = feedText.gameObject.AddComponent<AspectPosition>();
+            aspectPosition.Alignment = AspectPosition.EdgeAlignments.LeftTop;
+            aspectPosition.DistanceFromEdge = new Vector2(1.62f, 1.2f);
+            aspectPosition.AdjustPosition();
+            feedText.transform.localScale = new Vector3(0.6f, 0.6f, 1);
+            feedText.text = $"<size=200%>玩家的选择</size>\n\n";
+            feedText.alignment = TMPro.TextAlignmentOptions.TopLeft;
+            feedText.autoSizeTextContainer = true;
+            feedText.fontSize = 3f;
+            feedText.enableAutoSizing = false;
         }
-        public static void receivePick(byte playerId, byte roleId)
+
+        public static void receivePick(byte playerId, byte roleId, bool isRandom)
         {
             if (!isEnabled) return;
             RPCProcedure.setRole(roleId, playerId);
-            alreadyPicked.Add(roleId);
+            playerPicks[playerId] = (roleId, isRandom, false);
             try
             {
                 pickOrder.Remove(playerId);
                 timer = 0;
                 picked = true;
-                RoleInfo roleInfo = RoleInfo.allRoleInfos.First(x => (byte)x.roleId == roleId);
-                string roleString = Helpers.cs(roleInfo.color, roleInfo.name);
-                int roleLength = roleInfo.name.Length;  // Not used for now, but stores the amount of charactes of the roleString.
-
-                if (!CustomOptionHolder.draftModeShowRoles.getBool() && !(playerId == PlayerControl.LocalPlayer.PlayerId))
-                {
-                    roleString = "未知职业";
-                    roleLength = roleString.Length;
-                }
-                else if (CustomOptionHolder.draftModeHideImpRoles.getBool() && roleInfo.isImpostor && !(playerId == PlayerControl.LocalPlayer.PlayerId))
-                {
-                    roleString = Helpers.cs(Palette.ImpostorRed, "内鬼职业");
-                    roleLength = "内鬼职业".Length;
-                }
-                else if (CustomOptionHolder.draftModeHideNeutralRoles.getBool() && roleInfo.isNeutral && !(playerId == PlayerControl.LocalPlayer.PlayerId))
-                {
-                    roleString = Helpers.cs(Palette.Blue, "中立职业");
-                    roleLength = "中立职业".Length;
-                }
-                else if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && !roleInfo.isImpostor && !roleInfo.isNeutral && !(playerId == PlayerControl.LocalPlayer.PlayerId))
-                {
-                    roleString = Helpers.cs(Color.white, "船员职业");
-                    roleLength = "船员职业".Length;
-                }
-
-                string line = $"{(playerId == PlayerControl.LocalPlayer.PlayerId ? "你" : alreadyPicked.Count)}:";
-                line = line + string.Concat(Enumerable.Repeat(" ", 6 - line.Length)) + roleString;
-                feedText.text += line + "\n";
+                UpdateFeedText();
                 SoundEffectsManager.play("select");
             }
             catch (Exception e) { TheOtherRolesEditedPlugin.Logger.LogError(e); }
         }
 
-        public static void sendPick(byte RoleId)
+        public static void sendPick(byte RoleId, bool isRandom = false)
         {
             SoundEffectsManager.stop("timeMasterShield");
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DraftModePick, SendOption.Reliable, -1);
             writer.Write(PlayerControl.LocalPlayer.PlayerId);
             writer.Write(RoleId);
+            writer.Write(isRandom);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            receivePick(PlayerControl.LocalPlayer.PlayerId, RoleId);
+            receivePick(PlayerControl.LocalPlayer.PlayerId, RoleId, isRandom);
 
             // destroy all the buttons:
             foreach (var button in buttons)
@@ -575,10 +727,10 @@ namespace TheOtherRolesEdited.Modules
             buttons.Clear();
         }
 
-
         public static void sendPickOrder()
         {
             pickOrder = PlayerControl.AllPlayerControls.ToArray().Select(x => x.PlayerId).OrderBy(_ => Guid.NewGuid()).ToList().ToList();
+            initialPickOrder = new List<byte>(pickOrder);
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DraftModePickOrder, SendOption.Reliable, -1);
             writer.Write((byte)pickOrder.Count);
             foreach (var item in pickOrder)
@@ -588,15 +740,35 @@ namespace TheOtherRolesEdited.Modules
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
 
-
         public static void receivePickOrder(int amount, MessageReader reader)
         {
             pickOrder.Clear();
+            initialPickOrder.Clear();
             for (int i = 0; i < amount; i++)
             {
-                pickOrder.Add(reader.ReadByte());
+                byte playerId = reader.ReadByte();
+                pickOrder.Add(playerId);
+                initialPickOrder.Add(playerId);
             }
+        }
+
+        public static void HandlePlayerDisconnected(byte playerId)
+        {
+            if (!isEnabled || !isRunning) return;
+
+            if (playerPicks.ContainsKey(playerId))
+            {
+                var currentPick = playerPicks[playerId];
+                playerPicks[playerId] = (currentPick.roleId, currentPick.isRandom, true);
+            }
+            else
+            {
+                playerPicks[playerId] = (0, false, true);
+            }
+
+            pickOrder.Remove(playerId);
+
+            UpdateFeedText();
         }
     }
 }
-//copy from fangkuai

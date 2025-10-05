@@ -15,6 +15,7 @@ public static class MainMenuManagerPatch
     public static bool ShowedBak = false;
     private static bool ShowingPanel = false;
     public static MainMenuManager Instance { get; private set; }
+
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenGameModeMenu))]
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenAccountMenu))]
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenCredits))]
@@ -43,15 +44,21 @@ public static class MainMenuManagerPatch
     {
         if (GameObject.Find("MainUI") == null) ShowingPanel = false;
 
-        if (TitleLogoPatch.RightPanel != null)
-        {
-            var pos1 = TitleLogoPatch.RightPanel.transform.localPosition;
-            Vector3 lerp1 = Vector3.Lerp(pos1, TitleLogoPatch.RightPanelOp + new Vector3((ShowingPanel ? 0f : 10f), 0f, 0f), Time.deltaTime * (ShowingPanel ? 3f : 2f));
-            if (ShowingPanel
-                ? TitleLogoPatch.RightPanel.transform.localPosition.x > TitleLogoPatch.RightPanelOp.x + 0.03f
-                : TitleLogoPatch.RightPanel.transform.localPosition.x < TitleLogoPatch.RightPanelOp.x + 9f
-                ) TitleLogoPatch.RightPanel.transform.localPosition = lerp1;
-        }
+        var pos1 = TitleLogoPatch.RightPanel.transform.localPosition;
+        var pos3 = new Vector3(
+            TitleLogoPatch.RightPanelOp.x * TitleLogoPatch.GetResolutionOffset(),
+            TitleLogoPatch.RightPanelOp.y, TitleLogoPatch.RightPanelOp.z);
+#if PC
+        var lerp1 = Vector3.Lerp(pos1, ShowingPanel ? pos3 : TitleLogoPatch.RightPanelOp + new Vector3(10f, 0f, 0f),
+            Time.deltaTime * (ShowingPanel ? 3f : 2f));
+#else
+        var lerp1 = Vector3.Lerp(pos1, ShowingPanel ? pos3 : TitleLogoPatch.RightPanelOp + new Vector3(20f, 0f, 0f),
+            Time.deltaTime * (ShowingPanel ? 3f : 2f));
+#endif
+        if (ShowingPanel
+                ? TitleLogoPatch.RightPanel.transform.localPosition.x > pos3.x + 0.03f
+                : TitleLogoPatch.RightPanel.transform.localPosition.x < TitleLogoPatch.RightPanelOp.x + 29f
+           ) TitleLogoPatch.RightPanel.transform.localPosition = lerp1;
 
         if (ShowedBak) return;
         var bak = GameObject.Find("BackgroundTexture");
@@ -61,6 +68,7 @@ public static class MainMenuManagerPatch
         bak.transform.position = lerp2;
         if (pos2.y > 7f) ShowedBak = true;
     }
+
     //∑¿÷π ˜¿¡§Œsbº‡ª§»ÀºÏ≤‚
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.LateUpdate))]
     public static void Prefix(MainMenuManager __instance)
@@ -68,4 +76,3 @@ public static class MainMenuManagerPatch
         GameObject.Find("AccountManager/UpdateGuardianEmail")?.SetActive(false);
     }
 }
-//github:https://github.com/fangkuaiclub/AdultPermissionsAmongUs/releases/tag/v1.0.0

@@ -13,7 +13,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 namespace TheOtherRolesEdited.Modules;
-
+#if PC
 public class BepInExUpdater : MonoBehaviour
 {
     public const string RequiredBepInExVersion = "6.0.0-be.735+5fef3570f212b2fb5fbe9c1d20487c13c2fa90cb";
@@ -31,9 +31,9 @@ public class BepInExUpdater : MonoBehaviour
     [HideFromIl2Cpp]
     public IEnumerator CoUpdate()
     {
-        Task.Run(() => MessageBox(GetForegroundWindow(), "Required BepInEx update is downloading, please wait...","The Other Roles Edited", 0));
+        Task.Run(() => MessageBox(GetForegroundWindow(), "Required BepInEx update is downloading, please wait...", "The Other Roles Edited", 0));
         UnityWebRequest www = UnityWebRequest.Get(BepInExDownloadURL);
-        yield return www.Send();        
+        yield return www.Send();
         if (www.isNetworkError || www.isHttpError)
         {
             TheOtherRolesEditedPlugin.Logger.LogError(www.error);
@@ -43,19 +43,19 @@ public class BepInExUpdater : MonoBehaviour
         var zipPath = Path.Combine(Paths.GameRootPath, ".bepinex_update");
         File.WriteAllBytes(zipPath, www.downloadHandler.GetUnstrippedData());
 
-        
+
         var tempPath = Path.Combine(Path.GetTempPath(), "TheOtherUpdater.exe");
         var asm = Assembly.GetExecutingAssembly();
         var exeName = asm.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("TheOtherUpdater.exe"));
-        
-        using(var resource = asm.GetManifestResourceStream(exeName))
+
+        using (var resource = asm.GetManifestResourceStream(exeName))
         {
-            using(var file = new FileStream(tempPath, FileMode.OpenOrCreate, FileAccess.Write))
+            using (var file = new FileStream(tempPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 resource!.CopyTo(file);
-            } 
+            }
         }
-        
+
         var startInfo = new ProcessStartInfo(tempPath, $"--game-path \"{Paths.GameRootPath}\" --zip \"{zipPath}\"");
         startInfo.UseShellExecute = false;
         Process.Start(startInfo);
@@ -78,3 +78,4 @@ public static class StopLoadingMainMenu
         return !BepInExUpdater.UpdateRequired;
     }
 }
+#endif

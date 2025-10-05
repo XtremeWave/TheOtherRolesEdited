@@ -28,7 +28,9 @@ namespace TheOtherRolesEdited.Modules
         public ModUpdater(IntPtr ptr) : base(ptr) { }
 
         private bool _busy;
+#if PC
         private bool showPopUp = true;
+#endif
         public List<GithubRelease> Releases;
 
         public void Awake()
@@ -126,7 +128,7 @@ namespace TheOtherRolesEdited.Modules
             var asset = release.Assets.Find(FilterPluginAsset);
             var www = new UnityWebRequest();
             www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
-            www.SetUrl("https://ghproxy.fangkuai.fun/" + asset.DownloadUrl);
+            www.SetUrl("https://ghproxy.amongusclub.cn/" + asset.DownloadUrl);
             www.downloadHandler = new DownloadHandlerBuffer();
             var operation = www.SendWebRequest();
 
@@ -214,12 +216,13 @@ namespace TheOtherRolesEdited.Modules
             PassiveButton passiveButtonUPDATE = buttonUPDATE.GetComponent<PassiveButton>();
             passiveButtonUPDATE.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
             passiveButtonUPDATE.OnClick = new Button.ButtonClickedEvent();
-            passiveButtonUPDATE.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://tore.fangkuai.fun/#download")));
+            passiveButtonUPDATE.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://tore.amongusclub.cn/#download")));
             passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
             passiveButtonUPDATE.activeSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
             Color originalColorpassiveButtonUPDATE = passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color;
             passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonUPDATE * 0.6f;
-
+#if PC
+            //一键更新
             var button = Instantiate(template, null);
             var buttonTransform = button.transform;
             button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.788f, 0.04f);
@@ -243,7 +246,9 @@ namespace TheOtherRolesEdited.Modules
             var announcement = $"<size=150%>请更新至TheOtherRolesEdited{latestRelease.Tag}的最新版本</size>\n{latestRelease.Description}";
             var mgr = FindObjectOfType<MainMenuManager>(true);
             if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "更新TORE", date: latestRelease.PublishedAt));
-            showPopUp = false;            
+            showPopUp = false;
+#endif
+
         }
 
         [HideFromIl2Cpp]

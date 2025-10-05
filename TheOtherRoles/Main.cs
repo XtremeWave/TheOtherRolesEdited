@@ -23,7 +23,6 @@ using TheOtherRolesEdited.Modules.CustomHats;
 using static TheOtherRolesEdited.Modules.ModUpdater;
 using AmongUs.Data.Player;
 using AmongUs.GameOptions;
-using Rewired.Utils.Platforms.Windows;
 using Reactor.Patches;
 using System.Runtime.CompilerServices;
 using UnityEngine.Networking;
@@ -40,7 +39,7 @@ namespace TheOtherRolesEdited
     {
         public const string Id = "TheOtherRolesEdited";
         public const string Name = "TORE";
-        public const string VersionString = "1.2.9";
+        public const string VersionString = "1.3.0";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";
@@ -58,7 +57,7 @@ namespace TheOtherRolesEdited
         public static ConfigEntry<bool> GhostsSeeInformation { get; set; }
         public static ConfigEntry<bool> GhostsSeeRoles { get; set; }
         public static ConfigEntry<bool> GhostsSeeModifier { get; set; }
-        public static ConfigEntry<bool> GhostsSeeVotes{ get; set; }
+        public static ConfigEntry<bool> GhostsSeeVotes { get; set; }
         public static ConfigEntry<bool> ShowRoleSummary { get; set; }
         public static ConfigEntry<bool> ShowLighterDarker { get; set; }
         public static ConfigEntry<bool> EnableSoundEffects { get; set; }
@@ -79,7 +78,7 @@ namespace TheOtherRolesEdited
         {
             try
             {
-                string url = "https://player.fangkuai.fun/api/modusage/register?modName=TheOtherRolesEdited";
+                string url = "https://player.amongusclub.cn/api/modusage/register?modName=TheOtherRolesEdited";
                 var request = UnityWebRequest.Get(url);
 
                 var operation = request.SendWebRequest();
@@ -105,32 +104,37 @@ namespace TheOtherRolesEdited
                 Logger.LogError($"Error sending mod usage request: {ex.Message}");
             }
         }
-        public static void UpdateRegions() {
+        public static void UpdateRegions()
+        {
             ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
-            var regions = new IRegionInfo[] 
+            var regions = new IRegionInfo[]
             {
-                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "https://player.fangkuai.fun", 443, false) })).CastFast<IRegionInfo>(),
-                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://auhk.fangkuai.fun", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", "https://auhk.fangkuai.fun", 443, false) })).CastFast<IRegionInfo>(),      
-            };            
+                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "https://player.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
+                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://auhk.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", "https://auhk.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
+            };
             IRegionInfo currentRegion = serverManager.CurrentRegion;
             Logger.LogInfo($"Adding {regions.Length} regions");
-            foreach (IRegionInfo region in regions) {
-                if (region == null) 
+            foreach (IRegionInfo region in regions)
+            {
+                if (region == null)
                     Logger.LogError("Could not add region");
-                else {
-                    if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase)) 
-                        currentRegion = region;               
+                else
+                {
+                    if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase))
+                        currentRegion = region;
                     serverManager.AddOrUpdateRegion(region);
                 }
             }
 
             // AU remembers the previous region that was set, so we need to restore it
-            if (currentRegion != null) {
+            if (currentRegion != null)
+            {
                 Logger.LogDebug("Resetting previous region");
                 serverManager.SetRegion(currentRegion);
             }
         }
-        public override void Load() {
+        public override void Load()
+        {
             SendModUsageRequest();
             Logger = Log;
             Instance = this;
@@ -138,9 +142,17 @@ namespace TheOtherRolesEdited
             {
                 text.text = "";
             };
+#if PC
+            if (BepInExUpdater.UpdateRequired)
+            {
+                AddComponent<BepInExUpdater>();
+                return;
+            }
 
             _ = Helpers.checkBeta(); // Exit if running an expired beta
+            _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
 
+#endif
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
             GhostsSeeInformation = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
@@ -171,7 +183,7 @@ namespace TheOtherRolesEdited
     }
     internal class ModOption
     {
-            public static int NumImpostors => GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors;
+        public static int NumImpostors => GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors;
         public static bool DebugMode => CustomOptionHolder.debugMode.getBool();
         public static bool DisableGameEnd => DebugMode && CustomOptionHolder.disableGameEnd.getBool();
     }
@@ -180,42 +192,42 @@ namespace TheOtherRolesEdited
     {
         public static class GameStates
         {
-           public static string GetRegionName(IRegionInfo region = null)
-    {
-        region ??= ServerManager.Instance.CurrentRegion;
+            public static string GetRegionName(IRegionInfo region = null)
+            {
+                region ??= ServerManager.Instance.CurrentRegion;
 
-        string name = region.Name;
+                string name = region.Name;
 
-        if (AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
-        {
-            name = "本地";
-            return name;
-        }
+                if (AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
+                {
+                    name = "本地";
+                    return name;
+                }
 
-        if (region.PingServer.EndsWith("among.us", StringComparison.Ordinal))
-        {
-            // Official server
-            if (name == "North America") name = "北美服";
-            else if (name == "Europe") name = "欧服";
-            else if (name == "Asia") name = "亚服";
+                if (region.PingServer.EndsWith("among.us", StringComparison.Ordinal))
+                {
+                    // Official server
+                    if (name == "North America") name = "北美服";
+                    else if (name == "Europe") name = "欧服";
+                    else if (name == "Asia") name = "亚服";
 
-            return name;
-        }
+                    return name;
+                }
 
-        var Ip = region.Servers.FirstOrDefault()?.Ip ?? string.Empty;
+                var Ip = region.Servers.FirstOrDefault()?.Ip ?? string.Empty;
 
-        if (Ip.Contains("aumods.us", StringComparison.Ordinal)
-            || Ip.Contains("duikbo.at", StringComparison.Ordinal))
-        {
-            // Official Modded Server
-            if (Ip.Contains("au-eu")) name = "Modded EU(EU)";
-            else if (Ip.Contains("au-as")) name = "Modded ASIA(MAS)";
-            else if (Ip.Contains("www.")) name = "Modded NA(MNA)";
+                if (Ip.Contains("aumods.us", StringComparison.Ordinal)
+                    || Ip.Contains("duikbo.at", StringComparison.Ordinal))
+                {
+                    // Official Modded Server
+                    if (Ip.Contains("au-eu")) name = "Modded EU(EU)";
+                    else if (Ip.Contains("au-as")) name = "Modded ASIA(MAS)";
+                    else if (Ip.Contains("www.")) name = "Modded NA(MNA)";
 
-            return name;
-        }
-        return name;
-    }
+                    return name;
+                }
+                return name;
+            }
 
         }
     }
@@ -229,14 +241,17 @@ namespace TheOtherRolesEdited
         }
     }
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Awake))]
-    public static class ChatControllerAwakePatch {
-        private static void Prefix() {
-            if (!EOSManager.Instance.isKWSMinor) {
+    public static class ChatControllerAwakePatch
+    {
+        private static void Prefix()
+        {
+            if (!EOSManager.Instance.isKWSMinor)
+            {
                 DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
         }
     }
-    
+
     // Debugging tools
     [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Update))]
     public static class DebugManager
@@ -251,7 +266,8 @@ namespace TheOtherRolesEdited
             StringBuilder builder = new StringBuilder();
             SHA256 sha = SHA256Managed.Create();
             Byte[] hashed = sha.ComputeHash(Encoding.UTF8.GetBytes(TheOtherRolesEditedPlugin.DebugMode.Value));
-            foreach (var b in hashed) {
+            foreach (var b in hashed)
+            {
                 builder.Append(b.ToString("x2"));
             }
             string enteredHash = builder.ToString();
@@ -276,7 +292,8 @@ namespace TheOtherRolesEdited
             }*/
 
             // Terminate round
-            if(Input.GetKeyDown(KeyCode.L)) {
+            if (Input.GetKeyDown(KeyCode.L))
+            {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ForceEnd, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.forceEnd();

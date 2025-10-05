@@ -1926,7 +1926,7 @@ namespace TheOtherRolesEdited
                     RoleDraft.receivePickOrder(reader.ReadByte(), reader);
                     break;
                 case (byte)CustomRPC.DraftModePick:
-                    RoleDraft.receivePick(reader.ReadByte(), reader.ReadByte());
+                    RoleDraft.receivePick(reader.ReadByte(), reader.ReadByte(), reader.ReadBoolean());
                     break;
                 case (byte)CustomRPC.ShareGhostInfo:
                     RPCProcedure.receiveGhostInfo(reader.ReadByte(), reader);

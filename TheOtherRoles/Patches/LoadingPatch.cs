@@ -4,6 +4,7 @@ using HarmonyLib;
 using TheOtherRolesEdited.Modules;
 using TheOtherRolesEdited.Modules.CustomHats;
 using TheOtherRolesEdited.Utilities;
+using TMPro;
 using UnityEngine;
 
 namespace TheOtherRolesEdited;
@@ -12,31 +13,90 @@ namespace TheOtherRolesEdited;
 public static class LoadPatch
 {
     static Sprite logoSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner2.png", 140f);
+    static Sprite bgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Loading-BG.png", 100f);
     static TMPro.TextMeshPro loadText = null!;
+    static TMPro.TextMeshPro startText = null!;
+
+    private static float _scaleSpeed = 0.4f;    // 缩放动画速度（值越大越快）
+    private static float _scaleRange = 0.15f;   // 缩放幅度（0.15 = 最大放大15%）
+    private static Coroutine _scaleCoroutine;  
+    private static Vector3 originalLogoScale;
+
     public static string LoadingText { set { loadText.text = value; } }
+
     static IEnumerator CoLoadTheOtherRoles(SplashManager __instance)
     {
-        var logo = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedLogo", null, new Vector3(0, 0.5f, -5f));
+        var bg = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedBG", null, new Vector3(0, 0.5f, -10f));
+        bg.sprite = bgSprite;
+        bg.color = Color.clear;
+
+        var logo = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedLogo", null, new Vector3(0, 0.5f, -15f));
         logo.sprite = logoSprite;
+        logo.color = Color.clear;
 
+        float fadeInDuration = 2f;
+        float elapsedTime = 0f;
 
-        float p = 1f;
-        while (p > 0f)
+        while (elapsedTime < fadeInDuration)
         {
-            p -= Time.deltaTime * 2.8f;
-            float alpha = 1 - p;
+            elapsedTime += Time.deltaTime;
+            float alpha = elapsedTime / fadeInDuration;
+
+            bg.color = Color.white.AlphaMultiplied(alpha);
             logo.color = Color.white.AlphaMultiplied(alpha);
-            logo.transform.localScale = Vector3.one * (p * p * 0.012f + 1f);
+
+            logo.transform.localScale = Vector3.one * (1f - (1f - alpha) * (1f - alpha) * 0.012f);
             yield return null;
         }
+
+        bg.color = Color.white;
         logo.color = Color.white;
         logo.transform.localScale = Vector3.one;
+        originalLogoScale = logo.transform.localScale; 
+
+        startText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
+        startText.transform.localPosition = new(0f, -0.28f, -10f);
+        startText.text = "准备加载...";
+        startText.fontStyle = FontStyles.Bold;
+        startText.color = Color.white.AlphaMultiplied(0f); 
+
+        elapsedTime = 0f;
+        float startFadeIn = 0.5f;
+        while (elapsedTime < startFadeIn)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = elapsedTime / startFadeIn;
+            startText.color = Color.white.AlphaMultiplied(alpha);
+            yield return null;
+        }
+
+        float waitTime = 2f;
+        elapsedTime = 0f;
+        while (elapsedTime < waitTime)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        elapsedTime = 0f;
+        float startFadeOut = 0.5f;
+        while (elapsedTime < startFadeOut)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = 1f - (elapsedTime / startFadeOut);
+            startText.color = Color.white.AlphaMultiplied(alpha);
+            yield return null;
+        }
+        GameObject.Destroy(startText.gameObject);
 
         loadText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
         loadText.transform.localPosition = new(0f, -0.28f, -10f);
         loadText.fontStyle = TMPro.FontStyles.Bold;
         loadText.text = "正在加载...";
         loadText.color = Color.white.AlphaMultiplied(0.3f);
+
+        _scaleCoroutine = __instance.StartCoroutine(ScaleLoop(logo.transform, originalLogoScale).WrapToIl2Cpp());
+
         {
             loadText.text = "正在加载语言...";
             ModTranslation.Load();
@@ -64,7 +124,6 @@ public static class LoadPatch
             yield return new WaitForSeconds(0.5f);
             loadText.text = "正在加载模组音效...";
             SoundEffectsManager.Load();
-
             var hatsLoader = CustomHatManager.Loader;
             float downloadStartTime = Time.time;
             int lastDownloadedCount = 0;
@@ -72,7 +131,7 @@ public static class LoadPatch
             const float maxWaitTime = 120f; // 最大等待时间2分钟
             const float stallTimeout = 30f; // 停滞超时30秒
 
-            while (!hatsLoader.isRunning && Time.time - downloadStartTime < 5f)
+            while (!hatsLoader.isRunning && Time.time - downloadStartTime < 2f)
             {
                 yield return null;
             }
@@ -109,10 +168,11 @@ public static class LoadPatch
                 loadText.text = "帽子加载成功!";
                 yield return new WaitForSeconds(0.5f);
             }
-
+#if PC
             loadText.text = "尝试加载模组光标...";
             if (TheOtherRolesEditedPlugin.ToggleCursor.Value) Helpers.enableCursor(true);
             yield return new WaitForSeconds(0.5f);
+
             if (BepInExUpdater.UpdateRequired)
             {
                 loadText.text = "正在更新BepInEx...";
@@ -120,6 +180,7 @@ public static class LoadPatch
                 yield return new WaitForSeconds(0.5f);
                 yield return null;
             }
+#endif
             loadText.text = "正在加载模组更新...";
             TheOtherRolesEditedPlugin.Instance.AddComponent<ModUpdater>();
             yield return new WaitForSeconds(0.5f);
@@ -140,7 +201,8 @@ public static class LoadPatch
 
             TheOtherRolesEditedPlugin.Logger.LogInfo("Loading TORE completed!");
         }
-        loadText.text = "加载完成";
+
+        loadText.text = "加载完成!";
         for (int i = 0; i < 3; i++)
         {
             loadText.gameObject.SetActive(false);
@@ -148,21 +210,40 @@ public static class LoadPatch
             loadText.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.03f);
         }
-
         GameObject.Destroy(loadText.gameObject);
 
-        p = 1f;
-        while (p > 0f)
+        if (_scaleCoroutine != null)
         {
-            p -= Time.deltaTime * 1.2f;
-            logo.color = Color.white.AlphaMultiplied(p);
+            __instance.StopCoroutine(_scaleCoroutine);
+            logo.transform.localScale = Vector3.one;
+        }
+
+        float fadeOutDuration = 2f;
+        elapsedTime = 0f;
+        while (elapsedTime < fadeOutDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = 1f - (elapsedTime / fadeOutDuration);
+            bg.color = Color.white.AlphaMultiplied(alpha);
+            logo.color = Color.white.AlphaMultiplied(alpha);
             yield return null;
         }
+        bg.color = Color.clear;
         logo.color = Color.clear;
-
 
         __instance.sceneChanger.AllowFinishLoadingScene();
         __instance.startedSceneLoad = true;
+    }
+
+    private static IEnumerator ScaleLoop(Transform targetTransform, Vector3 originalScale)
+    {
+        while (true)
+        {
+            float pingPongValue = Mathf.PingPong(Time.time * _scaleSpeed, 1f);
+            float currentScaleRatio = 1f + (pingPongValue * _scaleRange);
+            targetTransform.localScale = originalScale * currentScaleRatio;
+            yield return null;
+        }
     }
 
     static bool loadedTheOtherRoles = false;
@@ -173,7 +254,6 @@ public static class LoadPatch
             loadedTheOtherRoles = true;
             __instance.StartCoroutine(CoLoadTheOtherRoles(__instance).WrapToIl2Cpp());
         }
-
         return false;
     }
 }

@@ -15,47 +15,49 @@ public static class CustomHatManager
     public const string InnerslothPackageName = "官方帽子";
     public const string DeveloperPackageName = "开发者帽子";
 
-    internal static readonly Tuple<string, string> Repository = new("TheOtherRolesAU", "TheOtherHats");
     internal static string RepositoryUrl
     {
         get
         {
-            var (owner, repository) = Repository;
-            return $"https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/{owner}/{repository}/master";
+            return $"https://dl.amongusclub.cn/TheOtherRolesEdited/TheOtherHats";
         }
     }
 
 
     internal static readonly string ManifestFileName = "CustomHats.json";
-    
+
+#if PC
     internal static string CustomSkinsDirectory => Path.Combine(Path.GetDirectoryName(Application.dataPath)!, ResourcesDirectory);
+#else
+    internal static string CustomSkinsDirectory => Path.Combine(Application.persistentDataPath, ResourcesDirectory);
+#endif
     internal static string HatsDirectory => CustomSkinsDirectory;
-    
+
     internal static List<CustomHat> UnregisteredHats = new();
     internal static readonly Dictionary<string, HatViewData> ViewDataCache = new();
     internal static readonly Dictionary<string, HatExtension> ExtensionCache = new();
-    
+
     internal static readonly HatsLoader Loader;
-    
+
     internal static HatExtension TestExtension { get; private set; }
 
     static CustomHatManager()
     {
         Loader = TheOtherRolesEditedPlugin.Instance.AddComponent<HatsLoader>();
     }
-    
+
     internal static void LoadHats()
     {
         Loader.FetchHats();
     }
-    
+
     internal static bool TryGetCached(this HatParent hatParent, out HatViewData asset)
     {
         if (hatParent && hatParent.Hat) return hatParent.Hat.TryGetCached(out asset);
         asset = null;
         return false;
     }
-    
+
     internal static bool TryGetCached(this HatData hat, out HatViewData asset)
     {
         return ViewDataCache.TryGetValue(hat.name, out asset);
@@ -65,19 +67,20 @@ public static class CustomHatManager
     {
         return ViewDataCache.ContainsKey(hat.name);
     }
-    
+
     internal static bool IsCached(this HatParent hatParent)
     {
         return hatParent.Hat.IsCached();
     }
-    
+
     internal static HatData CreateHatBehaviour(CustomHat ch, bool testOnly = false)
     {
         var viewData = ViewDataCache[ch.Name] = ScriptableObject.CreateInstance<HatViewData>();
         var hat = ScriptableObject.CreateInstance<HatData>();
 
         viewData.MainImage = CreateHatSprite(ch.Resource);
-        if (viewData.MainImage == null) {
+        if (viewData.MainImage == null)
+        {
             throw new FileNotFoundException("File not downloaded yet");
         }
         viewData.FloorImage = viewData.MainImage;
@@ -101,7 +104,8 @@ public static class CustomHatManager
         hat.ChipOffset = new Vector2(0f, 0.2f);
         hat.Free = true;
 
-        var extend = new HatExtension {
+        var extend = new HatExtension
+        {
             Author = ch.Author ?? "Unknown",
             Package = ch.Package ?? "Misc.",
             Condition = ch.Condition ?? "none",
@@ -127,19 +131,19 @@ public static class CustomHatManager
         {
             ExtensionCache[hat.name] = extend;
         }
-        
+
         hat.ViewDataRef = new AssetReference(ViewDataCache[hat.name].Pointer);
         hat.CreateAddressableAsset();
         return hat;
     }
-    
+
     private static Sprite CreateHatSprite(string path)
     {
         var texture = Helpers.loadTextureFromDisk(Path.Combine(HatsDirectory, path));
         if (texture == null)
             texture = Helpers.loadTextureFromResources(path);
         if (texture == null) return null;
-        var sprite = Sprite.Create(texture, 
+        var sprite = Sprite.Create(texture,
             new Rect(0, 0, texture.width, texture.height),
             new Vector2(0.53f, 0.575f),
             texture.width * 0.375f);
@@ -278,26 +282,31 @@ public static class CustomHatManager
         return toDownload;
     }
 
-    public static List<CustomHat> loadHorseHats() {
+    public static List<CustomHat> loadHorseHats()
+    {
         List<CustomHat> hatdatas = new();
         Assembly assembly = Assembly.GetExecutingAssembly();
         string[] resourceNames = assembly.GetManifestResourceNames();
         List<string> hatFiles = new();
         Dictionary<string, List<string>> hatFilesSorted = new Dictionary<string, List<string>>();
-        foreach (string resourceName in resourceNames) {
-            if (resourceName.Contains("TheOtherRolesEdited.Resources.HorseHats.") && resourceName.Contains(".png")) {
+        foreach (string resourceName in resourceNames)
+        {
+            if (resourceName.Contains("TheOtherRolesEdited.Resources.HorseHats.") && resourceName.Contains(".png"))
+            {
                 hatFiles.Add(resourceName);
             }
         }
 
-        foreach (string s in hatFiles) {
+        foreach (string s in hatFiles)
+        {
             string value = s.Substring(0, s.LastIndexOf("HorseSpecialHat") + 17);
             if (value.Contains(".")) value.Remove(value.LastIndexOf("."));
             if (!hatFilesSorted.ContainsKey(value)) hatFilesSorted.Add(value, new List<string>());
             hatFilesSorted[value].Add(s);
         }
         int i = 0;
-        foreach (var item in hatFilesSorted) {
+        foreach (var item in hatFilesSorted)
+        {
             CustomHat info = new CustomHat();
             info.Name = $"April Hat {i++:D2}";
             info.Author = "A Fool";

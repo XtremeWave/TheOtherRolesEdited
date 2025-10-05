@@ -1,7 +1,6 @@
 using AmongUs.QuickChat;
 using CsvHelper;
 using HarmonyLib;
-using Rewired.Utils.Platforms.Windows;
 using TheOtherRolesEdited.Modules;
 using UnityEngine;
 
@@ -82,7 +81,7 @@ public static class ChatBubblePatch
            chatText.Contains("politics") ||
            chatText.Contains("dictatorship"))
         {
-            chatText = $"{Helpers.GradientColorText("FFFF00", "FF0000", $"\n{ModTranslation.getString("Politics")}")}";
+            chatText = $"{Helpers.GradientColorText("FFFF00", "FF0000", $"{ModTranslation.getString("Politics")}")}";
         }
     }
         private static bool IsModdedMsg(string name) => name.EndsWith('\0');

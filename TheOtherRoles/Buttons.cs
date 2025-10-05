@@ -912,150 +912,130 @@ namespace TheOtherRolesEdited
             );
 
             vampireKillButton = new CustomButton(
-           () =>
-           {
-               var murder = Helpers.checkMuderAttempt(Vampire.vampire, Vampire.currentTarget);
-               if (murder == MurderAttemptResult.PerformKill)
-               {
-                   if (Vampire.targetNearGarlic)
-                   {
-                       var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                           (byte)CustomRPC.UncheckedMurderPlayer, SendOption.Reliable);
-                       writer.Write(Vampire.vampire.PlayerId);
-                       writer.Write(Vampire.currentTarget.PlayerId);
-                       writer.Write(byte.MaxValue);
-                       AmongUsClient.Instance.FinishRpcImmediately(writer);
-                       RPCProcedure.uncheckedMurderPlayer(Vampire.vampire.PlayerId, Vampire.currentTarget.PlayerId,
-                           byte.MaxValue);
+                    () => {
+                        MurderAttemptResult murder = Helpers.checkMuderAttempt(Vampire.vampire, Vampire.currentTarget);
+                        if (murder == MurderAttemptResult.PerformKill)
+                        {
+                            if (Vampire.targetNearGarlic)
+                            {
+                                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
+                                writer.Write(Vampire.vampire.PlayerId);
+                                writer.Write(Vampire.currentTarget.PlayerId);
+                                writer.Write(Byte.MaxValue);
+                                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                                RPCProcedure.uncheckedMurderPlayer(Vampire.vampire.PlayerId, Vampire.currentTarget.PlayerId, Byte.MaxValue);
 
-                       vampireKillButton.HasEffect = false; // Block effect on this click
-                       vampireKillButton.Timer = vampireKillButton.MaxTimer;
-                   }
-                   else
-                   {
-                       Vampire.bitten = Vampire.currentTarget;
-                       // Notify players about bitten
-                       var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                           (byte)CustomRPC.VampireSetBitten, SendOption.Reliable);
-                       writer.Write(Vampire.bitten.PlayerId);
-                       writer.Write((byte)0);
-                       AmongUsClient.Instance.FinishRpcImmediately(writer);
-                       RPCProcedure.vampireSetBitten(Vampire.bitten.PlayerId, 0);
+                                vampireKillButton.HasEffect = false; // Block effect on this click
+                                vampireKillButton.Timer = vampireKillButton.MaxTimer;
+                            }
+                            else
+                            {
+                                Vampire.bitten = Vampire.currentTarget;
+                                // Notify players about bitten
+                                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VampireSetBitten, Hazel.SendOption.Reliable, -1);
+                                writer.Write(Vampire.bitten.PlayerId);
+                                writer.Write((byte)0);
+                                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                                RPCProcedure.vampireSetBitten(Vampire.bitten.PlayerId, 0);
 
-                       var lastTimer = (byte)Vampire.delay;
-                       FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Vampire.delay,
-                           new Action<float>(p =>
-                           {
-                               // Delayed action
-                               if (p <= 1f)
-                               {
-                                   var timer = (byte)vampireKillButton.Timer;
-                                   if (timer != lastTimer)
-                                   {
-                                       lastTimer = timer;
-                                       var writer = AmongUsClient.Instance.StartRpcImmediately(
-                                           PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareGhostInfo,
-                                           SendOption.Reliable);
-                                       writer.Write(PlayerControl.LocalPlayer.PlayerId);
-                                       writer.Write((byte)RPCProcedure.GhostInfoTypes.VampireTimer);
-                                       writer.Write(timer);
-                                       AmongUsClient.Instance.FinishRpcImmediately(writer);
-                                   }
-                               }
+                                byte lastTimer = (byte)Vampire.delay;
+                                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Vampire.delay, new Action<float>((p) => { // Delayed action
+                                    if (p <= 1f)
+                                    {
+                                        byte timer = (byte)vampireKillButton.Timer;
+                                        if (timer != lastTimer)
+                                        {
+                                            lastTimer = timer;
+                                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareGhostInfo, Hazel.SendOption.Reliable, -1);
+                                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                                            writer.Write((byte)RPCProcedure.GhostInfoTypes.VampireTimer);
+                                            writer.Write(timer);
+                                            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                                        }
+                                    }
+                                    if (p == 1f)
+                                    {
+                                        // Perform kill if possible and reset bitten (regardless whether the kill was successful or not)
+                                        var res = Helpers.checkMurderAttemptAndKill(Vampire.vampire, Vampire.bitten, showAnimation: false);
+                                        if (res == MurderAttemptResult.PerformKill)
+                                        {
+                                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VampireSetBitten, Hazel.SendOption.Reliable, -1);
+                                            writer.Write(byte.MaxValue);
+                                            writer.Write(byte.MaxValue);
+                                            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                                            RPCProcedure.vampireSetBitten(byte.MaxValue, byte.MaxValue);
+                                        }
+                                    }
+                                })));
+                                SoundEffectsManager.play("vampireBite");
 
-                               if (p == 1f)
-                               {
-                                   // Perform kill if possible and reset bitten (regardless whether the kill was successful or not)
-                                   var res = Helpers.checkMurderAttemptAndKill(Vampire.vampire, Vampire.bitten,
-                                       showAnimation: false);
-                                   if (res == MurderAttemptResult.PerformKill)
-                                   {
-                                       var writer = AmongUsClient.Instance.StartRpcImmediately(
-                                           PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VampireSetBitten,
-                                           SendOption.Reliable);
-                                       writer.Write(byte.MaxValue);
-                                       writer.Write(byte.MaxValue);
-                                       AmongUsClient.Instance.FinishRpcImmediately(writer);
-                                       RPCProcedure.vampireSetBitten(byte.MaxValue, byte.MaxValue);
-                                   }
-                               }
-                           })));
-                       SoundEffectsManager.play("vampireBite");
-
-                       vampireKillButton.HasEffect = true; // Trigger effect on this click
-                   }
-               }
-               else if (murder == MurderAttemptResult.BlankKill)
-               {
-                   vampireKillButton.Timer = vampireKillButton.MaxTimer;
-                   vampireKillButton.HasEffect = false;
-               }
-               else
-               {
-                   vampireKillButton.HasEffect = false;
-               }
-           },
-           () =>
-           {
-               return Vampire.vampire != null && Vampire.vampire == PlayerControl.LocalPlayer &&
-                      !PlayerControl.LocalPlayer.Data.IsDead;
-           },
-           () =>
-           {
-               if (Vampire.targetNearGarlic && Vampire.canKillNearGarlics)
-               {
-                   vampireKillButton.actionButton.graphic.sprite = __instance.KillButton.graphic.sprite;
-                   vampireKillButton.showButtonText = true;
-               }
-               else
-               {
-                   vampireKillButton.actionButton.graphic.sprite = Vampire.getButtonSprite();
-                   vampireKillButton.showButtonText = false;
-               }
-
-               return Vampire.currentTarget != null && PlayerControl.LocalPlayer.CanMove &&
-                      (!Vampire.targetNearGarlic || Vampire.canKillNearGarlics);
-           },
-           () =>
-           {
-               vampireKillButton.Timer = vampireKillButton.MaxTimer;
-               vampireKillButton.isEffectActive = false;
-               vampireKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
-           },
-           Vampire.getButtonSprite(),
-           CustomButton.ButtonPositions.upperRowLeft,
-           __instance,
-           KeyCode.Q,
-           false,
-           0f,
-           () => { vampireKillButton.Timer = vampireKillButton.MaxTimer; }
-       );
+                                vampireKillButton.HasEffect = true; // Trigger effect on this click
+                            }
+                        }
+                        else if (murder == MurderAttemptResult.BlankKill)
+                        {
+                            vampireKillButton.Timer = vampireKillButton.MaxTimer;
+                            vampireKillButton.HasEffect = false;
+                        }
+                        else
+                        {
+                            vampireKillButton.HasEffect = false;
+                        }
+                    },
+                    () => { return Vampire.vampire != null && Vampire.vampire == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
+                    () => {
+                        if (Vampire.targetNearGarlic && Vampire.canKillNearGarlics)
+                        {
+                            vampireKillButton.actionButton.graphic.sprite = __instance.KillButton.graphic.sprite;
+                            vampireKillButton.showButtonText = true;
+                        }
+                        else
+                        {
+                            vampireKillButton.actionButton.graphic.sprite = Vampire.getButtonSprite();
+                            vampireKillButton.showButtonText = false;
+                        }
+                        return Vampire.currentTarget != null && PlayerControl.LocalPlayer.CanMove && (!Vampire.targetNearGarlic || Vampire.canKillNearGarlics);
+                    },
+                    () => {
+                        vampireKillButton.Timer = vampireKillButton.MaxTimer;
+                        vampireKillButton.isEffectActive = false;
+                        vampireKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+                    },
+                    Vampire.getButtonSprite(),
+                    CustomButton.ButtonPositions.upperRowLeft,
+                    __instance,
+                    KeyCode.Q,
+                    false,
+                    0f,
+                    () => {
+                        vampireKillButton.Timer = vampireKillButton.MaxTimer;
+                    }
+                );
 
             garlicButton = new CustomButton(
-                () =>
-                {
+                () => {
                     Vampire.localPlacedGarlic = true;
                     var pos = PlayerControl.LocalPlayer.transform.position;
-                    var buff = new byte[sizeof(float) * 2];
+                    byte[] buff = new byte[sizeof(float) * 2];
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    var writer =
-                        AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceGarlic, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaceGarlic, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    writer.EndMessage();
                     RPCProcedure.placeGarlic(buff);
                     SoundEffectsManager.play("garlic");
                 },
-                () =>
-                {
-                    return !Vampire.localPlacedGarlic && !PlayerControl.LocalPlayer.Data.IsDead && Vampire.garlicsActive &&
-                           !HideNSeek.isHideNSeekGM && !PropHunt.isPropHuntGM;
-                },
+                () => { return !Vampire.localPlacedGarlic && !PlayerControl.LocalPlayer.Data.IsDead && Vampire.garlicsActive && !HideNSeek.isHideNSeekGM && !PropHunt.isPropHuntGM; },
                 () => { return PlayerControl.LocalPlayer.CanMove && !Vampire.localPlacedGarlic; },
                 () => { },
                 Vampire.getGarlicButtonSprite(),
-                new Vector3(0, -0.06f, 0),
+
+#if PC
+            new Vector3(0, -0.06f, 0),
+#else
+            new Vector3(1f, -0.06f, 0),
+#endif
                 __instance,
                 null,
                 true

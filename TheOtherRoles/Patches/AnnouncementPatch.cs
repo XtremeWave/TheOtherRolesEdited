@@ -44,6 +44,24 @@ public class ModNewsHistory
     {
         // 创建新公告时，不能删除旧公告   
         {
+
+            {
+                // TORE v1.3.0
+                var news = new ModNews
+                {
+                    Number = 100012,
+                    Title = $"TheOtherRolesEdited  v1.3.0",
+                    SubTitle = "适配Starlight！！！",
+                    ShortTitle = $"★TORE",
+                    Text = "<size=100%>欢迎来到 TORE v1.3.0.适配Among us v2025.9.9s/v17.0.0</size>\n"
+                        + "\n<b>声明</b>\n· 本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
+                        + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
+                        + "\n<b>更新内容</b>\n · 适配Starlight\n · 新增Loading界面Logo放大缩小\n · 新增Loading界面背景\n · 新增主页大厅AmongUs Logo和TORE Logo来回切换\n · 新增游戏大厅倒计时(倒计时结束后会自动踢出房间内的所有人)\n · 新增切换设置页面按钮\n · 新增轮抽选角隐藏随机角色的设置\n · 新增Starlight按钮(Android版)\n · 删除右下角按钮\n · 删除版本号检测\n · 为安卓端适配大厅UI\n · 为安卓端添加自定义帽子\n · 为安卓端删除Beplnex更新检测"
+                        + "\n<b>目前已知的问题</b>\n · 当android端用户进入pc端用户创建的游戏时会检测到版本不同(反之可以)\n · 安卓端快捷按钮无法跳转指定页面\n<b>以上问题均会解决如有更多问题请邮箱联系！【liu9928161@gmail.com/1500689499@qq.com】感谢您的支持！</b>",
+                    Date = "2025-10-5T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
             {
                 // TORE v1.2.9
                 var news = new ModNews
@@ -71,7 +89,7 @@ public class ModNewsHistory
                     Text = "<size=100%>欢迎来到 TORE v1.2.8.适配Among us v2025.4.15s/v16.1.0</size>\n"
                         + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
                         + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
-                        + "\n<b>更新内容</b>\n · 新增轮抽选职职业底图\n · 新增轮抽选职随机回合(by:方块)\n · 新增Loading界面\n · 新增游戏设备检测\n · 新增手动更新按钮\n · 修复BUG若干\n · 删除更新背景提示\n · <s>我还更新了版本号</s>",
+                        + "\n<b>更新内容</b>\n · 新增轮抽选角职业底图\n · 新增轮抽选角随机回合(by:方块)\n · 新增Loading界面\n · 新增游戏设备检测\n · 新增手动更新按钮\n · 修复BUG若干\n · 删除更新背景提示\n · <s>我还更新了版本号</s>",
                     Date = "2025-8-31T00:00:00Z"
                 };
                 AllModNews.Add(news);
@@ -121,7 +139,7 @@ public class ModNewsHistory
                     Text = "<size=100%>欢迎来到 TORE v1.2.5.2.适配Among us v2025.3.31s</size>\n"
                         + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
                         + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
-                        + "\n<b>新增</b>\n · <s>我更新了版本号</s>\n · 修复轮抽选职(真的)\n · 更进到 TOR v4.8.0的代码",
+                        + "\n<b>新增</b>\n · <s>我更新了版本号</s>\n · 修复轮抽选角(真的)\n · 更进到 TOR v4.8.0的代码",
                     Date = "2025-6-15T00:00:00Z"
                 };
                 AllModNews.Add(news);
@@ -137,7 +155,7 @@ public class ModNewsHistory
                     Text = "<size=100%>欢迎来到 TORE v1.2.5.适配Among us v2025.3.31s</size>\n"
                         + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
                         + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
-                        + "\n<b>新增</b>\n ·切换地图皮肤样式(仅限骷髅舰)\n ·轮抽选职增加随机职业按钮\n ·MOTD大厅提示语(方块服务器)\n ·测试模式\n · <s>我还更新了版本号</s>",
+                        + "\n<b>新增</b>\n ·切换地图皮肤样式(仅限骷髅舰)\n ·轮抽选角增加随机职业按钮\n ·MOTD大厅提示语(方块服务器)\n ·测试模式\n · <s>我还更新了版本号</s>",
                     Date = "2025-6-1T00:00:00Z"
                 };
                 AllModNews.Add(news);
@@ -192,7 +210,7 @@ public class ModNewsHistory
                         + "\n<b>澄清</b>\n · 上个版本说的话当我没说(主要是没想到TOR会更新480)"
                         + "\n<b>修改</b>\n · 修复了变形躲猫猫中玩家无法转化为道具的错误"
                         + "\n<b>新增</b>\n · 轮抽选角(by:TOR)\n ·更改的Ping延迟文字在会议中的位置"
-                        + "\n<b>温馨提示</b>\n · 在轮抽选职模式中如果想听音乐应调节AU原版的音量大小:>"
+                        + "\n<b>温馨提示</b>\n · 在轮抽选角模式中如果想听音乐应调节AU原版的音量大小:>"
                         + "\n<b>huh</b>\n · Have a great time！",
                     Date = "2025-3-1T00:00:00Z"
                 };

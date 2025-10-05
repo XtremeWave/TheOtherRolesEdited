@@ -232,7 +232,7 @@ namespace TheOtherRolesEdited
             newSelection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
             if (AmongUsClient.Instance?.AmClient == true && notifyUsers && selection != newSelection)
             {
-                DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage((StringNames)(this.id +6000), selections[newSelection].ToString(), false);
+                DestroyableSingleton<HudManager>.Instance.Notifier.AddSettingsChangeMessage((StringNames)(this.id + 6000), selections[newSelection].ToString(), false);
                 try
                 {
                     selection = newSelection;
@@ -616,7 +616,7 @@ namespace TheOtherRolesEdited
                     }
                     if (i % 2 != 0) singles++;
                     headers++; // for header
-                   CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
+                    CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
                     categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 61);
                     categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
                     if ((int)optionType == 99)
@@ -628,7 +628,8 @@ namespace TheOtherRolesEdited
                     __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
                     num -= 1.05f;
                     i = 0;
-                } else if (option.parent != null && (option.parent.selection == 0 || option.parent.parent != null && option.parent.parent.selection == 0)) continue;  // Hides options, for which the parent is disabled!
+                }
+                else if (option.parent != null && (option.parent.selection == 0 || option.parent.parent != null && option.parent.parent.selection == 0)) continue;  // Hides options, for which the parent is disabled!
                 if (option == CustomOptionHolder.crewmateRolesCountMax || option == CustomOptionHolder.neutralRolesCountMax || option == CustomOptionHolder.impostorRolesCountMax || option == CustomOptionHolder.modifiersCountMax || option == CustomOptionHolder.crewmateRolesFill)
                     continue;
 
@@ -636,10 +637,12 @@ namespace TheOtherRolesEdited
                 viewSettingsInfoPanel.transform.SetParent(__instance.settingsContainer);
                 viewSettingsInfoPanel.transform.localScale = Vector3.one;
                 float num2;
-                if (i % 2 == 0) {
+                if (i % 2 == 0)
+                {
                     lines++;
                     num2 = -8.95f;
-                    if (i > 0) {
+                    if (i > 0)
+                    {
                         num -= 0.85f;
                     }
 
@@ -798,7 +801,6 @@ namespace TheOtherRolesEdited
         public static List<GameObject> currentTabs = new();
         public static List<PassiveButton> currentButtons = new();
         public static Dictionary<byte, GameOptionsMenu> currentGOMs = new();
-        public static GameObject allButtonBackground;
         public static void Postfix(GameSettingMenu __instance)
         {
             currentTabs.ForEach(x => x?.Destroy());
@@ -950,6 +952,7 @@ namespace TheOtherRolesEdited
             GameObject.Find("GameSettingsLabel").transform.localPosition = new Vector3(4.8601f, -2.5787f, 0f);
             GameObject.Find("GameSettingsLabel").transform.localScale = new Vector3(0.8f, 0.8f, 0f);
 
+
             var GameSettingsButton = GameObject.Find("GameSettingsButton");
             GameSettingsButton.transform.GetChild(3).GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
             __instance.ChangeTab(1, false);
@@ -1023,41 +1026,41 @@ namespace TheOtherRolesEdited
             {
 
                 // create TOR settings
-                createCustomButton(__instance, next++, "TORSettings", "TORE设置", "为 TheOtherRolesEdited 大厅编辑的常规设置。");
+                createCustomButton(__instance, next++, "TORSettings", $"{ModTranslation.getString("ModSettings")}", "为 TheOtherRolesEdited 大厅编辑的常规设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.General, "TORSettings");
                 // Guesser if applicableng 
                 if (TORMapOptions.gameMode == CustomGamemodes.Guesser)
                 {
-                    createCustomButton(__instance, next++, "GuesserSettings", "赌怪模式设置", "TheOtherRolesEdited 模组的<color=#F3D10B>赌怪模式</color>设置。");
+                    createCustomButton(__instance, next++, "GuesserSettings", $"{ModTranslation.getString("GuesserSettings")}", "TheOtherRolesEdited 模组的<color=#F3D10B>赌怪模式</color>设置。");
                     createGameOptionsMenu(__instance, CustomOptionType.Guesser, "GuesserSettings");
                 }
                 // IMp
-                createCustomButton(__instance, next++, "ImpostorSettings", "内鬼职业设置", "TheOtherRolesEdited 模组的<color=#FF1111>内鬼</color>职业设置。");
+                createCustomButton(__instance, next++, "ImpostorSettings", $"{ModTranslation.getString("ImpostorSettings")}", "TheOtherRolesEdited 模组的<color=#FF1111>内鬼</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.Impostor, "ImpostorSettings");
 
                 // Neutral
-                createCustomButton(__instance, next++, "NeutralSettings", "中立职业设置", "TheOtherRolesEdited 模组的<color=#525F5F>中立</color>职业设置。");
+                createCustomButton(__instance, next++, "NeutralSettings", $"{ModTranslation.getString("NeutralSettings")}", "TheOtherRolesEdited 模组的<color=#525F5F>中立</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.Neutral, "NeutralSettings");
                 // Crew
-                createCustomButton(__instance, next++, "CrewmateSettings", "船员职业设置", "TheOtherRolesEdited 模组的<color=#5DE2E7>船员</color>职业设置。");
+                createCustomButton(__instance, next++, "CrewmateSettings", $"{ModTranslation.getString("CrewmateSettings")}", "TheOtherRolesEdited 模组的<color=#5DE2E7>船员</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.Crewmate, "CrewmateSettings");
                 // Modifier
-                createCustomButton(__instance, next++, "ModifierSettings", "附加职业设置", "TheOtherRolesEdited 模组的<color=#F3D10B>附加</color>职业设置。");
+                createCustomButton(__instance, next++, "ModifierSettings", $"{ModTranslation.getString("ModifierSettings")}", "TheOtherRolesEdited 模组的<color=#F3D10B>附加</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.Modifier, "ModifierSettings");
 
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
             {
                 // create Main HNS settings
-                createCustomButton(__instance, next++, "HideNSeekMain", "捉迷藏模式设置", "TheOtherRolesEdited 模组的<color=#F30BD5>捉迷藏模式</color>主要设置。");
+                createCustomButton(__instance, next++, "HideNSeekMain", $"{ModTranslation.getString("HideNSeekMain")}", "TheOtherRolesEdited 模组的<color=#F30BD5>捉迷藏模式</color>主要设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.HideNSeekMain, "HideNSeekMain");
                 // create HNS Role settings
-                createCustomButton(__instance, next++, "HideNSeekRoles", "捉迷藏职业设置", "TheOtherRolesEdited 模组的<color=#F30BB1>捉迷藏模式</color>职业设置。");
+                createCustomButton(__instance, next++, "HideNSeekRoles", $"{ModTranslation.getString("HideNSeekRoles")}", "TheOtherRolesEdited 模组的<color=#F30BB1>捉迷藏模式</color>职业设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.HideNSeekRoles, "HideNSeekRoles");
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
             {
-                createCustomButton(__instance, next++, "PropHunt", "变形躲猫猫模式设置", "TheOtherRolesEdited 模组的<color=#0772FF>变形躲猫猫模式</color>主要设置。");
+                createCustomButton(__instance, next++, "PropHunt", $"{ModTranslation.getString("Prophunt")}", "TheOtherRolesEdited 模组的<color=#0772FF>变形躲猫猫模式</color>主要设置。");
                 createGameOptionsMenu(__instance, CustomOptionType.PropHunt, "PropHunt");
             }
         }
@@ -1652,8 +1655,11 @@ namespace TheOtherRolesEdited
             }
         }
 
-        private static TMPro.TextMeshPro[] settingsTMPs = new TMPro.TextMeshPro[4];
+        private static TextMeshPro[] settingsTMPs = new TextMeshPro[4];
         private static GameObject settingsBackground;
+
+        private static List<PassiveButton> tabButtons = new List<PassiveButton>();
+
         public static void OpenSettings(HudManager __instance)
         {
             if (__instance.FullScreen == null || MapBehaviour.Instance && MapBehaviour.Instance.IsOpen) return;
@@ -1661,7 +1667,7 @@ namespace TheOtherRolesEdited
             {
                 CloseSummary();
             }
-            settingsBackground = GameObject.Instantiate(__instance.FullScreen.gameObject, __instance.transform);
+            settingsBackground = UnityEngine.Object.Instantiate(__instance.FullScreen.gameObject, __instance.transform);
             settingsBackground.SetActive(true);
             var renderer = settingsBackground.GetComponent<SpriteRenderer>();
             renderer.color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
@@ -1669,12 +1675,14 @@ namespace TheOtherRolesEdited
 
             for (int i = 0; i < settingsTMPs.Length; i++)
             {
-                settingsTMPs[i] = GameObject.Instantiate(__instance.KillButton.cooldownTimerText, __instance.transform);
-                settingsTMPs[i].alignment = TMPro.TextAlignmentOptions.TopLeft;
+                settingsTMPs[i] = UnityEngine.Object.Instantiate(__instance.KillButton.cooldownTimerText, __instance.transform);
+                settingsTMPs[i].alignment = TextAlignmentOptions.TopLeft;
                 settingsTMPs[i].enableWordWrapping = false;
                 settingsTMPs[i].transform.localScale = Vector3.one * 0.25f;
                 settingsTMPs[i].gameObject.SetActive(true);
             }
+
+            CreateTabButtons(__instance);
         }
 
         public static void CloseSettings()
@@ -1683,6 +1691,56 @@ namespace TheOtherRolesEdited
                 if (tmp) tmp.gameObject.Destroy();
 
             if (settingsBackground) settingsBackground.Destroy();
+
+            DestroyTabButtons();
+        }
+
+        private static void CreateTabButtons(HudManager __instance)
+        {
+            DestroyTabButtons();
+
+            int totalPages = LegacyGameOptionsPatch.maxPage;
+            float startY = 2.0f;
+            float spacing = -0.5f;
+
+            for (int i = 0; i < totalPages; i++)
+            {
+                int pageIndex = i;
+
+                var button = UnityEngine.Object.Instantiate(__instance.MapButton, __instance.transform);
+                button.gameObject.SetActive(true);
+
+                var background = button.gameObject.transform.FindChild("Background");
+                if (background != null)
+                    background.gameObject.SetActive(false);
+
+                var renderer = button.gameObject.transform.Find("Inactive").GetComponent<SpriteRenderer>();
+                var rendererActive = button.gameObject.transform.Find("Active").GetComponent<SpriteRenderer>();
+                renderer.sprite = Helpers.loadSpriteFromResources($"TheOtherRolesEdited.Resources.TabButtons.Num{i + 1}.png", 100f);
+                rendererActive.sprite = Helpers.loadSpriteFromResources($"TheOtherRolesEdited.Resources.TabButtons.Num{i + 1}_Active.png", 100f);
+
+                button.transform.localPosition = new Vector3(-5f, startY + (spacing * i), -500f);
+                button.enabled = true;
+
+                button.OnClick.RemoveAllListeners();
+                button.OnClick.AddListener((Action)(() => {
+                    TheOtherRolesEditedPlugin.optionsPage = pageIndex;
+                }));
+
+                tabButtons.Add(button);
+            }
+        }
+
+        private static void DestroyTabButtons()
+        {
+            foreach (var button in tabButtons)
+            {
+                if (button != null && button.gameObject != null)
+                {
+                    button.gameObject.Destroy();
+                }
+            }
+            tabButtons.Clear();
         }
 
         public static void ToggleSettings(HudManager __instance)

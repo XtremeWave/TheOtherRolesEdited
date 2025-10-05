@@ -26,6 +26,9 @@ public static class UpdateFriendCodeUIPatch
         string credentialsText = $"<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color> \u00a9 2025 ";
         credentialsText += "\t\t\t";
         string versionText = $"{Helpers.GradientColorText("00BFFF", "0000FF", $"TORE")} - v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}";
+#if ANDROID
+        versionText += "<size=50%><color=#29D837>(Android)</color></size>";
+#endif
         credentialsText += versionText;
 
         var friendCode = GameObject.Find("FriendCode");

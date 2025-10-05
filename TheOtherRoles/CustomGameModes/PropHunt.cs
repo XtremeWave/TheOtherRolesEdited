@@ -410,8 +410,11 @@ namespace TheOtherRolesEdited.CustomGameModes {
             if (GameData.Instance && __instance.myPlayer.CanMove)
                 __instance.body.velocity *= speedboostRatio;
         }
-
+#if PC
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
+#else
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin))]
+#endif
         [HarmonyPostfix]
         public static void IntroCutsceneDestroyPatch(IntroCutscene __instance) {
             if (!isPropHuntGM || !PlayerControl.LocalPlayer.Data.Role.IsImpostor) return;
@@ -425,7 +428,11 @@ namespace TheOtherRolesEdited.CustomGameModes {
             // Play mp4 video in Full Screen:
             Assembly assembly = Assembly.GetExecutingAssembly();
             string[] resourceNames = assembly.GetManifestResourceNames();
-            var resourceBundle = assembly.GetManifestResourceStream("TheOtherRolesEdited.Resources.IntroAnimation.intro");
+#if PC
+            var resourceBundle = assembly.GetManifestResourceStream("TheOtherRolesEdited.Resources.IntroAnimation.intro_Win");
+#else
+            var resourceBundle = assembly.GetManifestResourceStream("TheOtherRolesEdited.Resources.IntroAnimation.intro_Android");
+#endif
             var assetBundle = AssetBundle.LoadFromMemory(resourceBundle.ReadFully());
             VideoClip introVid = assetBundle.LoadAsset<VideoClip>("Assets/Video/intro.webm");
             GameObject camera = GameObject.Find("Main Camera");
