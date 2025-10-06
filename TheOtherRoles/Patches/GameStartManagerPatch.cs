@@ -38,10 +38,10 @@ namespace TheOtherRolesEdited.Patches
         private static bool versionSent = false;
         private static string lobbyCodeText = "";
 
-        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
-        public class AmongUsClientOnPlayerJoinedPatch
+        [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), nameof(PlayerPhysics._CoSpawnPlayer_d__42.MoveNext))]
+        public class AmongUsClientCreatePlayerPatch
         {
-            public static void Postfix(AmongUsClient __instance)
+            public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance)
             {
                 if (CachedPlayer.LocalPlayer != null)
                 {
@@ -285,7 +285,9 @@ namespace TheOtherRolesEdited.Patches
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGamemode, Hazel.SendOption.Reliable, -1);
                     writer.Write((byte)TORMapOptions.gameMode);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.shareGamemode((byte)TORMapOptions.gameMode);
+                    try
+                    { RPCProcedure.shareGamemode((byte)TORMapOptions.gameMode); }
+                    catch { }
                     sendGamemode = false;
                 }
             }

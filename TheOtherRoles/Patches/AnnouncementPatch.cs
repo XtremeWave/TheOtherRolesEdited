@@ -57,8 +57,8 @@ public class ModNewsHistory
                         + "\n<b>声明</b>\n· 本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
                         + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
                         + "\n<b>更新内容</b>\n · 适配Starlight\n · 新增Loading界面Logo放大缩小\n · 新增Loading界面背景\n · 新增主页大厅AmongUs Logo和TORE Logo来回切换\n · 新增游戏大厅倒计时(倒计时结束后会自动踢出房间内的所有人)\n · 新增切换设置页面按钮\n · 新增轮抽选角隐藏随机角色的设置\n · 新增Starlight按钮(Android版)\n · 删除右下角按钮\n · 删除版本号检测\n · 为安卓端适配大厅UI\n · 为安卓端添加自定义帽子\n · 为安卓端删除Beplnex更新检测"
-                        + "\n<b>目前已知的问题</b>\n · 当android端用户进入pc端用户创建的游戏时会检测到版本不同(反之可以)\n · 安卓端快捷按钮无法跳转指定页面\n<b>以上问题均会解决如有更多问题请邮箱联系！【liu9928161@gmail.com/1500689499@qq.com】感谢您的支持！</b>",
-                    Date = "2025-10-5T00:00:00Z"
+                        + "\n<b>目前已知的问题</b>\n · <s>当android端用户进入pc端用户创建的游戏时会检测到版本不同(反之可以)</s>[已解决]\n · 安卓端快捷按钮无法跳转指定页面\n<b>以上问题均会解决如有更多问题请邮箱联系！【liu9928161@gmail.com/1500689499@qq.com】感谢您的支持！</b>",
+                    Date = "2025-10-6T00:00:00Z"
                 };
                 AllModNews.Add(news);
             }

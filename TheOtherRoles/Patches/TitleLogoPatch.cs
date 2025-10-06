@@ -95,7 +95,7 @@ internal class TitleLogoPatch
         if (!(BottomButtonBounds = GameObject.Find("BottomButtonBounds"))) return;
         BottomButtonBounds.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
 #if ANDROID
-        BottomButtonBounds.transform.localPosition = new Vector3(0.0777f, -1.2146f, 0);
+        BottomButtonBounds.transform.localPosition = new Vector3(0.08f, -1.2146f, 0);
 #endif
         __instance.playButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
         __instance.inventoryButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);

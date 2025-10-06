@@ -68,6 +68,7 @@ namespace TheOtherRolesEdited.Modules {
             }
         }
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
         public static class AmongUsClientOnPlayerJoined {
             public static bool Prefix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client) {
                 if (LobbyLimit < __instance.allClients.Count) { // TODO: Fix this canceling start

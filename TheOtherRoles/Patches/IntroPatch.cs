@@ -24,7 +24,13 @@ namespace TheOtherRolesEdited.Patches
     {
         public static PoolablePlayer playerPrefab;
         public static Vector3 bottomLeft;
-        public static void Prefix(IntroCutscene __instance)
+
+#if PC
+        [HarmonyPrefix]
+#else
+        [HarmonyPostfix]
+#endif
+        public static void IntroCutsceneDestroyPatch(IntroCutscene __instance)
         {
             // Generate and initialize player icons
             int playerCounter = 0;
@@ -217,7 +223,8 @@ namespace TheOtherRolesEdited.Patches
                     }
                     else
                     {
-                        __instance.ImpostorText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.NumImpostorsP, (Il2CppReferenceArray<Il2CppSystem.Object>)(new object[] { adjustedNumImpostors }));
+                        var parameters = new Il2CppReferenceArray<Il2CppSystem.Object>(new Il2CppSystem.Object[] { (Il2CppSystem.Object)adjustedNumImpostors });
+                        __instance.ImpostorText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.NumImpostorsP, parameters);
                     }
                     __instance.ImpostorText.text = __instance.ImpostorText.text.Replace("[FF1919FF]", "<color=#FF1919FF>");
                     __instance.ImpostorText.text = __instance.ImpostorText.text.Replace("[]", "</color>");
