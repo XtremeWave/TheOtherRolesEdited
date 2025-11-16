@@ -15,13 +15,13 @@ public static class CustomHatManager
     public const string InnerslothPackageName = "官方帽子";
     public const string DeveloperPackageName = "开发者帽子";
 
-    internal static string RepositoryUrl
-    {
-        get
-        {
-            return $"https://dl.amongusclub.cn/TheOtherRolesEdited/TheOtherHats";
-        }
-    }
+     internal static string RepositoryUrl
+     {
+         get
+         {
+             return $"https://mcbbs.amongusclub.cn:22032/TheOtherHats";
+         }
+     }
 
 
     internal static readonly string ManifestFileName = "CustomHats.json";

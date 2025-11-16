@@ -1,6 +1,7 @@
 ﻿using AmongUs.Data;
 using HarmonyLib;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -74,6 +75,11 @@ public class ModTranslation
         if (data.ContainsKey(defaultLanguage)) return key.Replace(keyClean, data[defaultLanguage]);
 
         return key;
+    }
+
+    internal static string getString(StringNames announcementLabel)
+    {
+        throw new NotImplementedException();
     }
 }
 

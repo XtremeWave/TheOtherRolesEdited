@@ -1,4 +1,6 @@
 using HarmonyLib;
+using TheOtherRolesEdited.Objects;
+using UnityEngine;
 
 namespace TheOtherRolesEdited.Modules;
 
@@ -18,7 +20,6 @@ public class Debugger
         }
     }
 
-
     [HarmonyPatch(typeof(LogicGameFlow), nameof(LogicGameFlow.CheckEndCriteria))]
     [HarmonyPatch(typeof(LogicGameFlowHnS), nameof(LogicGameFlowHnS.CheckEndCriteria))]
     [HarmonyPatch(typeof(LogicGameFlowNormal), nameof(LogicGameFlowNormal.CheckEndCriteria))]
@@ -30,7 +31,6 @@ public class Debugger
     [HarmonyPatch(typeof(EndGameNavigation), nameof(EndGameNavigation.ShowDefaultNavigation))]
     internal static class AutoPlayAgainPatch
     {
-
         public static void Postfix(EndGameNavigation __instance)
         {
             if (!DebugMode) return;

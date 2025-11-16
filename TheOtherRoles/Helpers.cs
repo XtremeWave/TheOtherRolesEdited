@@ -327,7 +327,7 @@ namespace TheOtherRolesEdited
         {
             if (initalSetCursor)
             {
-                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Cursor.png", 115f);
+                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Cursor-Old.png", 150f);
                 Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
                 return;
             }
@@ -337,7 +337,7 @@ namespace TheOtherRolesEdited
             }
             else
             {
-                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Cursor.png", 115f);
+                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Cursor-Old.png", 150f);
                 Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
             }
         }

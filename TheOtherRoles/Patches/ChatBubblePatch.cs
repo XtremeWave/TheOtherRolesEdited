@@ -1,89 +1,88 @@
 using AmongUs.QuickChat;
 using CsvHelper;
 using HarmonyLib;
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using TheOtherRolesEdited.Modules;
-using UnityEngine;
-
 namespace TheOtherRolesEdited.Patches;
 
 [HarmonyPatch(typeof(ChatBubble))]
 public static class ChatBubblePatch
 {
+    private static readonly string[] SensitiveContents;
 
-    public static string ColorString(Color32 color, string str) => $"<color=#{color.r:x2}{color.g:x2}{color.b:x2}{color.a:x2}>{str}</color>";
+    static ChatBubblePatch()
+    {
+        string Banwords = "TheOtherRolesEdited.Resources.BanWords.BanWords.txt";
+
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(Banwords);
+        using var reader = new StreamReader(stream);
+
+        SensitiveContents = reader.ReadToEnd()
+            .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Trim())
+            .ToArray();
+    }
 
     [HarmonyPatch(nameof(ChatBubble.SetText)), HarmonyPrefix]
     public static void SetTextPrefix(ChatBubble __instance, ref string chatText)
     {
-        if (chatText.Contains("░") ||
-           chatText.Contains("▄") ||
-           chatText.Contains("█") ||
-           chatText.Contains("▌") ||
-           chatText.Contains("▒") ||
-           chatText.Contains("中华民国") ||
-           chatText.Contains("ROC") ||
-           chatText.Contains("roc") ||
-           chatText.Contains("台湾国") ||
-           chatText.Contains("台湾独立") ||
-           chatText.Contains("台独") ||
-           chatText.Contains("香港独立") ||
-           chatText.Contains("港独") ||
-           chatText.Contains("澳门独立") ||
-           chatText.Contains("澳独") ||
-           chatText.Contains("西藏独立") ||
-           chatText.Contains("藏独") ||
-           chatText.Contains("新疆独立") ||
-           chatText.Contains("疆独") ||
-           chatText.Contains("赖清德") ||
-           chatText.Contains("蔡英文") ||
-           chatText.Contains("要独立") ||
-           chatText.Contains("搞独立") ||
-           chatText.Contains("中华人民共和国") ||
-           chatText.Contains("中国") ||
-           chatText.Contains("习近平") ||
-           chatText.Contains("邓小平") ||
-           chatText.Contains("江泽民") ||
-           chatText.Contains("毛泽东") ||
-           chatText.Contains("PRC") ||
-           chatText.Contains("共产党") ||
-           chatText.Contains("国民党") ||
-           chatText.Contains("民进党") ||
-           chatText.Contains("台湾当局") ||
-           chatText.Contains("总统") ||
-           chatText.Contains("主席") ||
-           chatText.Contains("民主") ||
-           chatText.Contains("政治") ||
-           chatText.Contains("独裁") ||
-           chatText.Contains("Taiwanese")||
-           chatText.Contains("Republic of China") ||
-           chatText.Contains("Republic of Taiwan") ||
-           chatText.Contains("Taiwan independence") ||
-           chatText.Contains("Hong Kong independence") ||
-           chatText.Contains("Macao independence") ||
-           chatText.Contains("Tibet independence") ||
-           chatText.Contains("xinjiang independence") ||
-           chatText.Contains("XinJing independence") ||
-           chatText.Contains("Lai Ching-te") ||
-           chatText.Contains("Tsai Ing-wen") ||
-           chatText.Contains("want to be independent") ||
-           chatText.Contains("engage in independence") ||
-           chatText.Contains("People's Republic of China") ||
-           chatText.Contains("Xi JingPing") ||
-           chatText.Contains("XiJingPing") ||
-           chatText.Contains("XIJINGPING") ||
-           chatText.Contains("Communist Party") ||
-           chatText.Contains("Kuomintang") ||
-           chatText.Contains("Democratic Progressive Party") ||
-           chatText.Contains("Taiwan authorities") ||
-           chatText.Contains("president") ||
-           chatText.Contains("chairman") ||
-           chatText.Contains("democracy") ||
-           chatText.Contains("politics") ||
-           chatText.Contains("dictatorship"))
+        string chatTextWithoutSpaces = chatText.Replace(" ", "");
+
+        foreach (var sensitiveWord in SensitiveContents)
         {
-            chatText = $"{Helpers.GradientColorText("FFFF00", "FF0000", $"{ModTranslation.getString("Politics")}")}";
+            string sensitiveWordWithoutSpaces = sensitiveWord.Replace(" ", "");
+
+            if (string.IsNullOrEmpty(sensitiveWordWithoutSpaces))
+                continue;
+
+            if (chatTextWithoutSpaces.Contains(sensitiveWordWithoutSpaces))
+            {
+                chatText = ReplaceIgnoringSpaces(chatText, sensitiveWord, "**");
+            }
         }
+
     }
-        private static bool IsModdedMsg(string name) => name.EndsWith('\0');
+
+    private static string ReplaceIgnoringSpaces(string originalText, string sensitiveWord, string replacement)
+    {
+        string sensitivePattern = sensitiveWord.Replace(" ", "");
+        if (string.IsNullOrEmpty(sensitivePattern))
+            return originalText;
+
+        string textWithoutSpaces = originalText.Replace(" ", "");
+        int index = textWithoutSpaces.IndexOf(sensitivePattern, StringComparison.Ordinal);
+
+        while (index != -1)
+        {
+            int startPos = GetOriginalPosition(originalText, 0, index);
+            int endPos = GetOriginalPosition(originalText, startPos, sensitivePattern.Length);
+
+            originalText = originalText.Remove(startPos, endPos - startPos).Insert(startPos, replacement);
+
+            textWithoutSpaces = originalText.Replace(" ", "");
+            index = textWithoutSpaces.IndexOf(sensitivePattern, StringComparison.Ordinal);
+        }
+
+        return originalText;
     }
-//来自YUAC的代码
+
+    private static int GetOriginalPosition(string originalText, int startSearch, int targetLength)
+    {
+        int currentLength = 0;
+        for (int i = startSearch; i < originalText.Length; i++)
+        {
+            if (originalText[i] != ' ')
+            {
+                currentLength++;
+                if (currentLength > targetLength)
+                    return i;
+            }
+        }
+        return originalText.Length;
+    }
+
+    private static bool IsModdedMsg(string name) => name.EndsWith('\0');
+}

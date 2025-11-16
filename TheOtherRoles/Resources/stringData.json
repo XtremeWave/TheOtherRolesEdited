@@ -1,4 +1,5 @@
 {
+    //UI
     "ToDateToday": {
         "0": "To date today TORE has been used  <color=#00bfff>{0}</color> times~",
         "13": "截至今日TORE已被使用 <color=#00bfff>{0}</color> 次啦~"
@@ -15,49 +16,9 @@
         "0": "Thank You For Playing TORE!",
         "13": "感谢您使用TORE!"
     },
-    "Welcome": {
-        "0": "Welcome to The Other Roles Edited!",
-        "13": "欢迎来到The Other Roles Edited!"
-    },
     "Politics": {
         "0": "【The content of the message contains politically sensitive information and has been rejected】",
         "13": "【发送内容包含政治敏感信息,已驳回】"
-    },
-    "Guesser": {
-        "0": "Guesser",
-        "13": "赌怪模式"
-    },
-    "HideNSeek": {
-        "0": "Hide N Seek",
-        "13": "捉迷藏模式"
-    },
-    "PropHunt": {
-        "0": "Prop Hunt",
-        "13": "变形躲猫猫模式"
-    },
-    "GuesserTip": {
-        "0": "Based on the classic mode, every player is a new mode of guesser",
-        "13": "在经典模式的基础上,每一位玩家都是赌怪的全新模式。"
-    },
-    "HideNSeekTip": {
-        "0": "A separate new mode in which the hunter catches all the hiders within the specified time.",
-        "13": "一个独立的新模式,猎人要在规定的时间内抓住所有躲藏者。"
-    },
-    "PropHuntTip": {
-        "0": "A separate new mode where each hider can be transformed into any item on the map.",
-        "13": "一个独立的新模式,每个躲藏者可变换为地图上的任意物品,猎人需要识破他们的伪装并击杀掉他们。"
-    },
-    "GameMode": {
-        "0": "Game Mode",
-        "13": "游戏模式"
-    },
-    "VanHideNSeek": {
-        "0": "Van. HideNSeek",
-        "13": "官方躲猫猫"
-    },
-    "Classic": {
-        "0": "Classic",
-        "13": "经典模式"
     },
     "Credentials": {
         "0": "Translate by:<color=#FCCE03FF>farewell</color>",
@@ -87,42 +48,85 @@
         "0": "TORE Credits",
         "13": "TORE贡献者"
     },
-    "Dev": {
-        "0": "Developers",
-        "13": "开发者"
-    },
-    "ServerHost": {
-        "0": "Server Host",
-        "13": "服主"
-    },
-    "Con": {
-        "0": "Contributors",
-        "13": "贡献者"
-    },
-    "Tester": {
-        "0": "Tester",
-        "13": "测逝员"
+    "MOD": {
+        "0": "Modded by",
+        "13": "模组作者"
     },
     "Art": {
-        "0": "Artist",
+        "0": "Art",
         "13": "美工"
     },
-    "On": {
-        "0": "On",
-        "13": "开启"
+    "Translate": {
+        "0": "English translation",
+        "13": "中文翻译"
     },
-    "Off": {
-        "0": "Off",
+    "UpdateWay1": {
+        "0": "One-Click Update",
+        "13": "一键更新"
+    },
+    "UpdateWay2": {
+        "0": "Manual Update",
+        "13": "手动更新"
+    },
+    "Announcement": {
+        "0": "Announcement",
+        "13": "公告"
+    },
+    "UpdateAnnouncement": {
+        "0": "Update Announcement",
+        "13": "更新公告"
+    },
+    "PleaseUpdate": {
+        "0": "Please update to the latest version of <color=#FF0205>{0}</color>",
+        "13": "请更新至<color=#FF0205>{0}</color>最新版本"
+    },
+    "Map": {
+        "0": "Map",
+        "13": "地图"
+    },
+    "Close": {
+        "0": "Close",
         "13": "关闭"
     },
-    "Preset": {
-        "0": "Preset",
-        "13": "预设"
+
+    //游戏模式
+    "Guesser": {
+        "0": "Guesser",
+        "13": "赌怪模式"
     },
-    "GameOptions": {
-        "0": "Game Options",
-        "13": "游戏选项"
+    "HideNSeek": {
+        "0": "Hide N Seek",
+        "13": "捉迷藏模式"
     },
+    "PropHunt": {
+        "0": "Prop Hunt",
+        "13": "变形狩猎模式"
+    },
+    "GameMode": {
+        "0": "Game Mode",
+        "13": "游戏模式"
+    },
+    "VanHideNSeek": {
+        "0": "Van. HideNSeek",
+        "13": "官方躲猫猫"
+    },
+    "Classic": {
+        "0": "Classic",
+        "13": "经典模式"
+    },
+    "GuesserTip": {
+        "0": "Based on the classic mode, every player is a new mode of guesser",
+        "13": "在经典模式的基础上,每一位玩家都是赌怪的全新模式。"
+    },
+    "HideNSeekTip": {
+        "0": "A separate new mode in which the hunter catches all the hiders within the specified time.",
+        "13": "一个独立的新模式,猎人要在规定的时间内抓住所有躲藏者。"
+    },
+    "PropHuntTip": {
+        "0": "A separate new mode where each hider can be transformed into any item on the map.",
+        "13": "一个独立的新模式,每个躲藏者可变换为地图上的任意物品,猎人需要识破他们的伪装并击杀掉他们。"
+    },
+    //模组设置
     "Options1": {
         "0": "Ghosts See Tasks & Other Info",
         "13": "幽灵可以查看任务&其他"
@@ -170,6 +174,23 @@
     "moreOptionsText": {
         "0": "More Options",
         "13": "更多设置..."
+    },
+    //游戏设置
+    "On": {
+        "0": "On",
+        "13": "开启"
+    },
+    "Off": {
+        "0": "Off",
+        "13": "关闭"
+    },
+    "Preset": {
+        "0": "Preset",
+        "13": "预设"
+    },
+    "GameOptions": {
+        "0": "Game Options",
+        "13": "游戏选项"
     },
     "ImpostorRoles": {
         "0": "Impostor Roles",
@@ -225,18 +246,259 @@
     },
     "Prophunt": {
         "0": "PropHunt Settings",
-        "13": "变形躲猫猫设置"
+        "13": "变形狩猎设置"
     },
-    "UpdateWay1": {
-        "0": "One-Click Update",
-        "13": "一键更新"
+    "ModDescriptionText": {
+        "0": "Classic settings for {0} mod editing.",
+        "13": "{0} 模组编辑设置的基本设置。"
     },
-    "UpdateWay2": {
-        "0": "Manual Update",
-        "13": "手动更新"
+    "GuesserModeDescriptionText": {
+        "0": "In <color=#F3D10B>GUESSER MODE</color>, each player can use the guess skill during the meeting.",
+        "13": "在<color=#F3D10B>赌怪模式</color>下每个玩家都可以在会议中使用赌杀技能。"
     },
+    "ImpostorDescriptionText": {
+        "0": "Add more <color=#FF1111>IMPOSTOR</color> roles to the game.",
+        "13": "为原版游戏增加更多<color=#FF1111>内鬼</color>职业而设置。"
+    },
+    "NeutralDescriptionText": {
+        "0": "Add more <color=#525F5F>NEUTRAL</color> roles to the game.",
+        "13": "为原版游戏增加更多<color=#525F5F>中立</color>职业而设置。"
+    },
+    "CrewmateDescriptionText": {
+        "0": "Add more <color=#5DE2E7>CREWMATE</color> roles to the game.",
+        "13": "为原版游戏增加更多<color=#5DE2E7>船员</color>职业而设置。"
+    },
+    "ModifierDescriptionText": {
+        "0": "Add more <color=#F3D10B>MODIFIER</color> roles to the game.",
+        "13": "为原版游戏增加更多<color=#F3D10B>附加</color>职业而设置。"
+    },
+    "HnsModeDescriptionText": {
+        "0": "In <color=#F30BD5>HIDE N SEEK MODE</color>, each player must hide well to avoid being discovered by the hunters.",
+        "13": "在<color=#F30BD5>捉迷藏模式</color>下每个玩家都要躲藏好防止被猎人发现。"
+    },
+    "HnsModeRolesDescriptionText": {
+        "0": "Roles settings for <color=#F30BB1>HIDE N SEEK MODE</color>.",
+        "13": "<color=#F30BB1>捉迷藏模式</color>的职业技能设置。"
+    },
+    "PhModeDescriptionText": {
+        "0": "In <color=#0772FF>PORPHUNT MODE</color>, each player must transform into any object on the map within the given time to avoid being discovered by the hunter.",
+        "13": "在<color=#0772FF>变形狩猎模式</color>下每个躲藏者要在规定时间内变为地图中的任意物品以保证不会被猎人发现。"
+    },
+
+    //轮抽选角
     "playerText": {
         "0": "player {0}",
         "13": "玩家 {0}"
+    },
+    //版本检测
+    "gameStartTextDiferentVersion": {
+        "0": "<color=#ff0305> {0} used different versions of The Other Roles Edited\n",
+        "13": "<color=#ff0305> {0} 使用了不同版本的 The Other Roles Edited\n"
+    },
+    "gameStartTextOldVersion": {
+        "0": "<color=#ff0305> {0} used an older version of The Other Roles Edited\n",
+        "13": "<color=#ff0305> {0} 使用了过旧版本的 The Other Roles Edited\n"
+    },
+    "gameStartTextNewVersion": {
+        "0": "<color=#ff0305> {0} used a newer version of The Other Roles Edited\n",
+        "13": "<color=#ff0305> {0} 使用了过新版本的 The Other Roles Edited\n"
+    },
+    "gameStartTextModVersion": {
+        "0": "<color=#ff0305> {0} used another TOR mod version\n",
+        "13": "<color=#ff0305> {0} 使用了其他 TOR 系列分支模组\n"
+    },
+    "gameStartHasDifferentVersion": {
+        "0": "<color=#ff0305> The host used different versions of The Other Roles Edited \n You will be kicked out in {0} seconds",
+        "13": "<color=#ff0305> 房主使用了不同版本的 The Other Roles Edited \n 你将在 {0} 秒后被踢出"
+    },
+    "gameStartDifferentVersionPlayer": {
+        "0": "<color=#ff0305> Some players used different versions of The Other Roles Edited\n",
+        "13": "<color=#ff0305> 有玩家使用了不同版本的The Other Roles Edited\n"
+    },
+    //颜色
+    "Tamarind": {
+        "0": "Tamarind",
+        "13": "深绿色"
+    },
+    "Army": {
+        "0": "Army",
+        "13": "军绿色"
+    },
+    "Olive": {
+        "0": "Olive",
+        "13": "橄榄色"
+    },
+    "Turquoise": {
+        "0": "Turquoise",
+        "13": "绿松石"
+    },
+    "Mint": {
+        "0": "Mint",
+        "13": "薄荷绿"
+    },
+    "Lavender": {
+        "0": "Lavender",
+        "13": "熏衣紫"
+    },
+    "Nougat": {
+        "0": "Nougat",
+        "13": "棕褐色"
+    },
+    "Peach": {
+        "0": "Peach",
+        "13": "桃粉色"
+    },
+    "Wasabi": {
+        "0": "Wasabi",
+        "13": "芥末绿"
+    },
+    "HotPink": {
+        "0": "Hot Pink",
+        "13": "热粉色"
+    },
+    "Petrol": {
+        "0": "Petrol",
+        "13": "油画绿"
+    },
+    "SignalOrange": {
+        "0": "Signal\nOrange",
+        "13": "信号橙"
+    },
+    "Teal": {
+        "0": "Teal",
+        "13": "蓝绿色"
+    },
+    "Blurple": {
+        "0": "Blurple",
+        "13": "蓝紫色"
+    },
+    "Sunrise": {
+        "0": "Sunrise",
+        "13": "日出红"
+    },
+    "Ice": {
+        "0": "Ice",
+        "13": "冰蓝色"
+    },
+    "Fuchsia": {
+        "0": "Fuchsia",
+        "13": "紫红色"
+    },
+    "RoyalGreen": {
+        "0": "Royal\nGreen",
+        "13": "皇家绿"
+    },
+    "Slime": {
+        "0": "Slime",
+        "13": "荧光绿"
+    },
+    "Navy": {
+        "0": "Navy",
+        "13": "藏蓝色"
+    },
+    "Darkness": {
+        "0": "Darkness",
+        "13": "暗黑色"
+    },
+    "Ocean": {
+        "0": "Ocean",
+        "13": "海蓝色"
+    },
+    "Sundown": {
+        "0": "Sundown",
+        "13": "鲑鱼红"
+    },
+    "Lemon": {
+        "0": "Lemon",
+        "13": "柠檬黄"
+    },
+    //Loading 
+    "Prepare": {
+        "0": "Preparing to load...",
+        "13": "准备加载..."
+    },
+    "Loading": {
+        "0": "Loading...",
+        "13": "正在加载..."
+    },
+    "Dev": {
+        "0": "Loading Dev Tags...",
+        "13": "正在加载开发者头衔..."
+    },
+    "Motd": {
+        "0": "Loading MOTDS...",
+        "13": "正在加载今日模组热点..."
+    },
+    "Server": {
+        "0": "Loading Server...",
+        "13": "正在加载服务器..."
+    },
+    "Harmony": {
+        "0": "Loading Harmony Patch...",
+        "13": "加载Harmony Patch..."
+    },
+    "Building": {
+        "0": "Building Settings...",
+        "13": "正在构建设置..."
+    },
+    "Modcolor": {
+        "0": "Loading Color...",
+        "13": "正在加载模组颜色..."
+    },
+    "Modsound": {
+        "0": "Loading Sounds...",
+        "13": "正在加载模组音效..."
+    },
+    "Modhat": {
+        "0": "Loading Hats...",
+        "13": "正在加载模组帽子..."
+    },
+    "Downloadhat": {
+        "0": "Downloading Hats",
+        "13": "正在下载模组帽子"
+    },
+    "Toolong": {
+        "0": "The hat is taking too long to download, continuing in the background...",
+        "13": "帽子下载时间过长，正在后台继续..."
+    },
+    "Skipping": {
+        "0": "Hat Download Paused, Skipping...",
+        "13": "帽子下载暂停，正在跳过..."
+    },
+    "Hatcomplete": {
+        "0": "Hats Loading complete...",
+        "13": "帽子加载成功..."
+    },
+    "Modcursor": {
+        "0": "Loading Cursor...",
+        "13": "尝试加载模组光标..."
+    },
+    "BepInEx": {
+        "0": "Updating BepInEx...",
+        "13": "正在更新BepInEx..."
+    },
+    "Modupdates": {
+        "0": "Loading Updates...",
+        "13": "正在加载模组更新..."
+    },
+    "AFD": {
+        "0": "Loading April Fools' Day event detection...",
+        "13": "加载愚人节事件检测..."
+    },
+    "Submerged": {
+        "0": "Trying to load Submerged...",
+        "13": "尝试加载Submerged..."
+    },
+    "UI": {
+        "0": "Loading UI...",
+        "13": "正在加载模组主界面..."
+    },
+    "Rolesintroduction": {
+        "0": "Loading Roles Introduction...",
+        "13": "正在加载模组职业介绍..."
+    },
+    "LoadingComplete": {
+        "0": "Loading Complete!",
+        "13": "加载完成!"
     }
 }

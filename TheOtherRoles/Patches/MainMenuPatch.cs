@@ -8,6 +8,10 @@ using AmongUs.Data;
 using Assets.InnerNet;
 using BepInEx.Unity.IL2CPP;
 using System.Linq;
+using static UnityEngine.UI.Button;
+using TheOtherRolesEdited.Utilities;
+using System.Collections.Generic;
+using TMPro;
 
 namespace TheOtherRolesEdited.Modules
 {
@@ -17,24 +21,28 @@ namespace TheOtherRolesEdited.Modules
         private static bool horseButtonState = TORMapOptions.enableHorseMode;
         //private static Sprite horseModeOffSprite = null;
         //private static Sprite horseModeOnSprite = null;
-        private static AnnouncementPopUp popUp;
+        //private static AnnouncementPopUp popUp;
+        public static GameObject modScreen = null;
+        internal static TMP_FontAsset fontAssetVersionShower;
+
         private static void Prefix(MainMenuManager __instance)
         {
             SoundEffectsManager.Load();
             var template = GameObject.Find("CreditsButton");
+            var Edited = GameObject.Find("newsButton");
+
+#if PC
             var buttonQQ = UnityEngine.Object.Instantiate(template, template.transform.parent);
             var buttonFK = UnityEngine.Object.Instantiate(template, template.transform.parent);
             var buttonGH = UnityEngine.Object.Instantiate(template, template.transform.parent);
             buttonQQ.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.43f);
             buttonFK.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.36f);
             buttonGH.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.36f);
-#if ANDROID
-            var buttonSL = UnityEngine.Object.Instantiate(template, template.transform.parent);
-            buttonSL.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.5f);
-#endif
+
             //FK button
             var textFK = buttonFK.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
+            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
+            {
                 textFK.SetText($"{ModTranslation.getString("ModWebsite")}");
             })));
             PassiveButton passiveButtonFK = buttonFK.GetComponent<PassiveButton>();
@@ -45,13 +53,11 @@ namespace TheOtherRolesEdited.Modules
             passiveButtonFK.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
             Color originalColorpassiveButtonFK = passiveButtonFK.inactiveSprites.GetComponent<SpriteRenderer>().color;
             passiveButtonFK.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonFK * 0.6f;
-#if ANDROID
-            passiveButtonFK.transform.localScale = new Vector3(1.064f, 0.84f, 0);
-#endif
 
             //Github button
             var textGH = buttonGH.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
+            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
+            {
                 textGH.SetText("Github");
             })));
             PassiveButton passiveButtonGH = buttonGH.GetComponent<PassiveButton>();
@@ -62,13 +68,11 @@ namespace TheOtherRolesEdited.Modules
             passiveButtonGH.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
             Color originalColorpassiveButtonGH = passiveButtonGH.inactiveSprites.GetComponent<SpriteRenderer>().color;
             passiveButtonGH.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonGH * 0.6f;
-#if ANDROID
-            passiveButtonGH.transform.localScale = new Vector3(1.064f, 0.84f, 0);
-#endif
 
             //QQ button
             var textQQ = buttonQQ.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
+            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
+            {
                 textQQ.SetText($"{ModTranslation.getString("QQGroup")}");
             })));
             PassiveButton passiveButtonQQ = buttonQQ.GetComponent<PassiveButton>();
@@ -79,35 +83,13 @@ namespace TheOtherRolesEdited.Modules
             passiveButtonQQ.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
             Color originalColorpassiveButtonQQ = passiveButtonQQ.inactiveSprites.GetComponent<SpriteRenderer>().color;
             passiveButtonQQ.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonQQ * 0.6f;
-#if ANDROID
-            passiveButtonQQ.transform.localScale = new Vector3(1.064f, 0.84f, 0);
 #endif
-
-
-#if ANDROID
-            //StarLight button
-            var textSL = buttonSL.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
-                textSL.SetText($"{ModTranslation.getString("StarLight")}");
-            })));
-            PassiveButton passiveButtonSL = buttonSL.GetComponent<PassiveButton>();
-            passiveButtonSL.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
-            passiveButtonSL.OnClick = new Button.ButtonClickedEvent();
-            passiveButtonSL.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://allofus.dev/starlight.html")));
-            passiveButtonSL.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
-            passiveButtonSL.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
-            Color originalColorpassiveButtonSL = passiveButtonSL.inactiveSprites.GetComponent<SpriteRenderer>().color;
-            passiveButtonSL.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonSL * 0.6f;
-            passiveButtonSL.transform.localScale = new Vector3(1.064f, 0.84f, 0);
-#endif
-
             // TOR credits button
             if (template == null) return;
             var creditsButton = Object.Instantiate(template, template.transform.parent);
-            creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.43f);
-
             var textCreditsButton = creditsButton.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
+            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
+            {
                 textCreditsButton.SetText($"{ModTranslation.getString("TOREcredits")}");
             })));
             PassiveButton passiveCreditsButton = creditsButton.GetComponent<PassiveButton>();
@@ -120,77 +102,79 @@ namespace TheOtherRolesEdited.Modules
             passiveCreditsButton.activeTextColor = Color.white;
             passiveCreditsButton.inactiveTextColor = Color.white;
 #if ANDROID
-            passiveCreditsButton.transform.localScale = new Vector3(1.064f, 0.84f, 0);
+            creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.5f);
+            passiveCreditsButton.transform.localScale = new Vector3(1f, 0.84f, 0);
+#else
+            creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.43f);
 #endif
 
 
-            passiveCreditsButton.OnClick.AddListener((System.Action)delegate {
-                // do stuff
-                if (popUp != null) Object.Destroy(popUp);
-                var popUpTemplate = Object.FindObjectOfType<AnnouncementPopUp>(true);
-                if (popUpTemplate == null)
+            passiveCreditsButton.OnClick.AddListener((System.Action)delegate
+            {
+                void ShowPopup(string text)
                 {
-                    TheOtherRolesEditedPlugin.Logger.LogError("couldnt show credits, popUp is null");
-                    return;
-                }
-                popUp = Object.Instantiate(popUpTemplate);
+                    var popup = GameObject.Instantiate(DiscordManager.Instance.discordPopup, Camera.main!.transform);
 
-                popUp.gameObject.SetActive(true);
-                string creditsString = @$"<align=""center""><b>Github Contributors:</b>
+                    var background = popup.transform.Find("Background").GetComponent<SpriteRenderer>();
+                    var size = background.size;
+                    size.x *= 2.5f;
+                    background.size = size;
+                    background.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Background.png", 150f);
+                    background.transform.localScale = new Vector3(1.2f, 3.16f, 1f);
+                    popup.TextAreaTMP.fontSizeMin = 2;
+                    popup.TextAreaTMP.rectTransform.localPosition = new Vector3(-3.2f, 0.06f);
+                    popup.TextAreaTMP.font = fontAssetVersionShower;
+                    popup.Show(text);
+
+                    var exitBtn = popup.transform.Find("ExitGame");
+                    if (exitBtn != null)
+                    {
+                        exitBtn.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+                        var pos = exitBtn.localPosition;
+                        pos.y -= 2.26f;
+                        exitBtn.localPosition = pos;
+
+                        var buttonText = exitBtn.transform.GetComponentInChildren<TMPro.TMP_Text>();
+                        __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
+                        {
+                            buttonText.SetText($"{ModTranslation.getString("Close")}");
+                            buttonText.font = fontAssetVersionShower;
+                        })));
+                    }
+                }
+
+                string creditsString = @$"<size=60%>
+<align=""left"">★<b>Github 贡献者:</b>
 Alex2911    amsyarasyiq    MaximeGillot
 Psynomit    probablyadnf    JustASysAdmin
-[https://discord.gg/w7msq53dq7]Discord[] Moderators:
+★<b>Discord 管理员:</b>
 Ryuk    K    XiezibanWrite
-Thanks to all our discord helpers!
-Thanks to miniduikboot & GD for hosting modded servers
-";
-                creditsString += $@"<size=60%> Other Credits & Resources:
-OxygenFilter - For the versions v2.3.0 to v2.6.1, we were using the OxygenFilter for automatic deobfuscation
-Reactor - The framework used for all versions before v2.0.0, and again since 4.2.0
-BepInEx - Used to hook game functions
-Essentials - Custom game options by DorCoMaNdO:
-Before v1.6: We used the default Essentials release
-v1.6-v1.8: We slightly changed the default Essentials.
-Four Han sinicization group - Some of the pictures are made by them
-Jackal and Sidekick - Original idea for the Jackal and Sidekick came from Dhalucard
-Among-Us-Love-Couple-Mod - Idea for the Lovers modifier comes from Woodi-dev
-Jester - Idea for the Jester role came from Maartii
-ExtraRolesAmongUs - Idea for the Engineer and Medic role came from NotHunter101. Also some code snippets from their implementation were used.
-Among-Us-Sheriff-Mod - Idea for the Sheriff role came from Woodi-dev
-TooManyRolesMods - Idea for the Detective and Time Master roles comes from Hardel-DW. Also some code snippets from their implementation were used.
-TownOfUs - Idea for the Swapper, Shifter, Arsonist and a similar Mayor role came from Slushiegoose
-Ottomated - Idea for the Morphling, Snitch and Camouflager role came from Ottomated
-Crowded-Mod - Our implementation for 10+ player lobbies was inspired by the one from the Crowded Mod Team
-Goose-Goose-Duck - Idea for the Vulture role came from Slushiegoose
-TheEpicRoles - Idea for the first kill shield (partly) and the tabbed option menu (fully + some code), by LaicosVK DasMonschta Nova</size>";
-                creditsString += "</align>";
+感谢所有 discord 上的支持者!
+感谢 miniduikboot & GD 制作模组服务器
+★<b>其他的贡献和资源:</b>
+OxygenFilter -  在 v2.3.0 至 v2.6.1 版本中，我们使用 OxygenFilter 进行自动反混淆处理
+Reactor - 在 v2.0.0 之前的所有版本以及 v4.2.0 之后的版本均使用该框架
+BepInEx - 用于挂钩游戏函数
+Essentials - DorCoMaNdO 的自定义游戏选项:
+v1.6 之前：我们使用 Essentials 的默认版本 v1.6 至 v1.8：我们对默认的 Essentials 做了轻微修改
+Four Han sinicization group - 部分图标由他们制作
+Jackal and Sidekick - 豺狼与跟班角色的创意源自 Dhalucard
+Among-Us-Love-Couple-Mod -  恋人角色的创意源自 Woodi-dev
+Jester - 小丑角色的创意源自 Maartii
+ExtraRolesAmongUs - 工程师与医生角色的创意源自 NotHunter101，同时借鉴了部分代码
+Among-Us-Sheriff-Mod - 警长角色的创意源自 Woodi-dev
+TooManyRolesMods - 侦探与时间大师角色的创意源自 Hardel-DW，同时借鉴了部分代码
+TownOfUs - 换票师、交换师、纵火犯以及市长角色的创意源自 Slushiegoose
+Ottomated - 化形者、告密者与隐蔽者角色的创意源自 Ottomated
+Crowded-Mod - 我们对 10 人以上玩家大厅的实现方式，灵感源自 Crowded 模组团队的方案
+Goose-Goose-Duck - 秃鹫角色的创意源自 Slushiegoose
+TheEpicRoles - 首刀保护（选用部分代码）以及菜单选项的创意（选用部分代码）源自 LaicosVK、DasMonschta、Nova
+轮抽选角 - 音乐源自 Youtube【Unreal Superhero 3 by Kenët & Rez】
+<b>编辑时间: 2025.11.15</b></size></align>";
 
+                string credits = $@"<size=150%>TORE贡献者</size>";
 
-                Assets.InnerNet.Announcement creditsAnnouncement = new()
-                {
-                    Id = "torCredits",
-                    Language = 0,
-                    Number = 500,
-                    Title = "\nThe Other Roles Edited\n贡献 & 资源",
-                    ShortTitle = "TORE公告",
-                    SubTitle = "",
-                    PinState = false,
-                    Date = "01.07.2022",
-                    Text = creditsString,
-                };
-                __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
-                    if (p == 1)
-                    {
-                        var backup = DataManager.Player.Announcements.allAnnouncements;
-                        DataManager.Player.Announcements.allAnnouncements = new();
-                        popUp.Init(false);
-                        DataManager.Player.Announcements.SetAnnouncements(new Announcement[] { creditsAnnouncement });
-                        popUp.CreateAnnouncementList();
-                        popUp.UpdateAnnouncementText(creditsAnnouncement.Number);
-                        popUp.visibleAnnouncements._items[0].PassiveButton.OnClick.RemoveAllListeners();
-                        DataManager.Player.Announcements.allAnnouncements = backup;
-                    }
-                })));
+                ShowPopup(credits + creditsString);
             });
         }
         private static void CheckAndUnpatch()
@@ -209,7 +193,8 @@ TheEpicRoles - Idea for the first kill shield (partly) and the tabbed option men
 
         public static void addSceneChangeCallbacks()
         {
-            SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)((scene, _) => {
+            SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)((scene, _) =>
+            {
                 if (!scene.name.Equals("MatchMaking", StringComparison.Ordinal)) return;
                 TORMapOptions.gameMode = CustomGamemodes.Classic;
                 // Add buttons For Guesser Mode, Hide N Seek in this scene.
@@ -224,7 +209,8 @@ TheEpicRoles - Idea for the first kill shield (partly) and the tabbed option men
                 var guesserButtonPassiveButton = guesserButton.GetComponentInChildren<PassiveButton>();
 
                 guesserButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
-                guesserButtonPassiveButton.OnClick.AddListener((System.Action)(() => {
+                guesserButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
+                {
                     TORMapOptions.gameMode = CustomGamemodes.Guesser;
                     template.OnClick();
                 }));
@@ -235,7 +221,8 @@ TheEpicRoles - Idea for the first kill shield (partly) and the tabbed option men
                 var HideNSeekButtonPassiveButton = HideNSeekButton.GetComponentInChildren<PassiveButton>();
 
                 HideNSeekButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
-                HideNSeekButtonPassiveButton.OnClick.AddListener((System.Action)(() => {
+                HideNSeekButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
+                {
                     TORMapOptions.gameMode = CustomGamemodes.HideNSeek;
                     template.OnClick();
                 }));
@@ -246,12 +233,14 @@ TheEpicRoles - Idea for the first kill shield (partly) and the tabbed option men
                 var PropHuntButtonPassiveButton = PropHuntButton.GetComponentInChildren<PassiveButton>();
 
                 PropHuntButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
-                PropHuntButtonPassiveButton.OnClick.AddListener((System.Action)(() => {
+                PropHuntButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
+                {
                     TORMapOptions.gameMode = CustomGamemodes.PropHunt;
                     template.OnClick();
                 }));
 
-                template.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) => {
+                template.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) =>
+                {
                     guesserButtonText.SetText($"{ModTranslation.getString("Guesser")}");
                     HideNSeekButtonText.SetText($"{ModTranslation.getString("HideNSeek")}");
                     PropHuntButtonText.SetText($"{ModTranslation.getString("PropHunt")}");

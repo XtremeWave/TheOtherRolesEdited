@@ -39,7 +39,7 @@ namespace TheOtherRolesEdited
     {
         public const string Id = "TheOtherRolesEdited";
         public const string Name = "TORE";
-        public const string VersionString = "1.3.0";
+        public const string VersionString = "1.3.1";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";
@@ -111,6 +111,7 @@ namespace TheOtherRolesEdited
             {
                 new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "https://player.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
                 new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://auhk.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", "https://auhk.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
+                new StaticHttpRegionInfo("<color=#cdfffd>XtremeWave服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://imp.xtreme.net.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#cdfffd>XtremeWave服</color> <color=#00bfff>[香港]</color>", "https://imp.xtreme.net.cn", 443, false) })).CastFast<IRegionInfo>(),
             };
             IRegionInfo currentRegion = serverManager.CurrentRegion;
             Logger.LogInfo($"Adding {regions.Length} regions");
@@ -185,6 +186,8 @@ namespace TheOtherRolesEdited
     {
         public static int NumImpostors => GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors;
         public static bool DebugMode => CustomOptionHolder.debugMode.getBool();
+        public static bool HostName => CustomOptionHolder.HostName.getBool();
+
         public static bool DisableGameEnd => DebugMode && CustomOptionHolder.disableGameEnd.getBool();
     }
 

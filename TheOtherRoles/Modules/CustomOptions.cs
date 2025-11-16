@@ -768,7 +768,7 @@ namespace TheOtherRolesEdited
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
             {
-                createCustomButton(__instance, next++, "PropHunt", "变形躲猫猫设置", CustomOptionType.PropHunt);
+                createCustomButton(__instance, next++, "PropHunt", "变形狩猎设置", CustomOptionType.PropHunt);
             }
         }
     }
@@ -946,11 +946,12 @@ namespace TheOtherRolesEdited
             GameObject.Find("RoleSettingsButton")?.Destroy();
             GameObject.Find("PanelSprite")?.Destroy();
             GameObject.Find("What Is This?").transform.localPosition = new Vector3(-0.1f, 1.1f, 0f);
+            GameObject.Find("GameSettingsLabel").transform.localPosition = new Vector3(4.6601f, -2.5787f, 0f);
+            GameObject.Find("GameSettingsLabel").transform.localScale = new Vector3(0.8f, 0.8f, 0f);
             GameObject.Find("PanelSprite").transform.localPosition = new Vector3(1111f, 11111f, -1f);
             GameObject.Find("GamePresetButton").transform.localPosition = new Vector3(1111f, 11111f, -1f);
             GameObject.Find("RoleSettingsButton").transform.localPosition = new Vector3(1111f, 11111f, -1f);
-            GameObject.Find("GameSettingsLabel").transform.localPosition = new Vector3(4.8601f, -2.5787f, 0f);
-            GameObject.Find("GameSettingsLabel").transform.localScale = new Vector3(0.8f, 0.8f, 0f);
+
 
 
             var GameSettingsButton = GameObject.Find("GameSettingsButton");
@@ -1026,41 +1027,41 @@ namespace TheOtherRolesEdited
             {
 
                 // create TOR settings
-                createCustomButton(__instance, next++, "TORSettings", $"{ModTranslation.getString("ModSettings")}", "为 TheOtherRolesEdited 大厅编辑的常规设置。");
+                createCustomButton(__instance, next++, "TORSettings", $"{ModTranslation.getString("ModSettings")}" , string.Format(ModTranslation.getString("ModDescriptionText"), Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Name}")));
                 createGameOptionsMenu(__instance, CustomOptionType.General, "TORSettings");
                 // Guesser if applicableng 
                 if (TORMapOptions.gameMode == CustomGamemodes.Guesser)
                 {
-                    createCustomButton(__instance, next++, "GuesserSettings", $"{ModTranslation.getString("GuesserSettings")}", "TheOtherRolesEdited 模组的<color=#F3D10B>赌怪模式</color>设置。");
+                    createCustomButton(__instance, next++, "GuesserSettings", $"{ModTranslation.getString("GuesserSettings")}", $"{ModTranslation.getString("GuesserModeDescriptionText")}");
                     createGameOptionsMenu(__instance, CustomOptionType.Guesser, "GuesserSettings");
                 }
                 // IMp
-                createCustomButton(__instance, next++, "ImpostorSettings", $"{ModTranslation.getString("ImpostorSettings")}", "TheOtherRolesEdited 模组的<color=#FF1111>内鬼</color>职业设置。");
+                createCustomButton(__instance, next++, "ImpostorSettings", $"{ModTranslation.getString("ImpostorSettings")}", $"{ModTranslation.getString("ImpostorDescriptionText")}");
                 createGameOptionsMenu(__instance, CustomOptionType.Impostor, "ImpostorSettings");
 
                 // Neutral
-                createCustomButton(__instance, next++, "NeutralSettings", $"{ModTranslation.getString("NeutralSettings")}", "TheOtherRolesEdited 模组的<color=#525F5F>中立</color>职业设置。");
+                createCustomButton(__instance, next++, "NeutralSettings", $"{ModTranslation.getString("NeutralSettings")}", $"{ModTranslation.getString("NeutralDescriptionText")}");
                 createGameOptionsMenu(__instance, CustomOptionType.Neutral, "NeutralSettings");
                 // Crew
-                createCustomButton(__instance, next++, "CrewmateSettings", $"{ModTranslation.getString("CrewmateSettings")}", "TheOtherRolesEdited 模组的<color=#5DE2E7>船员</color>职业设置。");
+                createCustomButton(__instance, next++, "CrewmateSettings", $"{ModTranslation.getString("CrewmateSettings")}", $"{ModTranslation.getString("CrewmateDescriptionText")}");
                 createGameOptionsMenu(__instance, CustomOptionType.Crewmate, "CrewmateSettings");
                 // Modifier
-                createCustomButton(__instance, next++, "ModifierSettings", $"{ModTranslation.getString("ModifierSettings")}", "TheOtherRolesEdited 模组的<color=#F3D10B>附加</color>职业设置。");
+                createCustomButton(__instance, next++, "ModifierSettings", $"{ModTranslation.getString("ModifierSettings")}", $"{ModTranslation.getString("ModifierDescriptionText")}");
                 createGameOptionsMenu(__instance, CustomOptionType.Modifier, "ModifierSettings");
 
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
             {
                 // create Main HNS settings
-                createCustomButton(__instance, next++, "HideNSeekMain", $"{ModTranslation.getString("HideNSeekMain")}", "TheOtherRolesEdited 模组的<color=#F30BD5>捉迷藏模式</color>主要设置。");
+                createCustomButton(__instance, next++, "HideNSeekMain", $"{ModTranslation.getString("HideNSeekMain")}", $"{ModTranslation.getString("HnsModeDescriptionText")}");
                 createGameOptionsMenu(__instance, CustomOptionType.HideNSeekMain, "HideNSeekMain");
                 // create HNS Role settings
-                createCustomButton(__instance, next++, "HideNSeekRoles", $"{ModTranslation.getString("HideNSeekRoles")}", "TheOtherRolesEdited 模组的<color=#F30BB1>捉迷藏模式</color>职业设置。");
+                createCustomButton(__instance, next++, "HideNSeekRoles", $"{ModTranslation.getString("HideNSeekRoles")}", $"{ModTranslation.getString("HnsModeRolesDescriptionText")}");
                 createGameOptionsMenu(__instance, CustomOptionType.HideNSeekRoles, "HideNSeekRoles");
             }
             else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
             {
-                createCustomButton(__instance, next++, "PropHunt", $"{ModTranslation.getString("Prophunt")}", "TheOtherRolesEdited 模组的<color=#0772FF>变形躲猫猫模式</color>主要设置。");
+                createCustomButton(__instance, next++, "PropHunt", $"{ModTranslation.getString("Prophunt")}", $"{ModTranslation.getString("PhModeDescriptionText")}");
                 createGameOptionsMenu(__instance, CustomOptionType.PropHunt, "PropHunt");
             }
         }

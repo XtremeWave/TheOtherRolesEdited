@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if PC
+using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using Il2CppSystem;
@@ -54,3 +55,4 @@ public class MainMenuButtonHoverAnimation
     }
 }
 //From:https://Karped1em/TownOfHostEdited 
+#endif

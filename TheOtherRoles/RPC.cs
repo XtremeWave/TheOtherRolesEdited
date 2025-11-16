@@ -233,13 +233,17 @@ namespace TheOtherRolesEdited
             }
         }
 
-        public static void shareGamemode(byte gm) {
-            TORMapOptions.gameMode = (CustomGamemodes) gm;
-            LobbyViewSettingsPatch.currentButtons?.ForEach(x => x.gameObject?.Destroy());
-            LobbyViewSettingsPatch.currentButtons?.Clear();
-            LobbyViewSettingsPatch.currentButtonTypes?.Clear();
+        public static void shareGamemode(byte gm)
+        {
+            try
+            {
+                TORMapOptions.gameMode = (CustomGamemodes)gm;
+                LobbyViewSettingsPatch.currentButtons?.ForEach(x => x.gameObject?.Destroy());
+                LobbyViewSettingsPatch.currentButtons?.Clear();
+                LobbyViewSettingsPatch.currentButtonTypes?.Clear();
+            }
+            catch { }
         }
-
         public static void stopStart(byte playerId) {
             if (!CustomOptionHolder.anyPlayerCanStopStart.getBool())
                 return;
@@ -1278,17 +1282,18 @@ namespace TheOtherRolesEdited
                     FastDestroyableSingleton<UnityTelemetry>.Instance.SendWho();
             }
         }
+        public static void blackmailPlayer(byte playerId)
+        {
+            PlayerControl target = Helpers.playerById(playerId);
+            Blackmailer.blackmailed = target;
+        }
+
         public static void unblackmailPlayer()
         {
             Blackmailer.blackmailed = null;
             Blackmailer.alreadyShook = false;
         }
 
-        public static void blackmailPlayer(byte playerId)
-        {
-            PlayerControl target = Helpers.playerById(playerId);
-            Blackmailer.blackmailed = target;
-        }
         public static void setBlanked(byte playerId, byte value) {
             PlayerControl target = Helpers.playerById(playerId);
             if (target == null) return;
@@ -1942,6 +1947,12 @@ namespace TheOtherRolesEdited
                     var pos = reader.ReadBytesAndSize();
                     var zAxis = reader.ReadSingle();
                     RPCProcedure.Mine(newVentId, role, pos, zAxis);
+                    break;
+                case (byte)CustomRPC.BlackmailPlayer:
+                    RPCProcedure.blackmailPlayer(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.UnblackmailPlayer:
+                    RPCProcedure.unblackmailPlayer();
                     break;
                 case (byte)CustomRPC.EventKick:
                     byte kickSource = reader.ReadByte();

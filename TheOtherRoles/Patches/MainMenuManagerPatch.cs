@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TheOtherRolesEdited.Modules;
+using TheOtherRolesEdited.Patches;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;

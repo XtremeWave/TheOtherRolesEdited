@@ -22,5 +22,4 @@ public class XtremeWavePatch
         renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.XtremeWave.png", 290f);
     }
 }
-//来自YUAC的代码
 

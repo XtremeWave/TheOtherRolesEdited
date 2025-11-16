@@ -28,9 +28,7 @@ namespace TheOtherRolesEdited.Modules
         public ModUpdater(IntPtr ptr) : base(ptr) { }
 
         private bool _busy;
-#if PC
-        private bool showPopUp = true;
-#endif
+        //private bool showPopUp = true;
         public List<GithubRelease> Releases;
 
         public void Awake()
@@ -194,7 +192,6 @@ namespace TheOtherRolesEdited.Modules
             if (b.IsNewer(a.Version)) return 1;
             return 0;
         }
-        public static SpriteRenderer ModUpdateBG;
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (_busy || scene.name != "MainMenu") return;
@@ -202,13 +199,17 @@ namespace TheOtherRolesEdited.Modules
             if (latestRelease == null || latestRelease.Version <= TheOtherRolesEditedPlugin.Version)
                 return;
 
-            var template = GameObject.Find("ExitGameButton");
+            var template = GameObject.Find("CreditsButton");
             if (!template) return;
 
             //手动更新
             var buttonUPDATE = UnityEngine.Object.Instantiate(template, template.transform.parent);
-            buttonUPDATE.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.253f, 0.379f);
-            buttonUPDATE.transform.localScale = new Vector3(0.99f, 1f, 0);
+#if PC
+            buttonUPDATE.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.42f, 0.379f);
+#else
+            buttonUPDATE.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.38f, 0.379f);
+#endif              
+            buttonUPDATE.transform.localScale = new Vector3(1f, 1f, 0);
             var textFK = buttonUPDATE.transform.GetComponentInChildren<TMPro.TMP_Text>();
             StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
                 textFK.SetText($"{ModTranslation.getString("UpdateWay2")}");
@@ -221,11 +222,11 @@ namespace TheOtherRolesEdited.Modules
             passiveButtonUPDATE.activeSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
             Color originalColorpassiveButtonUPDATE = passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color;
             passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonUPDATE * 0.6f;
-#if PC
             //一键更新
+#if PC
             var button = Instantiate(template, null);
             var buttonTransform = button.transform;
-            button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.788f, 0.04f);
+            button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.925f, 0.03f);
             PassiveButton passiveButton = button.GetComponent<PassiveButton>();
             passiveButton.OnClick = new Button.ButtonClickedEvent();
             passiveButton.OnClick.AddListener((Action)(() =>
@@ -241,17 +242,15 @@ namespace TheOtherRolesEdited.Modules
             var text = button.transform.GetComponentInChildren<TMPro.TMP_Text>();
             string t = $"{ModTranslation.getString("UpdateWay1")}";
             StartCoroutine(Effects.Lerp(0.1f, (System.Action<float>)(p => text.SetText(t))));
-            passiveButton.OnMouseOut.AddListener((Action)(() => text.color = Color.white));
-            passiveButton.OnMouseOver.AddListener((Action)(() => text.color = Color.white));
-            var announcement = $"<size=150%>请更新至TheOtherRolesEdited{latestRelease.Tag}的最新版本</size>\n{latestRelease.Description}";
+#endif
+          /*  var announcement = $"<size=150%>请更新至TheOtherRolesEdited{latestRelease.Tag}的最新版本</size>\n{latestRelease.Description}";
             var mgr = FindObjectOfType<MainMenuManager>(true);
             if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "更新TORE", date: latestRelease.PublishedAt));
-            showPopUp = false;
-#endif
+            showPopUp = false;*/
 
         }
 
-        [HideFromIl2Cpp]
+      /*  [HideFromIl2Cpp]
         public IEnumerator CoShowAnnouncement(string announcement, bool show = true, string shortTitle = "更新TORE", string title = "", string date = "")
         {
             var mgr = FindObjectOfType<MainMenuManager>(true);
@@ -290,7 +289,7 @@ namespace TheOtherRolesEdited.Modules
                     DataManager.Player.Announcements.allAnnouncements = backup;
                 }
             })));
-        }
+        }*/
     }
 
     public class GithubRelease

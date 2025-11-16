@@ -44,7 +44,23 @@ public class ModNewsHistory
     {
         // 创建新公告时，不能删除旧公告   
         {
-
+            {
+                // TORE v1.3.1
+                var news = new ModNews
+                {
+                    Number = 100013,
+                    Title = $"TheOtherRolesEdited  v1.3.1",
+                    SubTitle = "超多更新！<s>(我会增加新职业的!)</s>",
+                    ShortTitle = $"★TORE",
+                    Text = "<size=100%>欢迎来到 TORE v1.3.1.适配Among us v2025.9.9s/v17.0.0</size>\n"
+                        + "\n<b>声明</b>\n· 本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
+                        + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
+                        + "\n<b>更新内容</b>\n · 再度适配Starlight(包含UI)\n · 优化升级违禁词检测\n · 提升下载帽子的速度(by fangkuai)\n · 更改大厅名称颜色\n · 更改游戏开始时的加载UI\n · 更改替换部分图片\n · 新增搜索游戏时地图的检测(CopyFrom YuET)\n · 新增进入游戏快捷键\n · 新增公告界面\n · 新增公告\n · 新增隐藏AspectSize的动画\n · 新增关闭开启Aspect的按钮\n · 新增更新公告UI\n · 新增TORE贡献者UI\n · 新增Loading界面的多语言\n · 修复安卓端UI错位\n · 修复PC端和安卓端不兼容的问题\n · 修复勒索者没有技能的问题\n · 删除安卓端部分按钮\n · 删除Aige按钮\n · 删除原更新公告UI\n · 删除原TORE贡献者UI\n · 删除TORE头衔\n · 删除TORE部分自定义颜色"
+                        + "\n<b>BUG反馈</b>\n · 如有更多问题请邮箱联系！【liu9928161@gmail.com/1500689499@qq.com】感谢您的支持！",
+                    Date = "2025-11-16T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
             {
                 // TORE v1.3.0
                 var news = new ModNews
@@ -208,7 +224,7 @@ public class ModNewsHistory
                         + "\n<b>声明</b>\n·本模组不隶属于 Among Us 或 Innersloth LLC 其中包含的内容未得到 Innersloth LLC 的认可或以其他方式赞助 此处包含的部分材料是 Innersloth LLC的财产 ©Innersloth"
                         + "\n<b>对应官方版本</b>\n · TOR v.4.8.0\r"
                         + "\n<b>澄清</b>\n · 上个版本说的话当我没说(主要是没想到TOR会更新480)"
-                        + "\n<b>修改</b>\n · 修复了变形躲猫猫中玩家无法转化为道具的错误"
+                        + "\n<b>修改</b>\n · 修复了变形狩猎中玩家无法转化为道具的错误"
                         + "\n<b>新增</b>\n · 轮抽选角(by:TOR)\n ·更改的Ping延迟文字在会议中的位置"
                         + "\n<b>温馨提示</b>\n · 在轮抽选角模式中如果想听音乐应调节AU原版的音量大小:>"
                         + "\n<b>huh</b>\n · Have a great time！",

@@ -59,8 +59,7 @@ namespace TheOtherRolesEdited.Patches
                 JackInTheBox.convertToVents();
                 if (Blackmailer.blackmailer != null && Blackmailer.blackmailed != null)
                 {
-                    // Blackmailer reset blackmailed
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UnblackmailPlayer, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UnblackmailPlayer, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.unblackmailPlayer();
                 }

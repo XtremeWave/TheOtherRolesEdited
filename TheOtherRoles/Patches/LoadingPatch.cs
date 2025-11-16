@@ -17,7 +17,7 @@ public static class LoadPatch
     static TMPro.TextMeshPro loadText = null!;
     static TMPro.TextMeshPro startText = null!;
 
-    private static float _scaleSpeed = 0.4f;    // 缩放动画速度（值越大越快）
+    private static float _scaleSpeed = 0.2f;    // 缩放动画速度（值越大越快）
     private static float _scaleRange = 0.15f;   // 缩放幅度（0.15 = 最大放大15%）
     private static Coroutine _scaleCoroutine;  
     private static Vector3 originalLogoScale;
@@ -26,6 +26,8 @@ public static class LoadPatch
 
     static IEnumerator CoLoadTheOtherRoles(SplashManager __instance)
     {
+        ModTranslation.Load();
+
         var bg = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedBG", null, new Vector3(0, 0.5f, -10f));
         bg.sprite = bgSprite;
         bg.color = Color.clear;
@@ -56,7 +58,7 @@ public static class LoadPatch
 
         startText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
         startText.transform.localPosition = new(0f, -0.28f, -10f);
-        startText.text = "准备加载...";
+        startText.text = ModTranslation.getString("Prepare");
         startText.fontStyle = FontStyles.Bold;
         startText.color = Color.white.AlphaMultiplied(0f); 
 
@@ -87,43 +89,38 @@ public static class LoadPatch
             startText.color = Color.white.AlphaMultiplied(alpha);
             yield return null;
         }
-        GameObject.Destroy(startText.gameObject);
+        Object.Destroy(startText.gameObject);
 
         loadText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
         loadText.transform.localPosition = new(0f, -0.28f, -10f);
         loadText.fontStyle = TMPro.FontStyles.Bold;
-        loadText.text = "正在加载...";
+        loadText.text = ModTranslation.getString("Loading");
         loadText.color = Color.white.AlphaMultiplied(0.3f);
 
         _scaleCoroutine = __instance.StartCoroutine(ScaleLoop(logo.transform, originalLogoScale).WrapToIl2Cpp());
 
         {
-            loadText.text = "正在加载语言...";
-            ModTranslation.Load();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在加载开发者头衔...";
-            DevManager.Init();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在加载今日模组热点...";
+            loadText.text = ModTranslation.getString("Motd");
             _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在加载服务器...";
+            loadText.text = ModTranslation.getString("Server");
             TheOtherRolesEditedPlugin.UpdateRegions();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "加载Harmony Patch...";
+            loadText.text = ModTranslation.getString("Harmony");
             TheOtherRolesEditedPlugin.Instance.Harmony.PatchAll();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在构建设置...";
+            loadText.text = ModTranslation.getString("Building");
             CustomOptionHolder.Load();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在加载模组颜色...";
+            loadText.text = ModTranslation.getString("Modcolor");
             CustomColors.Load();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在加载模组帽子...";
+            loadText.text = ModTranslation.getString("Modsound");
+            SoundEffectsManager.Load();
+            yield return new WaitForSeconds(0.5f);
+            loadText.text = ModTranslation.getString("Modhat");
             CustomHatManager.LoadHats();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在加载模组音效...";
-            SoundEffectsManager.Load();
             var hatsLoader = CustomHatManager.Loader;
             float downloadStartTime = Time.time;
             int lastDownloadedCount = 0;
@@ -140,7 +137,7 @@ public static class LoadPatch
                    Time.time - downloadStartTime < maxWaitTime &&
                    Time.time - lastProgressTime < stallTimeout)
             {
-                loadText.text = $"正在下载帽子: {hatsLoader.downloadedFiles}/{hatsLoader.totalFilesToDownload}";
+                loadText.text = $"{ModTranslation.getString("Downloadhat")}: {hatsLoader.downloadedFiles}/{hatsLoader.totalFilesToDownload}";
 
                 if (hatsLoader.downloadedFiles > lastDownloadedCount)
                 {
@@ -155,45 +152,45 @@ public static class LoadPatch
             {
                 if (Time.time - downloadStartTime >= maxWaitTime)
                 {
-                    loadText.text = "帽子下载时间过长，正在后台继续...";
+                    loadText.text = ModTranslation.getString("Toolong");
                 }
                 else if (Time.time - lastProgressTime >= stallTimeout)
                 {
-                    loadText.text = "帽子下载暂停，正在跳过...";
+                    loadText.text = ModTranslation.getString("Skipping");
                 }
                 yield return new WaitForSeconds(1f);
             }
             else
             {
-                loadText.text = "帽子加载成功!";
+                loadText.text = ModTranslation.getString("Hatcomplete");
                 yield return new WaitForSeconds(0.5f);
             }
 #if PC
-            loadText.text = "尝试加载模组光标...";
+            loadText.text = ModTranslation.getString("Modcursor");
             if (TheOtherRolesEditedPlugin.ToggleCursor.Value) Helpers.enableCursor(true);
             yield return new WaitForSeconds(0.5f);
 
             if (BepInExUpdater.UpdateRequired)
             {
-                loadText.text = "正在更新BepInEx...";
+                loadText.text = ModTranslation.getString("BepInEx");
                 TheOtherRolesEditedPlugin.Instance.AddComponent<BepInExUpdater>();
                 yield return new WaitForSeconds(0.5f);
                 yield return null;
             }
 #endif
-            loadText.text = "正在加载模组更新...";
+            loadText.text = ModTranslation.getString("Modupdates");
             TheOtherRolesEditedPlugin.Instance.AddComponent<ModUpdater>();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "加载愚人节事件检测...";
+            loadText.text = ModTranslation.getString("AFD");
             EventUtility.Load();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "尝试加载Submerged...";
+            loadText.text = ModTranslation.getString("Submerged");
             SubmergedCompatibility.Initialize();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在加载模组主界面...";
+            loadText.text = ModTranslation.getString("UI");
             MainMenuPatch.addSceneChangeCallbacks();
             yield return new WaitForSeconds(0.5f);
-            loadText.text = "正在加载模组职业介绍...";
+            loadText.text = ModTranslation.getString("Rolesintroduction");
             _ = RoleInfo.loadReadme();
             yield return new WaitForSeconds(0.5f);
 
@@ -202,7 +199,7 @@ public static class LoadPatch
             TheOtherRolesEditedPlugin.Logger.LogInfo("Loading TORE completed!");
         }
 
-        loadText.text = "加载完成!";
+        loadText.text = ModTranslation.getString("LoadingComplete");
         for (int i = 0; i < 3; i++)
         {
             loadText.gameObject.SetActive(false);

@@ -23,7 +23,6 @@ namespace TheOtherRolesEdited
         public static CustomButton sheriffKillButton;
         private static CustomButton deputyHandcuffButton;
         private static CustomButton timeMasterShieldButton;
-        private static CustomButton timeMasterRewindButton;
         private static CustomButton medicShieldButton;
         private static CustomButton shifterShiftButton;
         private static CustomButton morphlingButton;
@@ -111,7 +110,6 @@ namespace TheOtherRolesEdited
             sheriffKillButton.MaxTimer = Sheriff.cooldown;
             deputyHandcuffButton.MaxTimer = Deputy.handcuffCooldown;
             timeMasterShieldButton.MaxTimer = TimeMaster.cooldown;
-            timeMasterRewindButton.MaxTimer = TimeMaster.rewindCooldown;
             medicShieldButton.MaxTimer = 0f;
             shifterShiftButton.MaxTimer = 0f;
             morphlingButton.MaxTimer = Morphling.cooldown;
@@ -519,40 +517,6 @@ namespace TheOtherRolesEdited
                 }
             );
 
-            // Time Master Rewind Button
-            timeMasterRewindButton = new CustomButton(
-            () =>
-            {
-                var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
-                    (byte)CustomRPC.TimeMasterRewindTime, SendOption.Reliable);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.timeMasterRewindTime();
-            },
-            () =>
-            {
-                return TimeMaster.timeMaster != null && TimeMaster.timeMaster == PlayerControl.LocalPlayer &&
-                       !PlayerControl.LocalPlayer.Data.IsDead && TimeMaster.canUseRewind;
-            },
-            () => { return PlayerControl.LocalPlayer.CanMove; },
-            () =>
-            {
-                timeMasterRewindButton.Timer = timeMasterRewindButton.MaxTimer;
-                timeMasterRewindButton.isEffectActive = false;
-                timeMasterRewindButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
-            },
-            TimeMaster.getRewindButtonSprite(),
-            CustomButton.ButtonPositions.upperRowRight,
-            __instance,
-            KeyCode.G,
-            true,
-            TimeMaster.rewindTime,
-            () =>
-            {
-                timeMasterRewindButton.Timer = timeMasterRewindButton.MaxTimer;
-            },
-            buttonText: "Ê±¼ä»ØËÝ",
-            abilityTexture: CustomButton.ButtonLabelType.UseButton
-        );
 
             blackmailerButton = new CustomButton(
            () => { // Action when Pressed

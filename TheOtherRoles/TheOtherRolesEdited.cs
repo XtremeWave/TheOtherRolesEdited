@@ -431,7 +431,6 @@ namespace TheOtherRolesEdited
         public static bool isRewinding = false;
 
         private static Sprite buttonSprite;
-        private static Sprite rewindbuttonSprite;
         public static Sprite getButtonSprite()
         {
             if (buttonSprite) return buttonSprite;
@@ -439,12 +438,6 @@ namespace TheOtherRolesEdited
             return buttonSprite;
         }
 
-        public static Sprite getRewindButtonSprite()
-        {
-            if (rewindbuttonSprite) return rewindbuttonSprite;
-            rewindbuttonSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.RewindButton.png", 115f);
-            return rewindbuttonSprite;
-        }
 
         public static void RewindTime()
         {

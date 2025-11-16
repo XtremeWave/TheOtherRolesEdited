@@ -29,9 +29,11 @@ namespace TheOtherRolesEdited
         public static CustomOption eventHeavyAge;
         public static CustomOption deadImpsBlockSabotage;
         public static CustomOption CanUseSwitchShipCostumeButton;
+        public static CustomOption modifierShifterShiftsMedicShield;
+        public static CustomOption HostName;
+
         public static CustomOption debugMode;
         public static CustomOption disableGameEnd;
-        public static CustomOption modifierShifterShiftsMedicShield;
 
         public static CustomOption mafiaSpawnRate;
         public static CustomOption janitorCooldown;
@@ -843,8 +845,8 @@ namespace TheOtherRolesEdited
             huntedShieldNumber = CustomOption.Create(Types.HideNSeekRoles, cs(Color.gray, "躲藏者护盾数量"), 3f, 1f, 15f, 1f);
 
             // Prop Hunt General Options
-            propHuntMap = CustomOption.Create(Types.PropHunt, cs(Color.yellow, "地图"), new string[] { "骷髅舰", "米拉总部", "波鲁斯", "飞艇地图", "真菌世界", "潜艇地图", "自定义地图" }, null, true, onChange: () => { int map = propHuntMap.selection; if (map >= 3) map++; GameOptionsManager.Instance.currentNormalGameOptions.MapId = (byte)map; }, heading: "变形躲猫猫地图设置");
-            propHuntTimer = CustomOption.Create(Types.PropHunt, cs(Color.yellow, "计时器最小值"), 5f, 1f, 30f, 0.5f, null, true, heading: "变形躲猫猫普通设置");
+            propHuntMap = CustomOption.Create(Types.PropHunt, cs(Color.yellow, "地图"), new string[] { "骷髅舰", "米拉总部", "波鲁斯", "飞艇地图", "真菌世界", "潜艇地图", "自定义地图" }, null, true, onChange: () => { int map = propHuntMap.selection; if (map >= 3) map++; GameOptionsManager.Instance.currentNormalGameOptions.MapId = (byte)map; }, heading: "变形狩猎地图设置");
+            propHuntTimer = CustomOption.Create(Types.PropHunt, cs(Color.yellow, "计时器最小值"), 5f, 1f, 30f, 0.5f, null, true, heading: "变形狩猎普通设置");
             propHuntUnstuckCooldown = CustomOption.Create(Types.PropHunt, cs(Color.yellow, "穿墙冷却时间"), 30f, 2.5f, 60f, 2.5f);
             propHuntUnstuckDuration = CustomOption.Create(Types.PropHunt, cs(Color.yellow, "穿墙持续时间"), 2f, 1f, 60f, 1f);
             propHunterVision = CustomOption.Create(Types.PropHunt, cs(Color.yellow, "猎人视野"), 0.5f, 0.25f, 2f, 0.25f);
@@ -873,7 +875,8 @@ namespace TheOtherRolesEdited
             propHuntSpeedboostSpeed = CustomOption.Create(Types.PropHunt, cs(Palette.CrewmateBlue, "加速提升速度"), 2f, 1.25f, 5f, 0.25f, propHuntSpeedboostEnabled);
 
             // Other options
-            CanUseSwitchShipCostumeButton = CustomOption.Create(Types.General, "切换地图皮肤(仅支持骷髅舰)", false, null, true, heading: "切换地图皮肤");
+            CanUseSwitchShipCostumeButton = CustomOption.Create(Types.General, "切换地图皮肤(仅支持骷髅舰)", false, null, true, heading: "其他设置");
+            HostName = CustomOption.Create(Types.General, "启用TORE头衔", false);
             debugMode = CustomOption.Create(Types.General, "测试模式", false, null, true, heading: "测试模式");
             disableGameEnd = CustomOption.Create(Types.General, "游戏不结束", false, debugMode);
             maxNumberOfMeetings = CustomOption.Create(Types.General, "会议总次数 (不计入市长)", 10, 0, 15, 1, null, true, heading: "游戏设定");

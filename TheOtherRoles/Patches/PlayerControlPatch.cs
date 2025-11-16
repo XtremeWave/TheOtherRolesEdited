@@ -6,7 +6,6 @@ using System.Linq;
 using static TheOtherRolesEdited.TheOtherRolesEdited;
 using static TheOtherRolesEdited.GameHistory;
 using TheOtherRolesEdited.Objects;
-
 using TheOtherRolesEdited.Utilities;
 using UnityEngine;
 using TheOtherRolesEdited.CustomGameModes;
@@ -16,6 +15,7 @@ using Assets.CoreScripts;
 using Sentry.Internal.Extensions;
 using Reactor.Utilities.Extensions;
 using TheOtherRolesEdited.Players;
+using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -499,11 +499,11 @@ namespace TheOtherRolesEdited.Patches {
             }
         }
 
-        static void blackMailerSetTarget()
+        static void blackmailerSetTarget()
         {
-            if (Blackmailer.blackmailer == null || Blackmailer.blackmailer != CachedPlayer.LocalPlayer.PlayerControl) return;
+            if (Blackmailer.blackmailer == null || Blackmailer.blackmailer != PlayerControl.LocalPlayer) return;
             Blackmailer.currentTarget = setTarget();
-            setPlayerOutline(Medic.currentTarget, Blackmailer.blackmailedColor);
+            setPlayerOutline(Blackmailer.currentTarget, Blackmailer.blackmailedColor);
         }
 
         public static void updatePlayerInfo() {
@@ -706,11 +706,18 @@ namespace TheOtherRolesEdited.Patches {
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
 
                 // Show poolable player
-                if (FastDestroyableSingleton<HudManager>.Instance != null && FastDestroyableSingleton<HudManager>.Instance.UseButton != null) {
+                if (FastDestroyableSingleton<HudManager>.Instance != null && FastDestroyableSingleton<HudManager>.Instance.UseButton != null)
+                {
                     foreach (PoolablePlayer pp in TORMapOptions.playerIcons.Values) pp.gameObject.SetActive(false);
                     if (TORMapOptions.playerIcons.ContainsKey(BountyHunter.bounty.PlayerId) && TORMapOptions.playerIcons[BountyHunter.bounty.PlayerId].gameObject != null)
                         TORMapOptions.playerIcons[BountyHunter.bounty.PlayerId].gameObject.SetActive(true);
                 }
+            }
+            else
+            {
+                BountyHunter.bounty = null;
+                foreach (PoolablePlayer pp in TORMapOptions.playerIcons.Values)
+                    pp.gameObject.SetActive(false);
             }
 
             // Hide in meeting
@@ -1016,7 +1023,6 @@ namespace TheOtherRolesEdited.Patches {
             }
         }
         public static void Postfix(PlayerControl __instance) {
-            Modules.CustomName.ApplySuffix();
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
 
             // Mini and Morphling shrink
@@ -1074,7 +1080,7 @@ namespace TheOtherRolesEdited.Patches {
                 // Impostor
                 impostorSetTarget();
                 // Blackmailer
-                blackMailerSetTarget();
+                blackmailerSetTarget();
                 // Warlock
                 warlockSetTarget();
                 // Check for deputy promotion on Sheriff disconnect
@@ -1515,6 +1521,10 @@ namespace TheOtherRolesEdited.Patches {
         public static void Prefix(GameData __instance, PlayerControl player, DisconnectReasons reason) {
             if (MeetingHud.Instance) {
                 MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, player.PlayerId);
+            }
+            if (RoleDraft.isEnabled && RoleDraft.isRunning)
+            {
+                RoleDraft.HandlePlayerDisconnected(player.PlayerId);
             }
         }
     }

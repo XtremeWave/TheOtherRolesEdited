@@ -13,6 +13,10 @@ using System.Text;
 using InnerNet;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils;
+using TheOtherRolesEdited.Patches;
+using Reactor.Utilities.Extensions;
+using TheOtherRolesEdited.Modules;
+using static TheOtherRolesEdited.Patches.CredentialsPatch;
 
 namespace TheOtherRolesEdited.Modules;
 
@@ -38,7 +42,6 @@ internal class TitleLogoPatch
     public static float switchInterval = 4f;    // 切换间隔（秒）
     public static float fadeDuration = 0.8f;    // 渐变时长（秒，越大越慢）
 
- //copy from https://github.com/Slok7565/FinalSuspect/blob/FinalSus/FinalSuspect/Modules/Core/Game/Utils.cs#L29
     public static float GetResolutionOffset()
     {
         return (float)Screen.width / Screen.height / (16f / 9f);
@@ -49,6 +52,7 @@ internal class TitleLogoPatch
 #if PC
         ResolutionManager.SetResolution(1920, 1080, true);
 #endif
+        EnterCodePatch.ifFirst = true;
 
         GameObject.Find("BackgroundTexture")?.SetActive(!MainMenuManagerPatch.ShowedBak);
 
@@ -82,21 +86,41 @@ internal class TitleLogoPatch
 
         if (!(Sizer = GameObject.Find("Sizer"))) return;
         if (!(AULogo = GameObject.Find("LOGO-AU"))) return;
+        var now = DateTime.Now;
+        var month = now.Month;
+        var day = now.Day;
         logoRenderer = AULogo.GetComponent<SpriteRenderer>();
+#if PC
         AULogo.transform.localPosition += new Vector3(-0.35f, 0.28f, 0);
         AULogo.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
-        logoSprite1 = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE.png", 150f);
+#else
+        AULogo.transform.localPosition += new Vector3(-0.4f, 0f, 0);
+#endif
+        string logoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE.png";
+        if (month == 4 && day == 1)logoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE.png";
+        logoSprite1 = Helpers.loadSpriteFromResources(logoPath, 150f);
         logoSprite2 = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.AmongUs-Logo.png", 150f);
         logoRenderer.sprite = logoSprite1;
-        logoRenderer.color = Color.white;
-
-        __instance.StartCoroutine(GradientSwitchCoroutine());
+        logoRenderer.color = Color.white; __instance.StartCoroutine(GradientSwitchCoroutine());
 
         if (!(BottomButtonBounds = GameObject.Find("BottomButtonBounds"))) return;
-        BottomButtonBounds.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
-#if ANDROID
-        BottomButtonBounds.transform.localPosition = new Vector3(0.08f, -1.2146f, 0);
+#if PC
+        BottomButtonBounds.transform.localPosition += new Vector3(-0.35f * GetResolutionOffset(), 0.8f * GetResolutionOffset(), 0);
+#else
+        BottomButtonBounds.transform.localPosition += new Vector3(0.06f, 0.17f, 0);
 #endif
+        DateTime currentDate = DateTime.Now;
+        if (currentDate.Month == 10 && currentDate.Day == 25)
+        {
+            /*__instance.playButton.OnClick.RemoveAllListeners();
+            __instance.playButton.OnClick.AddListener((System.Action)(() => __instance.inventoryButton.OnClick.Invoke()));
+            __instance.inventoryButton.OnClick.AddListener((System.Action)(() => __instance.shopButton.OnClick.Invoke()));
+            __instance.shopButton.OnClick.AddListener((System.Action)(() => __instance.newsButton.OnClick.Invoke()));
+            __instance.myAccountButton.OnClick.AddListener((System.Action)(() => __instance.settingsButton.OnClick.Invoke()));
+            __instance.newsButton.OnClick.AddListener((System.Action)(() => __instance.playButton.OnClick.Invoke()));
+            __instance.settingsButton.OnClick.AddListener((System.Action)(() => __instance.myAccountButton.OnClick.Invoke()));*/
+        }
+#if PC
         __instance.playButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
         __instance.inventoryButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
         __instance.shopButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
@@ -109,6 +133,14 @@ internal class TitleLogoPatch
         __instance.myAccountButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.newsButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.settingsButton.transform.localScale += new Vector3(0.02f, 0f, 0);
+#else
+        __instance.playButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
+        __instance.inventoryButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
+        __instance.shopButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
+        __instance.myAccountButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
+        __instance.newsButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
+        __instance.settingsButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
+#endif
 
         if (!(RightPanel = GameObject.Find("RightPanel"))) return;
         var rpap = RightPanel.GetComponent<AspectPosition>();
@@ -120,7 +152,6 @@ internal class TitleLogoPatch
         RightPanel.transform.localPosition = RightPanelOp + new Vector3(20f, 0f, 0f);
 #endif
         RightPanel.GetComponent<SpriteRenderer>().color = new(0f, 0.6f, 255f);
-
         CloseRightButton = new GameObject("CloseRightPanelButton");
         CloseRightButton.transform.SetParent(RightPanel.transform);
         CloseRightButton.transform.localPosition = new Vector3(-4.78f * GetResolutionOffset(), 1.3f, 1f);
@@ -219,26 +250,6 @@ internal class TitleLogoPatch
         }
         return null;
     }
-    [HarmonyPatch(typeof(ResolutionManager))]
-    internal class ResolutionManagerPatch
-    {
-        [HarmonyPatch(nameof(ResolutionManager.SetResolution))]
-        public static void Postfix(int width, int height)
-        {
-            _ = new LateTask(() =>
-            {
-                if (!GameObject.Find("MainUI")) return;
-                var offset = GetResolutionOffset();
-                CloseRightButton.transform.localPosition = new Vector3(-4.78f * offset, 1.3f, 1.0f);
-                Tint.transform.localPosition = new Vector3(-0.0824f * offset, 0.0513f, Tint.transform.localPosition.z);
-                Sizer.transform.localPosition = new Vector3(-4.0f * offset, 1.4f, -1.0f);
-                Background.transform.localScale = new Vector3(Mathf.Max(GetResolutionOffset(), 1), Mathf.Max(GetResolutionOffset(), 1), 1);
-                var mainButtons = GameObject.Find("Main Buttons");
-                mainButtons.transform.position = new Vector3(-3.4f * offset, mainButtons.transform.position.y,mainButtons.transform.position.z);
-                CloseRightButton.transform.localPosition = new Vector3(-4.78f * GetResolutionOffset(), 1.3f, 1f);
-            }, 0.01f, "RefreshMenu");
-        }
-    }
     [HarmonyPatch(typeof(GameSettingMenu))]
     public class GameSettingMenuPatch
     {
@@ -257,6 +268,10 @@ internal class TitleLogoPatch
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
     public static void Postfix(VersionShower __instance)
     {
+        MainMenuPatch.fontAssetVersionShower = __instance.text.font;
+        LogoPatch.fontAssetVersionShower = __instance.text.font;
+        Showpop.fontAssetVersionShower = __instance.text.font;
+
         __instance.text.fontSize = 1.5f;
         __instance.text.text = $"AmongUs v{DestroyableSingleton<ReferenceDataManager>.Instance.Refdata.userFacingVersion}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString}";
         __instance.text.text += "\n" + string.Format(ModTranslation.getString("ToDateToday"), TheOtherRolesEditedPlugin.ModUsageCount);
@@ -328,15 +343,6 @@ internal class TitleLogoPatch
         SceneChanger.ChangeScene("MainMenu");
     }
 
-    [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
-    public static class GameStartManagePatch
-    {
-        public static void Postfix(GameStartManager __instance)
-        {
-            var AspectSize = GameObject.Find("AspectSize");
-            AspectSize.transform.FindChild("Background").gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.4f);
-        }
-    }
 
     [HarmonyPatch]
     class LobbyViewSettingsPanePatch
@@ -456,26 +462,6 @@ internal class UpdateCharCountPatch
             __instance.charCountText.color = Color.red;
     }
 }
-[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSendChat))]
-class RpcSendChatPatch
-{
-    public static bool Prefix(PlayerControl __instance, string chatText, ref bool __result)
-    {
-        if (string.IsNullOrWhiteSpace(chatText))
-        {
-            __result = false;
-            return false;
-        }
-        int return_count = PlayerControl.LocalPlayer.name.Count(x => x == '\n');
-        chatText = new StringBuilder(chatText).Insert(0, "\n", return_count).ToString();
-        if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
-            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(__instance, chatText);
-        if (chatText.Contains("who", StringComparison.OrdinalIgnoreCase))
-            DestroyableSingleton<UnityTelemetry>.Instance.SendWho();
-        __result = true;
-        return false;
-    }
-}
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
 public static class GameStartManagerUpdatePatch
 {
@@ -485,20 +471,36 @@ public static class GameStartManagerUpdatePatch
         {
             try
             {
-                Helpers.playerById(GameData.Instance.GetPlayerByClient(client).PlayerId).cosmetics.nameText.text = $"{client.PlayerName} {client.GetPlatform()}";
+                PlayerControl player = Helpers.playerById(GameData.Instance.GetPlayerByClient(client).PlayerId);
+                player.cosmetics.nameText.text = $"<color=#7bbfea>{client.PlayerName}</color>";
+                if (ModOption.HostName) player.cosmetics.nameText.text += $"{Helpers.GradientColorText("00BFFF", "0000FF", $" ★TORE")}";
+                player.cosmetics.nameText.text += $"\n<size=60%>{player.GetPlatform()}</size>";
             }
             catch
             { }
         }
     }
-    public static string GetPlatform(this ClientData clientData)
+    public static ClientData GetClient(this PlayerControl player)
+    {
+        try
+        {
+            var client = AmongUsClient.Instance.allClients
+                .ToArray().FirstOrDefault(cd => cd.Character.PlayerId == player.PlayerId);
+            return client;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    public static string GetPlatform(this PlayerControl player)
     {
         try
         {
             var color = "";
             var name = "";
             string text;
-            switch (clientData.PlatformData.Platform)
+            switch (player.GetClient().PlatformData.Platform)
             {
                 case Platforms.StandaloneEpicPC:
                     color = "#905CDA";
@@ -553,4 +555,4 @@ public static class GameStartManagerUpdatePatch
         }
     }
 }
-//somecode copy from https://github.com/Slok7565/FinalSuspect
+//copy from https://github.com/Slok7565/FinalSuspect/blob/FinalSus/FinalSuspect/Modules/Core/Game/Utils.cs#L29
