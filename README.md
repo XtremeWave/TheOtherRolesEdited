@@ -7,11 +7,11 @@
 <details>
   <summary>点我查看TheOtherRolesEdited开发者</summary>
 
-- 本模组由TheOtherRoles v4.7.0版本进行分支十分感谢一些贡献者对我们的帮助！
-- 汉化由[毒液](https://github.com/ksduye) & [方块er](https://github.com/farthest001) 
-- 美术编辑:[毒液](https://github.com/ksduye) , JMS & 尤路丽丝
-- TORE作者:[毒液](https://github.com/ksduye)& [方块er](https://github.com/farthest001) & [Yu](https://github.com/Night-GUA)
-- 贡献者:[lezaiya](https://github.com/LezaiYa) & [imp11](https://github.com/dabao40) & [水木年华]()
+- 本模组由TheOtherRoles v4.8.0版本进行分支十分感谢一些贡献者对我们的帮助！
+- 汉化由[farewell](https://github.com/ksduye) & [方块er](https://github.com/farthest001) 
+- 美术编辑:[farewell](https://github.com/ksduye) , JMS & 尤路丽丝
+- TORE作者:[farewell](https://github.com/ksduye)& [方块er](https://github.com/farthest001) 
+- 贡献者:[Yu](https://github.com/Night-GUA)
 
 </details>
 
@@ -49,8 +49,6 @@
 | [矿工](#矿工) | [医生](#医生) |  |
 | [悠悠球](#悠悠球) |  [猎人](#猎人) |  |
 |  | [正义的赌怪](#赌怪) |  |  |
-
-[关于模组](#关于模组) 
 
 # 下载
 | Among Us - 版本| 模组版本 | 链接 |
@@ -106,16 +104,9 @@
 | 米拉HQ | 2 | 13 | 11
 | 波鲁斯 | 4 | 14 | 15
 | 高空飞艇 | 2 | 23 | 15
-| 真菌世界 | 2 | 114514 | 208200
 -----------------------
 
 # 自定义帽子
 ## 创建并提交新的帽子设计
 - 详情请去[TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles)
 
-## 关于模组
-- 本模组由TheOtherRoles v4.5.1版本进行分支十分感谢一些贡献者对我们的帮助！
-- 汉化由[毒液](https://github.com/ksduye) & [方块er](https://github.com/farthest001) 
-- 美术编辑:[毒液](https://github.com/ksduye)
-- TORE作者:[毒液](https://github.com/ksduye)& [方块er](https://github.com/farthest001) & [Yu](https://github.com/Night-GUA)
-- 贡献者:[lezaiya](https://github.com/LezaiYa) & [imp11](https://github.com/dabao40) & [水木年华]()# TheOtherRolesEdited
