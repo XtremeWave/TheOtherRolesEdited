@@ -8,6 +8,7 @@ using Hazel;
 using PowerTools;
 using TheOtherRolesEdited.CustomGameModes;
 using TheOtherRolesEdited.Modules;
+using TheOtherRolesEdited.Objects;
 using TheOtherRolesEdited.Utilities;
 using UnityEngine;
 using static TheOtherRolesEdited.TheOtherRolesEdited;
@@ -32,6 +33,11 @@ namespace TheOtherRolesEdited.Patches
 #endif
         public static void IntroCutsceneDestroyPatch(IntroCutscene __instance)
         {
+            HudManager.Instance.ShowVanillaKeyGuide();
+            // Add Electrical
+            FungleAdditionalElectrical.CreateElectrical();
+
+
             // Generate and initialize player icons
             int playerCounter = 0;
             int hideNSeekCounter = 0;
@@ -101,16 +107,16 @@ namespace TheOtherRolesEdited.Patches
             }
 
             // Force Bounty Hunter to load a new Bounty when the Intro is over
-            if (BountyHunter.bounty != null && PlayerControl.LocalPlayer == BountyHunter.bountyHunter)
+            if (BountyHunter.bounty != null)
             {
-                BountyHunter.bountyUpdateTimer = 0f;
+                if (PlayerControl.LocalPlayer == BountyHunter.bountyHunter) BountyHunter.bountyUpdateTimer = 0f;
                 if (FastDestroyableSingleton<HudManager>.Instance != null)
                 {
                     BountyHunter.cooldownText = UnityEngine.Object.Instantiate<TMPro.TextMeshPro>(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText, FastDestroyableSingleton<HudManager>.Instance.transform);
                     BountyHunter.cooldownText.alignment = TMPro.TextAlignmentOptions.Center;
                     BountyHunter.cooldownText.transform.localPosition = bottomLeft + new Vector3(0f, -0.35f, -62f);
                     BountyHunter.cooldownText.transform.localScale = Vector3.one * 0.4f;
-                    BountyHunter.cooldownText.gameObject.SetActive(true);
+                    BountyHunter.cooldownText.gameObject.SetActive(PlayerControl.LocalPlayer == BountyHunter.bountyHunter);
                 }
             }
 
@@ -485,10 +491,14 @@ namespace TheOtherRolesEdited.Patches
                 __instance.RoleBlurbText.text = "";
                 if (roleInfo != null)
                 {
+                    __instance.YouAreText.color = roleInfo.color;
                     __instance.RoleText.text = roleInfo.name;
                     __instance.RoleText.color = roleInfo.color;
                     __instance.RoleBlurbText.text = roleInfo.introDescription;
                     __instance.RoleBlurbText.color = roleInfo.color;
+                    __instance.RoleText.SetOutlineColor(ColorHelper.ShadeColor(roleInfo.color, 0.1f).SetAlpha(0.38f));
+                    __instance.RoleText.SetOutlineThickness(0.17f);
+
                 }
                 if (modifierInfo != null)
                 {
@@ -512,7 +522,7 @@ namespace TheOtherRolesEdited.Patches
             public static bool Prefix(IntroCutscene._ShowRole_d__41 __instance)
             {
                 seed = rnd.Next(5000);
-                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(1f, new Action<float>((p) => {
+                FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
                     SetRoleTexts(__instance.__4__this);
                 })));
                 return true;
@@ -578,5 +588,6 @@ namespace TheOtherRolesEdited.Patches
         }
     }
 }
+
 
 

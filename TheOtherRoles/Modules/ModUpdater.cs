@@ -141,8 +141,10 @@ namespace TheOtherRolesEdited.Modules
             if (www.isNetworkError || www.isHttpError)
             {
                 popup.TextAreaTMP.text = "更新失败\n请重新尝试,\n或者手动更新.";
+                button.SetActive(true);
                 yield break;
             }
+
             popup.TextAreaTMP.text = $"更新TORE中\n请等待...\n\n正在下载文件\n复制新版本文件...";
 
             var filePath = Path.Combine(Paths.PluginPath, asset.Name);
@@ -203,27 +205,26 @@ namespace TheOtherRolesEdited.Modules
             if (!template) return;
 
             //手动更新
-            var buttonUPDATE = UnityEngine.Object.Instantiate(template, template.transform.parent);
-#if PC
-            buttonUPDATE.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.42f, 0.379f);
-#else
-            buttonUPDATE.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.38f, 0.379f);
-#endif              
-            buttonUPDATE.transform.localScale = new Vector3(1f, 1f, 0);
-            var textFK = buttonUPDATE.transform.GetComponentInChildren<TMPro.TMP_Text>();
+            var button2 = Instantiate(template, null);
+            var buttonTransform2 = button2.transform;
+            button2.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.925f, 0.1f);
+            PassiveButton passivebutton2 = button2.GetComponent<PassiveButton>();
+            passivebutton2.OnClick = new Button.ButtonClickedEvent();
+            passivebutton2.OnClick.AddListener((Action)(() =>
+            {
+                Application.OpenURL("https://tore.amongusclub.cn/#download");
+            }));
+            passivebutton2.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
+            passivebutton2.activeSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
+            Color originalColorpassivebutton2 = passivebutton2.inactiveSprites.GetComponent<SpriteRenderer>().color;
+            passivebutton2.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassivebutton2 * 0.6f;
+            var text2 = button2.transform.GetComponentInChildren<TMPro.TMP_Text>();
             StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
-                textFK.SetText($"{ModTranslation.getString("UpdateWay2")}");
+                text2.SetText($"{ModTranslation.getString("UpdateWay2")}");
             })));
-            PassiveButton passiveButtonUPDATE = buttonUPDATE.GetComponent<PassiveButton>();
-            passiveButtonUPDATE.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
-            passiveButtonUPDATE.OnClick = new Button.ButtonClickedEvent();
-            passiveButtonUPDATE.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://tore.amongusclub.cn/#download")));
-            passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
-            passiveButtonUPDATE.activeSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
-            Color originalColorpassiveButtonUPDATE = passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color;
-            passiveButtonUPDATE.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonUPDATE * 0.6f;
-            //一键更新
+
 #if PC
+            //一键更新
             var button = Instantiate(template, null);
             var buttonTransform = button.transform;
             button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.925f, 0.03f);

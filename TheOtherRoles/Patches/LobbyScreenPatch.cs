@@ -8,16 +8,16 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-namespace TheOtherRolesEdited.Patches;
+namespace TheOtherRolesEdited;
 
 [HarmonyPatch]
 public sealed class LobbyJoinBind
 {
     private static int GameId;
-    private static GameObject LobbyText;
+    internal static GameObject LobbyText;
     internal static TMP_FontAsset fontAssetPingTracker;
-    private static GameObject previousLobbyButton;
-    private static GameObject clipboardLobbyButton;
+    internal static GameObject previousLobbyButton;
+    internal static GameObject clipboardLobbyButton;
 
     [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.JoinGame))]
     [HarmonyPostfix]
@@ -26,6 +26,7 @@ public sealed class LobbyJoinBind
         GameId = __instance.GameId;
     }
 
+    [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.LateUpdate))]
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
     [HarmonyPostfix]
     public static void Postfix()
@@ -37,8 +38,10 @@ public sealed class LobbyJoinBind
             comp.fontSize = 2.5f;
             comp.font = fontAssetPingTracker;
             comp.outlineWidth = -2f;
-            LobbyText.transform.localPosition = new Vector3(10.67f, -0.55f, 0);
+            LobbyText.transform.localPosition = new Vector3(7.934f, 0.1f, 0);
             LobbyText.SetActive(true);
+            GameObject rightPanel = GameObject.Find("RightPanel");
+            comp.transform.SetParent(rightPanel.transform, false);
         }
     }
 
@@ -48,11 +51,8 @@ public sealed class LobbyJoinBind
     {
         var template = GameObject.Find("CreditsButton");
         if (!template) return;
-
         CreatePreviousLobbyButton(template, __instance);
-
         CreateClipboardLobbyButton(template, __instance);
-
         HandleLobbyTextAndHotkeys(__instance);
     }
 
@@ -63,16 +63,24 @@ public sealed class LobbyJoinBind
         {
             previousLobbyButton = Object.Instantiate(template, template.transform.parent);
             previousLobbyButton.name = "PreviousLobbyButton";
-            previousLobbyButton.transform.localScale = new Vector3(0.3f, 0.7f, 0);
-            previousLobbyButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.48f, 1.06f);
+            GameObject rightPanel = GameObject.Find("RightPanel");
+            previousLobbyButton.transform.SetParent(rightPanel.transform, false);
+            previousLobbyButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.8f, 0.7f);
+
+            var colliderButton = previousLobbyButton.GetComponent<BoxCollider2D>();
+            colliderButton.size = new Vector2(0.8f, 0.68f);
+           
+            foreach (var spr in previousLobbyButton.transform.GetChild(0).gameObject.GetComponentsInChildren<SpriteRenderer>())
+                spr.size = new Vector2(0.8f, 0.68f);
+            foreach (var spr in previousLobbyButton.transform.GetChild(1).gameObject.GetComponentsInChildren<SpriteRenderer>())
+                spr.size = new Vector2(0.8f, 0.68f);
 
             var TMP_1 = previousLobbyButton.transform.FindChild("FontPlacer").gameObject;
-            TMP_1.transform.localScale = new Vector3(2.4f, 1f, 1f);
-            TMP_1.transform.localPosition -= new Vector3(1.8f, 0f, 1f);
+            TMP_1.transform.localPosition = new Vector3(-0.8373f, 0.0382f, 1f);
 
             var passiveButton = previousLobbyButton.GetComponent<PassiveButton>();
             passiveButton.OnClick = new Button.ButtonClickedEvent();
-            passiveButton.OnClick.AddListener((System.Action)delegate 
+            passiveButton.OnClick.AddListener((System.Action)delegate
             {
                 if (GameId != 0)
                     instance.StartCoroutine(AmongUsClient.Instance.CoJoinOnlineGameFromCode(GameId));
@@ -99,13 +107,22 @@ public sealed class LobbyJoinBind
         if (clipboardLobbyButton == null)
         {
             clipboardLobbyButton = Object.Instantiate(template, template.transform.parent);
+            GameObject rightPanel = GameObject.Find("RightPanel");
+            clipboardLobbyButton.transform.SetParent(rightPanel.transform, false);
             clipboardLobbyButton.name = "ClipboardLobbyButton";
-            clipboardLobbyButton.transform.localScale = new Vector3(0.3f, 0.7f, 0);
-            clipboardLobbyButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(1.48f, 0.992f);
+            clipboardLobbyButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.8f, 0.6f);
+
+            var colliderButton = clipboardLobbyButton.GetComponent<BoxCollider2D>();
+            colliderButton.size = new Vector2(0.8f, 0.68f);
+
+            foreach (var spr in clipboardLobbyButton.transform.GetChild(0).gameObject.GetComponentsInChildren<SpriteRenderer>())
+                spr.size = new Vector2(0.8f, 0.68f);
+            foreach (var spr in clipboardLobbyButton.transform.GetChild(1).gameObject.GetComponentsInChildren<SpriteRenderer>())
+                spr.size = new Vector2(0.8f, 0.68f);
+
 
             var TMP_2 = clipboardLobbyButton.transform.FindChild("FontPlacer").gameObject;
-            TMP_2.transform.localScale = new Vector3(2.4f, 1f, 1f);
-            TMP_2.transform.localPosition -= new Vector3(1.8f, 0f, 1f);
+            TMP_2.transform.localPosition = new Vector3(-0.8373f, 0.0382f, 1f);
 
             var passiveButton = clipboardLobbyButton.GetComponent<PassiveButton>();
             passiveButton.OnClick = new Button.ButtonClickedEvent();
@@ -126,7 +143,6 @@ public sealed class LobbyJoinBind
         passiveBtn.inactiveSprites.GetComponent<SpriteRenderer>().color = color * 0.6f;
         passiveBtn.activeSprites.GetComponent<SpriteRenderer>().color = color;
     }
-
     private static void HandleLobbyTextAndHotkeys(MainMenuManager instance)
     {
         var code2 = GUIUtility.systemCopyBuffer;

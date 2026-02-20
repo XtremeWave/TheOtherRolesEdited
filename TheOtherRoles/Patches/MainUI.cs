@@ -2,8 +2,11 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheOtherRolesEdited.Modules;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
+using static TheOtherRolesEdited.Patches.CredentialsPatch;
 using Object = UnityEngine.Object;
 
 namespace TheOtherRolesEdited;
@@ -47,6 +50,9 @@ public static class MainUIPatch
         __instance.settingsButton.buttonText.color = Color.white;
         __instance.howToPlayButton.buttonText.color = Color.white;
         __instance.freePlayButton.buttonText.color = Color.white;
+        Showpop.fontAsset = __instance.playButton.buttonText.font;
+        LogoPatch.fontAsset = __instance.playButton.buttonText.font;
+        MainMenuPatch.fontAsset = __instance.playButton.buttonText.font;
 
         __instance.playButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
         __instance.playButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 2f);
@@ -130,6 +136,37 @@ public static class MainUIPatch
         __instance.howToPlayButton.activeTextColor = Color.white;
         __instance.howToPlayButton.inactiveTextColor = Color.white;
 
+        __instance.accountCTAButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+        __instance.accountCTAButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 2f);
+        Color originalColoraccountCTAButton = __instance.accountCTAButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
+        __instance.accountCTAButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColoraccountCTAButton * 0.6f;
+        __instance.accountCTAButton.activeSprites.GetComponent<SpriteRenderer>().color = originalColoraccountCTAButton * 0.65f;
+        __instance.accountCTAButton.activeTextColor = Color.white;
+        __instance.accountCTAButton.inactiveTextColor = Color.white;
+        __instance.accountCTAButton.activeSprites.transform.FindChild("Shine")?.gameObject?.SetActive(false);
+        __instance.accountCTAButton.inactiveSprites.transform.FindChild("Shine")?.gameObject?.SetActive(false);
+        __instance.accountCTAButton.activeSprites.transform.FindChild("Icon")?.gameObject?.SetActive(true);
+        __instance.accountCTAButton.inactiveSprites.transform.FindChild("Icon")?.gameObject?.SetActive(true);
+        __instance.accountCTAButton.activeSprites.transform.FindChild("Icon").transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+        __instance.accountCTAButton.inactiveSprites.transform.FindChild("Icon").transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+        //__instance.accountCTAButton.activeSprites.transform.FindChild("Icon").GetComponent<SpriteRenderer>().color = Color.blue;
+        //__instance.accountCTAButton.inactiveSprites.transform.FindChild("Icon").GetComponent<SpriteRenderer>().color = Color.blue;
+
+        __instance.accountStatsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+        __instance.accountStatsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 2f);
+        Color originalColoraccountStatsButton = __instance.accountStatsButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
+        __instance.accountStatsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColoraccountStatsButton * 0.6f;
+        __instance.accountStatsButton.activeSprites.GetComponent<SpriteRenderer>().color = originalColoraccountStatsButton * 0.65f;
+        __instance.accountStatsButton.activeTextColor = Color.white;
+        __instance.accountStatsButton.inactiveTextColor = Color.white;
+        __instance.accountStatsButton.activeSprites.transform.FindChild("Shine")?.gameObject?.SetActive(false);
+        __instance.accountStatsButton.inactiveSprites.transform.FindChild("Shine")?.gameObject?.SetActive(false);
+        __instance.accountStatsButton.activeSprites.transform.FindChild("Icon")?.gameObject?.SetActive(true);
+        __instance.accountStatsButton.inactiveSprites.transform.FindChild("Icon")?.gameObject?.SetActive(true);
+        __instance.accountStatsButton.activeSprites.transform.FindChild("Icon").transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+        __instance.accountStatsButton.inactiveSprites.transform.FindChild("Icon").transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+        //__instance.accountStatsButton.activeSprites.transform.FindChild("Icon").GetComponent<SpriteRenderer>().color = Color.blue;
+        //__instance.accountStatsButton.inactiveSprites.transform.FindChild("Icon").GetComponent<SpriteRenderer>().color = Color.blue;
     }
     public static void Modify(this PassiveButton passiveButton, Action action)
     {

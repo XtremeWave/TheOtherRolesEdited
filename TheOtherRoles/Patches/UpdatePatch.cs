@@ -198,7 +198,7 @@ namespace TheOtherRolesEdited.Patches {
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
                         if (Lovers.lover1.PlayerId == player.TargetPlayerId || Lovers.lover2.PlayerId == player.TargetPlayerId)
-                            player.NameText.text += suffix;
+                            player.NameText.text += suffix; 
             }
 
             // Lawyer or Prosecutor

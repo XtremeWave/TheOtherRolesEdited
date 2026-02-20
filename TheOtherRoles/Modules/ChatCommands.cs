@@ -24,7 +24,7 @@ namespace TheOtherRolesEdited.Modules
                     DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
             public static void Postfix(ChatController __instance)
-            { 
+            {
                 if (!__instance.freeChatField.textArea.hasFocus) return;
                 __instance.freeChatField.textArea.characterLimit = AmongUsClient.Instance.AmHost ? 2000 : 1200;
 

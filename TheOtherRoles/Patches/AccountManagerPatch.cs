@@ -1,8 +1,10 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 
 namespace TheOtherRolesEdited;
@@ -23,10 +25,19 @@ public static class UpdateFriendCodeUIPatch
         FriendsButton.transform.FindChild("Inactive").FindChild("NewRequestInactive").FindChild("Background").gameObject
             .GetComponent<SpriteRenderer>().color = Color.white.AlphaMultiplied(0.5f);
 
-        string credentialsText = $"<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color> \u00a9 2025 ";
+        string credentialsText = $"<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color> \u00a9 2026 ";
         credentialsText += "\t\t\t";
         string versionText = $"{Helpers.GradientColorText("00BFFF", "0000FF", $"TORE")} - v{TheOtherRolesEditedPlugin.Version.ToString() + (TheOtherRolesEditedPlugin.betaDays > 0 ? "-BETA" : "")}";
-        //versionText += "<size=80%> - 测试版本不要外传啊喂！</size>";
+    
+        DateTime now = DateTime.Now;
+        int currentMonth = now.Month;
+        int currentDay = now.Day;
+        bool isInDisplayPeriod = currentMonth == 2 && currentDay >= 16 && currentDay <= 20;
+        if (isInDisplayPeriod)
+        {
+            versionText += $"- {Helpers.GradientColorText("F5BC13", "F70F00", $"新年快乐")}";
+        }
+
 #if ANDROID
         versionText += "<size=50%><color=#29D837>(Android)</color></size>";
 #endif

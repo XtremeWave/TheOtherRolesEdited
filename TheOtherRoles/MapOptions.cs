@@ -21,6 +21,7 @@ namespace TheOtherRolesEdited{
         public static bool ShowVentsOnMap = true;
         public static bool ShowChatNotifications = true;
         public static bool toggleCursor = true;
+
         public static CustomGamemodes gameMode = CustomGamemodes.Classic;
 
         // Updating values
@@ -58,7 +59,16 @@ namespace TheOtherRolesEdited{
             ShowVentsOnMap = TheOtherRolesEditedPlugin.ShowVentsOnMap.Value;
             ShowChatNotifications = TheOtherRolesEditedPlugin.ShowChatNotifications.Value;
             toggleCursor = TheOtherRolesEditedPlugin.ToggleCursor.Value;
+
             //Patches.ShouldAlwaysHorseAround.isHorseMode = TheOtherRolesEditedPlugin.EnableHorseMode.Value;
         }
+        public static void resetPoolables()
+        {
+            foreach (PoolablePlayer p in playerIcons.Values)
+            {
+                if (p != null && p.gameObject != null) p.gameObject.SetActive(false);
+            }
+        }
+
     }
 }

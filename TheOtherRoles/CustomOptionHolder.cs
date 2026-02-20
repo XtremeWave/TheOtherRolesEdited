@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static TheOtherRolesEdited.TheOtherRolesEdited;
-using Types = TheOtherRolesEdited.CustomOption.CustomOptionType;
+using Types = TheOtherRolesEdited.CustomOption.CustomOptionMenu;
 
 namespace TheOtherRolesEdited
 {
@@ -28,9 +28,9 @@ namespace TheOtherRolesEdited
         public static CustomOption eventKicksPerRound;
         public static CustomOption eventHeavyAge;
         public static CustomOption deadImpsBlockSabotage;
-        public static CustomOption CanUseSwitchShipCostumeButton;
         public static CustomOption modifierShifterShiftsMedicShield;
         public static CustomOption HostName;
+        public static CustomOption fungleElectrical;
 
         public static CustomOption debugMode;
         public static CustomOption disableGameEnd;
@@ -53,6 +53,10 @@ namespace TheOtherRolesEdited
 
         public static CustomOption minerSpawnRate;
         public static CustomOption minerCooldown;
+
+        public static CustomOption undertakerSpawnRate;
+        public static CustomOption undertakerDragingDelaiAfterKill;
+        public static CustomOption undertakerCanDragAndVent;
 
         public static CustomOption eraserSpawnRate;
         public static CustomOption eraserCooldown;
@@ -259,7 +263,6 @@ namespace TheOtherRolesEdited
         public static CustomOption thiefCanKillSheriff;
         public static CustomOption thiefCanStealWithGuess;
 
-
         public static CustomOption trapperSpawnRate;
         public static CustomOption trapperCooldown;
         public static CustomOption trapperMaxCharges;
@@ -268,6 +271,15 @@ namespace TheOtherRolesEdited
         public static CustomOption trapperAnonymousMap;
         public static CustomOption trapperInfoType;
         public static CustomOption trapperTrapDuration;
+
+        public static CustomOption paranoiaSpawnRate;
+        public static CustomOption paranoiaCooldown;
+        public static CustomOption paranoiaProtectionDuration;
+        public static CustomOption paranoiaProtectionNumber;
+
+        public static CustomOption veteranSpawnRate;
+        public static CustomOption veteranCooldown;
+        public static CustomOption veteranAlertDuration;
 
         public static CustomOption bomberSpawnRate;
         public static CustomOption bomberBombDestructionTime;
@@ -284,8 +296,6 @@ namespace TheOtherRolesEdited
         public static CustomOption yoyoHasAdminTable;
         public static CustomOption yoyoAdminTableCooldown;
         public static CustomOption yoyoSilhouetteVisibility;
-
-
 
         public static CustomOption modifiersAreHidden;
 
@@ -545,7 +555,7 @@ namespace TheOtherRolesEdited
             ninjaTraceColorTime = CustomOption.Create(Types.Impostor, "树叶褪色的时间", 2f, 0f, 20f, 0.5f, ninjaSpawnRate);
             ninjaInvisibleDuration = CustomOption.Create(Types.Impostor, "忍者隐身时间", 3f, 0f, 20f, 1f, ninjaSpawnRate);
 
-            bomberSpawnRate = CustomOption.Create(Types.Impostor, cs(Bomber.color, "爆炸狂"), rates, null, true);
+            bomberSpawnRate = CustomOption.Create(Types.Impostor, cs(Bomber.color, "爆破手"), rates, null, true);
             bomberBombDestructionTime = CustomOption.Create(Types.Impostor, "炸弹销毁时间", 20f, 2.5f, 120f, 2.5f, bomberSpawnRate);
             bomberBombDestructionRange = CustomOption.Create(Types.Impostor, "炸弹破坏范围", 50f, 5f, 150f, 5f, bomberSpawnRate);
             bomberBombHearRange = CustomOption.Create(Types.Impostor, "炸弹爆炸范围", 60f, 5f, 150f, 5f, bomberSpawnRate);
@@ -566,8 +576,12 @@ namespace TheOtherRolesEdited
 
             blackmailerSpawnRate = CustomOption.Create(Types.Impostor, cs(Blackmailer.color, "勒索者"), rates, null, true);
             blackmailerCooldown = CustomOption.Create(Types.Impostor, "勒索冷却时间", 30f, 5f, 120f, 5f, blackmailerSpawnRate);
-            guesserSpawnRate = CustomOption.Create(Types.Neutral, cs(Guesser.color, "赌怪"), rates, null, true);
 
+            undertakerSpawnRate = CustomOption.Create(Types.Impostor, cs(Undertaker.color, "送葬者"), rates, null, true);
+            undertakerDragingDelaiAfterKill = CustomOption.Create(Types.Impostor, "从击杀到恢复拖曳能力所需时间", 0f, 0f, 15, 1f, undertakerSpawnRate);
+            undertakerCanDragAndVent = CustomOption.Create(Types.Impostor, "拖拽尸体时可以使用管道", true, undertakerSpawnRate);
+
+            guesserSpawnRate = CustomOption.Create(Types.Neutral, cs(Guesser.color, "赌怪"), rates, null, true);
             guesserIsImpGuesserRate = CustomOption.Create(Types.Neutral, "赌怪是内鬼的机率", rates, guesserSpawnRate);
             guesserNumberOfShots = CustomOption.Create(Types.Neutral, "赌怪的赌杀次数", 2f, 1f, 15f, 1f, guesserSpawnRate);
             guesserHasMultipleShotsPerMeeting = CustomOption.Create(Types.Neutral, "赌怪可以在会议上多次赌杀", false, guesserSpawnRate);
@@ -587,15 +601,15 @@ namespace TheOtherRolesEdited
             jackalKillCooldown = CustomOption.Create(Types.Neutral, "豺狼/跟班的击杀冷却时间", 30f, 10f, 60f, 2.5f, jackalSpawnRate);
             jackalCreateSidekickCooldown = CustomOption.Create(Types.Neutral, "豺狼招募技能冷却时间", 30f, 10f, 60f, 2.5f, jackalSpawnRate);
             jackalCanUseVents = CustomOption.Create(Types.Neutral, "豺狼可以使用管道", true, jackalSpawnRate);
-            sidekickCanSabotageLights = CustomOption.Create(Types.Neutral, "跟班可以破坏灯光", true, jackalSpawnRate);
-            jackalCanCreateSidekick = CustomOption.Create(Types.Neutral, "豺狼可以招募一个跟班", false, jackalSpawnRate);
             jackalCanSabotageLights = CustomOption.Create(Types.Neutral, "豺狼可以破坏灯光", true, jackalSpawnRate);
-            sidekickPromotesToJackal = CustomOption.Create(Types.Neutral, "跟班在豺狼死后晋升豺狼", false, jackalCanCreateSidekick);
+            jackalAndSidekickHaveImpostorVision = CustomOption.Create(Types.Neutral, "豺狼和跟班拥有内鬼的视野", false, jackalSpawnRate);
+            jackalCanCreateSidekick = CustomOption.Create(Types.Neutral, "豺狼可以招募一个跟班", false, jackalSpawnRate);
+            sidekickCanSabotageLights = CustomOption.Create(Types.Neutral, "跟班可以破坏灯光", true, jackalCanCreateSidekick);
             sidekickCanKill = CustomOption.Create(Types.Neutral, "跟班可以击杀", false, jackalCanCreateSidekick);
             sidekickCanUseVents = CustomOption.Create(Types.Neutral, "跟班可以使用管道", true, jackalCanCreateSidekick);
+            sidekickPromotesToJackal = CustomOption.Create(Types.Neutral, "跟班可以在豺狼死后晋升为豺狼", false, jackalCanCreateSidekick);
             jackalPromotedFromSidekickCanCreateSidekick = CustomOption.Create(Types.Neutral, "晋升的跟班可以拥有招募技能", true, sidekickPromotesToJackal);
             jackalCanCreateSidekickFromImpostor = CustomOption.Create(Types.Neutral, "豺狼可以招募内鬼为自己的跟班", true, jackalCanCreateSidekick);
-            jackalAndSidekickHaveImpostorVision = CustomOption.Create(Types.Neutral, "豺狼和跟班拥有内鬼的视野", false, jackalSpawnRate);
 
             vultureSpawnRate = CustomOption.Create(Types.Neutral, cs(Vulture.color, "秃鹫"), rates, null, true);
             vultureCooldown = CustomOption.Create(Types.Neutral, "吞噬技能冷却时间", 15f, 10f, 60f, 2.5f, vultureSpawnRate);
@@ -738,6 +752,16 @@ namespace TheOtherRolesEdited
             trapperAnonymousMap = CustomOption.Create(Types.Crewmate, "显示匿名地图", false, trapperSpawnRate);
             trapperInfoType = CustomOption.Create(Types.Crewmate, "陷阱信息类型", new string[] { "职业", "正义/邪恶的职业", "玩家名字" }, trapperSpawnRate);
             trapperTrapDuration = CustomOption.Create(Types.Crewmate, "陷阱持续时间", 5f, 1f, 15f, 1f, trapperSpawnRate);
+         
+            paranoiaSpawnRate = CustomOption.Create(Types.Crewmate, cs(Paranoia.color, "被害妄想症"), rates, null, true);
+            paranoiaCooldown = CustomOption.Create(Types.Crewmate, "自护技能冷却时间", 30f, 10f, 60f, 2.5f, paranoiaSpawnRate);
+            paranoiaProtectionDuration = CustomOption.Create(Types.Crewmate, "自护技能持续时间", 3f, 1f, 20f, 1f, paranoiaSpawnRate);
+            paranoiaProtectionNumber = CustomOption.Create(Types.Crewmate, "可自护次数", 5f, 1f, 15f, 1f, paranoiaSpawnRate);
+         
+            veteranSpawnRate = CustomOption.Create(Types.Crewmate, cs(Veteran.color, "老兵"), rates, null, true);
+            veteranCooldown = CustomOption.Create(Types.Crewmate, "警戒技能冷却时间", 30f, 10f, 120f, 2.5f, veteranSpawnRate);
+            veteranAlertDuration = CustomOption.Create(Types.Crewmate, "警戒技能持续时间", 3f, 1f, 20f, 1f, veteranSpawnRate);
+
             // Modifier (1000 - 1999)
             //modifiersAreHidden = CustomOption.Create(1009, Types.Modifier, cs(Color.yellow, "死后隐藏附加职业"), true, null, true); 歌姬farewell翻译错了
             modifiersAreHidden = CustomOption.Create(Types.Modifier, cs(Color.yellow, "隐藏VIP, 诱饵 & 溅血者"), true, null, true, heading: cs(Color.yellow, "死后隐藏附加职业效果"));
@@ -875,11 +899,11 @@ namespace TheOtherRolesEdited
             propHuntSpeedboostSpeed = CustomOption.Create(Types.PropHunt, cs(Palette.CrewmateBlue, "加速提升速度"), 2f, 1.25f, 5f, 0.25f, propHuntSpeedboostEnabled);
 
             // Other options
-            CanUseSwitchShipCostumeButton = CustomOption.Create(Types.General, "切换地图皮肤(仅支持骷髅舰)", false, null, true, heading: "其他设置");
-            HostName = CustomOption.Create(Types.General, "启用TORE头衔", false);
             debugMode = CustomOption.Create(Types.General, "测试模式", false, null, true, heading: "测试模式");
             disableGameEnd = CustomOption.Create(Types.General, "游戏不结束", false, debugMode);
             maxNumberOfMeetings = CustomOption.Create(Types.General, "会议总次数 (不计入市长)", 10, 0, 15, 1, null, true, heading: "游戏设定");
+            HostName = CustomOption.Create(Types.General, "启用TORE头衔", false);
+            fungleElectrical = CustomOption.Create(Types.General, "真菌世界可以关闭灯光", false);
             anyPlayerCanStopStart = CustomOption.Create(Types.General, "所有玩家都可以暂停开始游戏", false, null, false);
             blockSkippingInEmergencyMeetings = CustomOption.Create(Types.General, "禁用会议中弃票", false);
             noVoteIsSelfVote = CustomOption.Create(Types.General, "不投票看作投自己", false, blockSkippingInEmergencyMeetings);

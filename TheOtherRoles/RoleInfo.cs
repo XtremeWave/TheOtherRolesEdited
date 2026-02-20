@@ -53,6 +53,7 @@ namespace TheOtherRolesEdited
         public static RoleInfo cleaner = new RoleInfo("清理者", Cleaner.color, "杀人于无形之中", "清理你的作案痕迹", RoleId.Cleaner);
         public static RoleInfo blackmailer = new RoleInfo("勒索者", Blackmailer.color, "嘘~~~~~~~~~~~", "不许说话哦~", RoleId.Blackmailer);
         public static RoleInfo miner = new RoleInfo("矿工", Miner.color, "建立新的管道网络", "建立新的管道", RoleId.Miner);
+        public static RoleInfo undertaker = new RoleInfo("送葬者", Undertaker.color, "嘿咻嘿咻嘿咻~", "干掉船员们并藏好尸体", RoleId.Undertaker);
         public static RoleInfo warlock = new RoleInfo("术士", Warlock.color, "画个圈圈诅咒你", "利用诅咒杀掉船员", RoleId.Warlock);
         public static RoleInfo bountyHunter = new RoleInfo("赏金猎人", BountyHunter.color, "赏金我让欲罢不能", "无休止的获得赏金吧", RoleId.BountyHunter);
         public static RoleInfo detective = new RoleInfo("侦探", Detective.color, "寻找<color=#FF1919FF>内鬼</color>留下的作案痕迹吧", "在脚印中寻找线索", RoleId.Detective);
@@ -66,7 +67,9 @@ namespace TheOtherRolesEdited
         public static RoleInfo jackal = new RoleInfo("豺狼", Jackal.color, "杀了船员和<color=#FF1919FF>内鬼</color>来获得胜利", "击杀所有人", RoleId.Jackal, true);
         public static RoleInfo sidekick = new RoleInfo("跟班", Sidekick.color, "帮助豺狼获得胜利", "帮助豺狼杀掉所有人", RoleId.Sidekick, true);
         public static RoleInfo spy = new RoleInfo("卧底", Spy.color, "隐藏在<color=#FF1919FF>内鬼</color>之主", "让内鬼们相互猜疑", RoleId.Spy);
-        public static RoleInfo securityGuard = new RoleInfo("保安", SecurityGuard.color, "嘿咻咻~不多不少好极了", "放置摄像头和封锁管道", RoleId.SecurityGuard);
+        public static RoleInfo securityGuard = new RoleInfo("保安", SecurityGuard.color, "嘿咻嘿咻`~", "放置摄像头和封锁管道", RoleId.SecurityGuard);
+        public static RoleInfo paranoia = new RoleInfo("被害妄想症", Paranoia.color, "你要干什么啊啊啊！！！", "必要时保护自己", RoleId.Paranoia);
+        public static RoleInfo veteran = new RoleInfo("老兵", Veteran.color, "老骥伏枥,志在千里", "时刻保持警惕", RoleId.Veteran);
         public static RoleInfo arsonist = new RoleInfo("纵火犯", Arsonist.color, "要来一起吃烤肉吗？", "我最喜欢烟花！", RoleId.Arsonist, true);
         public static RoleInfo goodGuesser = new RoleInfo("正义的赌怪", Guesser.color, "生命即是豪赌", "生命即是豪赌", RoleId.NiceGuesser);
         public static RoleInfo badGuesser = new RoleInfo("邪恶的赌怪", Palette.ImpostorRed, "生命即是豪赌", "生命即是豪赌", RoleId.EvilGuesser);
@@ -81,13 +84,11 @@ namespace TheOtherRolesEdited
         public static RoleInfo witch = new RoleInfo("女巫", Witch.color, "毒药为你准备好了哦~", "为所有人下咒", RoleId.Witch);
         public static RoleInfo ninja = new RoleInfo("忍者", Ninja.color, "杀人于无形之中", "杀人于无形之中", RoleId.Ninja);
         public static RoleInfo thief = new RoleInfo("强盗", Thief.color, "这些都是我的啦！", "先杀人再盗窃", RoleId.Thief, true);
-        public static RoleInfo bomber = new RoleInfo("爆炸狂", Bomber.color, "我可是比纵火犯还喜欢烟花呢~", "炸死所有船员", RoleId.Bomber);
+        public static RoleInfo bomber = new RoleInfo("爆破手", Bomber.color, "我可是比纵火犯还喜欢烟花呢~", "炸死所有船员", RoleId.Bomber);
         public static RoleInfo yoyo = new RoleInfo("悠悠球", Yoyo.color, "欻~~~~~~~~~~~", "瞬移到你所标记的位置", RoleId.Yoyo);
         public static RoleInfo hunter = new RoleInfo("猎人", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "找到并击杀所有人"), "找到并击杀所有人", RoleId.Impostor);
         public static RoleInfo hunted = new RoleInfo("躲藏者", Color.white, "躲躲藏藏又是一年", "躲藏", RoleId.Crewmate);
         public static RoleInfo prop = new RoleInfo("变形者", Color.white, "伪装成物体并生存", "伪装成物体并生存", RoleId.Crewmate);
-
-
 
         // Modifier
         public static RoleInfo bloody = new RoleInfo("溅血者", Bloody.color, "杀了你的人会留下痕迹", "杀了你的人会留下痕迹", RoleId.Bloody, false, true);
@@ -113,6 +114,7 @@ namespace TheOtherRolesEdited
             morphling,
             camouflager,
             vampire,
+            undertaker,
             eraser,
             trickster,
             cleaner,
@@ -148,6 +150,8 @@ namespace TheOtherRolesEdited
             medic,
             swapper,
             seer,
+            paranoia,
+            veteran,
             hacker,
             tracker,
             snitch,
@@ -216,6 +220,7 @@ namespace TheOtherRolesEdited
             if (p == Witch.witch) infos.Add(witch);
             if (p == Ninja.ninja) infos.Add(ninja);
             if (p == Bomber.bomber) infos.Add(bomber);
+            if (p == Undertaker.undertaker) infos.Add(undertaker);
             if (p == Yoyo.yoyo) infos.Add(yoyo);
             if (p == Miner.miner) infos.Add(miner);
             if (p == Blackmailer.blackmailer) infos.Add(blackmailer);
@@ -223,6 +228,8 @@ namespace TheOtherRolesEdited
             if (p == TimeMaster.timeMaster) infos.Add(timeMaster);
             if (p == Medic.medic) infos.Add(medic);
             if (p == Swapper.swapper) infos.Add(swapper);
+            if (p == Paranoia.paranoia) infos.Add(paranoia);
+            if (p == Veteran.veteran) infos.Add(veteran);
             if (p == Seer.seer) infos.Add(seer);
             if (p == Hacker.hacker) infos.Add(hacker);
             if (p == Tracker.tracker) infos.Add(tracker);

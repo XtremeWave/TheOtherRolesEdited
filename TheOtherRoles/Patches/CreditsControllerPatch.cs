@@ -1,9 +1,34 @@
 ﻿#if PC
 using HarmonyLib;
+using Rewired.Utils.Platforms.Windows;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace TheOtherRolesEdited;
+
+[HarmonyPatch(typeof(CreditsScreenPopUp))]
+internal class CreditsScreenPopUpPatch
+{
+    [HarmonyPatch(nameof(CreditsScreenPopUp.OnEnable))]
+    public static void Postfix(CreditsScreenPopUp __instance)
+    {
+        __instance.BackButton.transform.parent.FindChild("Background").gameObject.SetActive(false);
+
+        var followUs = __instance.BackButton.transform.parent.FindChild("FollowUs");
+        followUs.FindChild("TwitterIcon").gameObject.SetActive(false);
+
+        var qqIcon = followUs.FindChild("FacebookIcon");
+        qqIcon.GetComponent<TwitterLink>().LinkUrl = "https://qm.qq.com/q/roXbwr7R2S";
+        qqIcon.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.qqlogo.png", 1000f);
+        qqIcon.gameObject.SetActive(true);
+
+        var dcIcon = followUs.FindChild("Discord-Logo-Color");
+        dcIcon.GetComponent<TwitterLink>().LinkUrl = "https://space.bilibili.com/1049954492?spm_id_from=333.1007.0.0";
+        dcIcon.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.bilibililogo.png", 200f);
+        dcIcon.gameObject.SetActive(true);
+    }
+}
 
 [HarmonyPatch(typeof(CreditsController))]
 public class CreditsControllerPatch

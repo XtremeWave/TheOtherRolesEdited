@@ -44,6 +44,22 @@
         "0": "QQ Group",
         "13": "QQ群"
     },
+    "DefaultMode": {
+        "0": "Default Mode",
+        "13": "普通模式"
+    },
+    "HorseMode": {
+        "0": "Horse Mode",
+        "13": "马模式"
+    },
+    "LongMode": {
+        "0": "Long Mode",
+        "13": "长颈豆模式"
+    },
+    "LongSeekerMode": {
+        "0": "Long Seeker Mode",
+        "13": "长颈马模式"
+    },
     "TOREcredits": {
         "0": "TORE Credits",
         "13": "TORE贡献者"
@@ -87,6 +103,34 @@
     "Close": {
         "0": "Close",
         "13": "关闭"
+    },
+    "modHowToPlay": {
+        "0": "How to play",
+        "13": "如何游玩"
+    },
+    "modUpdate": {
+        "0": "Update Log",
+        "13": "更新日志"
+    },
+    "modAbout": {
+        "0": "About",
+        "13": "关于模组"
+    },
+    "howToPlayCrewmate": {
+        "0": "<color=#8CFFFFFF>Crewmate</color>\n As a Crewmate, your objective goal is to complete all tasks and exile the ",
+        "13": "<color=#8CFFFFFF>船员职业</color>\n 作为一名船员，你的任务是找出藏在你们之中的内鬼和中立并完成任务\n 当然你也要运用好你的特殊技能帮助你完成这一目标"
+    },
+    "howToPlayImpostor": {
+        "0": "<color=#FF1919FF>Impostors</color>\n You might also use your special abilities to discover all hidden ",
+        "13": "<color=#FF1919FF>内鬼职业</color>\n 杀光船员和中立，并对飞船搞破坏切记要阻止船员完成任务\n 运用好你的特殊技能让船员们不知所措吧! "
+    },
+    "howToPlayNeutral": {
+        "0": "<color=#4C544EFF>Neutrals</color>\n For some individuals, your power is hidden until a certain amount of tasks have been completed \n Use your abilities wisely and uncover the evil powers that are among you",
+        "13": "<color=#4C544EFF>中立职业</color>\n 你不属于船员和内鬼而是自我独立的阵营\n 最重要的是你需要用好你的技能帮助你获胜 "
+    },
+    "howToPlayModifier": {
+        "0": "<color=#FFFF33>Modifier</color>\n This is a modifier you've got—you need to make good use of it to contribute to the victory.",
+        "13": "<color=#FFFF33>附加职业</color>\n 这是你额外获得的技能，你需要利用好这项技能为胜利做出努力"
     },
 
     //游戏模式
@@ -166,6 +210,10 @@
     "Options10": {
         "0": "Enable Sound Effects",
         "13": "启用模组音效"
+    },
+    "Options11": {
+        "0": "Enable Dark Mode",
+        "13": "启用深色模式"
     },
     "modOptionsText": {
         "0": "Mod Options",
@@ -290,6 +338,7 @@
         "0": "player {0}",
         "13": "玩家 {0}"
     },
+    
     //版本检测
     "gameStartTextDiferentVersion": {
         "0": "<color=#ff0305> {0} used different versions of The Other Roles Edited\n",
@@ -412,10 +461,10 @@
         "0": "Lemon",
         "13": "柠檬黄"
     },
-    //Loading 
-    "Prepare": {
-        "0": "Preparing to load...",
-        "13": "准备加载..."
+    //Loading
+    "AprilFoolsDay": {
+        "0": "Happy April Fool's Day!",
+        "13": "愚人节快乐!"
     },
     "Loading": {
         "0": "Loading...",

@@ -284,7 +284,6 @@ namespace TheOtherRolesEdited.Patches {
                 RPCProcedure.sidekickPromotes();
             }
         }
-
         static void eraserSetTarget() {
             if (Eraser.eraser == null || Eraser.eraser != PlayerControl.LocalPlayer) return;
 
@@ -667,7 +666,16 @@ namespace TheOtherRolesEdited.Patches {
             }
             if (numberOfTasks <= Snitch.taskCountForReveal) Snitch.isRevealed = true;
         }
+        static void undertakerDragBodyUpdate()
+        {
+            if (Undertaker.undertaker == null || Undertaker.undertaker.Data.IsDead) return;
+            if (Undertaker.deadBodyDraged != null)
+            {
+                Vector3 currentPosition = Undertaker.undertaker.transform.position;
+                Undertaker.deadBodyDraged.transform.position = currentPosition;
+            }
 
+        }
         static void bountyHunterUpdate() {
             if (BountyHunter.bountyHunter == null || PlayerControl.LocalPlayer != BountyHunter.bountyHunter) return;
 
@@ -686,15 +694,18 @@ namespace TheOtherRolesEdited.Patches {
             BountyHunter.arrowUpdateTimer -= Time.fixedDeltaTime;
             BountyHunter.bountyUpdateTimer -= Time.fixedDeltaTime;
 
-            if (BountyHunter.bounty == null || BountyHunter.bountyUpdateTimer <= 0f) {
+            if (BountyHunter.bounty == null || BountyHunter.bountyUpdateTimer <= 0f)
+            {
                 // Set new bounty
                 BountyHunter.bounty = null;
                 BountyHunter.arrowUpdateTimer = 0f; // Force arrow to update
                 BountyHunter.bountyUpdateTimer = BountyHunter.bountyDuration;
                 var possibleTargets = new List<PlayerControl>();
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls)
+                {
                     if (!p.Data.IsDead && !p.Data.Disconnected && p != p.Data.Role.IsImpostor && p != Spy.spy && (p != Sidekick.sidekick || !Sidekick.wasTeamRed) && (p != Jackal.jackal || !Jackal.wasTeamRed) && (p != Mini.mini || Mini.isGrownUp()) && (Lovers.getPartner(BountyHunter.bountyHunter) == null || p != Lovers.getPartner(BountyHunter.bountyHunter))) possibleTargets.Add(p);
                 }
+                if (possibleTargets.Count == 0) return;
                 BountyHunter.bounty = possibleTargets[TheOtherRolesEdited.rnd.Next(0, possibleTargets.Count)];
                 if (BountyHunter.bounty == null) return;
 
@@ -708,32 +719,28 @@ namespace TheOtherRolesEdited.Patches {
                 // Show poolable player
                 if (FastDestroyableSingleton<HudManager>.Instance != null && FastDestroyableSingleton<HudManager>.Instance.UseButton != null)
                 {
-                    foreach (PoolablePlayer pp in TORMapOptions.playerIcons.Values) pp.gameObject.SetActive(false);
+                    TORMapOptions.resetPoolables();
                     if (TORMapOptions.playerIcons.ContainsKey(BountyHunter.bounty.PlayerId) && TORMapOptions.playerIcons[BountyHunter.bounty.PlayerId].gameObject != null)
                         TORMapOptions.playerIcons[BountyHunter.bounty.PlayerId].gameObject.SetActive(true);
                 }
             }
-            else
-            {
-                BountyHunter.bounty = null;
-                foreach (PoolablePlayer pp in TORMapOptions.playerIcons.Values)
-                    pp.gameObject.SetActive(false);
-            }
-
             // Hide in meeting
             if (MeetingHud.Instance && TORMapOptions.playerIcons.ContainsKey(BountyHunter.bounty.PlayerId) && TORMapOptions.playerIcons[BountyHunter.bounty.PlayerId].gameObject != null)
                 TORMapOptions.playerIcons[BountyHunter.bounty.PlayerId].gameObject.SetActive(false);
 
             // Update Cooldown Text
-            if (BountyHunter.cooldownText != null) {
+            if (BountyHunter.cooldownText != null)
+            {
                 BountyHunter.cooldownText.text = Mathf.CeilToInt(Mathf.Clamp(BountyHunter.bountyUpdateTimer, 0, BountyHunter.bountyDuration)).ToString();
                 BountyHunter.cooldownText.gameObject.SetActive(!MeetingHud.Instance);  // Show if not in meeting
             }
 
             // Update Arrow
-            if (BountyHunter.showArrow && BountyHunter.bounty != null) {
-                if (BountyHunter.arrow == null) BountyHunter.arrow = new Arrow(Color.red);
-                if (BountyHunter.arrowUpdateTimer <= 0f) {
+            if (BountyHunter.showArrow && BountyHunter.bounty != null)
+            {
+                BountyHunter.arrow ??= new Arrow(Color.red);
+                if (BountyHunter.arrowUpdateTimer <= 0f)
+                {
                     BountyHunter.arrow.Update(BountyHunter.bounty.transform.position);
                     BountyHunter.arrowUpdateTimer = BountyHunter.arrowUpdateIntervall;
                 }
@@ -1112,11 +1119,12 @@ namespace TheOtherRolesEdited.Patches {
                 ninjaSetTarget();
                 NinjaTrace.UpdateAll();
                 ninjaUpdate();
+                // undertaker
+                undertakerDragBodyUpdate();
                 // Thief
                 thiefSetTarget();
                 // yoyo
                 Silhouette.UpdateAll();
-
                 hackerUpdate();
                 swapperUpdate();
                 // Hacker
@@ -1269,6 +1277,10 @@ namespace TheOtherRolesEdited.Patches {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.lawyerPromotesToPursuer();
+                
+            // Undertaker Button Sync
+            if (Undertaker.undertaker != null && CachedPlayer.LocalPlayer.PlayerControl == Undertaker.undertaker && __instance == Undertaker.undertaker && HudManagerStartPatch.undertakerDragButton != null)
+                HudManagerStartPatch.undertakerDragButton.Timer = Undertaker.dragingDelaiAfterKill;
             }
 
             // Seer show flash and add dead player position
@@ -1390,14 +1402,16 @@ namespace TheOtherRolesEdited.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(KillAnimation), nameof(KillAnimation.CoPerformKill))]
-    class KillAnimationCoPerformKillPatch {
-        public static bool hideNextAnimation = false;
-        public static void Prefix(KillAnimation __instance, [HarmonyArgument(0)]ref PlayerControl source, [HarmonyArgument(1)]ref PlayerControl target) {
-            if (hideNextAnimation)
-                source = target;
-            hideNextAnimation = false;
-        }
+
+    [HarmonyPatch(typeof(KillAnimation._CoPerformKill_d__2), nameof(KillAnimation._CoPerformKill_d__2.MoveNext))] class KillAnimationCoPerformKillPatch 
+    { 
+        public static bool hideNextAnimation = false; 
+        public static void Prefix(KillAnimation._CoPerformKill_d__2 __instance) 
+        {
+            if (hideNextAnimation) 
+            __instance.source = __instance.target; 
+            hideNextAnimation = false; 
+        } 
     }
 
     [HarmonyPatch(typeof(KillAnimation), nameof(KillAnimation.SetMovement))]

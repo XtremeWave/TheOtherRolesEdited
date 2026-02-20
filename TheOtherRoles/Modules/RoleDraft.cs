@@ -341,11 +341,13 @@ namespace TheOtherRolesEdited.Modules
 
                                 PassiveButton button = actionButton.GetComponent<PassiveButton>();
                                 button.OnClick = new Button.ButtonClickedEvent();
-                                button.OnClick.AddListener((Action)(() => {
+                                button.OnClick.AddListener((Action)(() =>
+                                {
                                     sendPick((byte)roleInfo.roleId);
                                     ShowLocalPlayerSelection(__instance, (byte)roleInfo.roleId);
                                 }));
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) =>
+                                {
                                     actionButton.OverrideText("");
                                 })));
                                 buttons.Add(actionButton);
@@ -495,7 +497,7 @@ namespace TheOtherRolesEdited.Modules
                 string statusText;
                 if (disconnected)
                 {
-                    statusText = Helpers.cs(Color.gray,"断连");
+                    statusText = Helpers.cs(Color.gray, "断连");
                 }
                 else
                 {
@@ -506,7 +508,7 @@ namespace TheOtherRolesEdited.Modules
                     }
                     else
                     {
-                        statusText = Helpers.cs(Color.white,"未知");
+                        statusText = Helpers.cs(Color.white, "未知");
                     }
                 }
 
@@ -536,17 +538,17 @@ namespace TheOtherRolesEdited.Modules
         {
             if (!CustomOptionHolder.draftModeShowRoles.getBool())
             {
-                return Helpers.cs(Color.white,"未知职业");
+                return Helpers.cs(Color.white, "未知职业");
             }
 
             if (CustomOptionHolder.draftModeHideRandomRoles.getBool() && isRandom)
             {
-                return Helpers.cs(Color.green,"随机职业");
+                return Helpers.cs(Color.green, "随机职业");
             }
 
             if (CustomOptionHolder.draftModeHideImpRoles.getBool() && roleInfo.isImpostor)
             {
-                return Helpers.cs(Palette.ImpostorRed,"内鬼职业");
+                return Helpers.cs(Palette.ImpostorRed, "内鬼职业");
             }
 
             if (CustomOptionHolder.draftModeHideNeutralRoles.getBool() && roleInfo.isNeutral)
@@ -556,7 +558,7 @@ namespace TheOtherRolesEdited.Modules
 
             if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && !roleInfo.isImpostor && !roleInfo.isNeutral)
             {
-                return Helpers.cs(Color.white,"船员职业");
+                return Helpers.cs(Color.white, "船员职业");
             }
 
             return Helpers.cs(roleInfo.color, roleInfo.name);
@@ -609,7 +611,7 @@ namespace TheOtherRolesEdited.Modules
         private static IEnumerator CoShowRandomOrderAnimation(IntroCutscene __instance)
         {
             var titleText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
-            titleText.text = "<color=red>正在随机挑选顺序...</color>";
+            titleText.text = "<color=red>正在随机轮抽顺序...</color>";
             titleText.transform.localPosition = new Vector3(0, 2f, -10f);
             titleText.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
             titleText.alignment = TMPro.TextAlignmentOptions.Center;

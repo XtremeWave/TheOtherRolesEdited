@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
@@ -12,121 +13,159 @@ namespace TheOtherRolesEdited;
 [HarmonyPatch(typeof(SplashManager), nameof(SplashManager.Update))]
 public static class LoadPatch
 {
-    static Sprite logoSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner2.png", 140f);
-    static Sprite bgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Loading-BG.png", 100f);
-    static TMPro.TextMeshPro loadText = null!;
-    static TMPro.TextMeshPro startText = null!;
+    static Sprite logoSprite;
+    static Sprite bgSprite;
 
-    private static float _scaleSpeed = 0.2f;    // 缩放动画速度（值越大越快）
-    private static float _scaleRange = 0.15f;   // 缩放幅度（0.15 = 最大放大15%）
-    private static Coroutine _scaleCoroutine;  
-    private static Vector3 originalLogoScale;
+    static TMPro.TextMeshPro loadText = null!;
+    static TMPro.TextMeshPro aprilFoolsText = null!;
+
+    private static bool IsAprilFoolsDay => DateTime.Now.Month == 12 && DateTime.Now.Day == 27;
 
     public static string LoadingText { set { loadText.text = value; } }
+   
+    static LoadPatch()
+    {
+        string aprilFoolBgPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-Loading-BG_AprilFool.png";
+        string aprilFoolLogoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner2_AprilFool.png";
+
+        string normalBgPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-Loading-BG-2.png";
+        string normalLogoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner2.png";
+
+        bgSprite = IsAprilFoolsDay
+            ? Helpers.loadSpriteFromResources(aprilFoolBgPath, 100f)
+            : Helpers.loadSpriteFromResources(normalBgPath, 100f);
+
+        logoSprite = IsAprilFoolsDay
+            ? Helpers.loadSpriteFromResources(aprilFoolLogoPath, 140f)
+            : Helpers.loadSpriteFromResources(normalLogoPath, 140f);
+    }
 
     static IEnumerator CoLoadTheOtherRoles(SplashManager __instance)
-    {
+    {       
         ModTranslation.Load();
 
         var bg = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedBG", null, new Vector3(0, 0.5f, -10f));
         bg.sprite = bgSprite;
         bg.color = Color.clear;
-
         var logo = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedLogo", null, new Vector3(0, 0.5f, -15f));
         logo.sprite = logoSprite;
         logo.color = Color.clear;
+        logo.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
 
-        float fadeInDuration = 2f;
+        float bgFadeInDuration = 0.5f;
         float elapsedTime = 0f;
 
-        while (elapsedTime < fadeInDuration)
+        while (elapsedTime < bgFadeInDuration)
         {
             elapsedTime += Time.deltaTime;
-            float alpha = elapsedTime / fadeInDuration;
-
+            float alpha = Mathf.Clamp01(elapsedTime / bgFadeInDuration);
             bg.color = Color.white.AlphaMultiplied(alpha);
-            logo.color = Color.white.AlphaMultiplied(alpha);
-
-            logo.transform.localScale = Vector3.one * (1f - (1f - alpha) * (1f - alpha) * 0.012f);
             yield return null;
         }
-
         bg.color = Color.white;
+        yield return new WaitForSeconds(0.5f);
+
+        float logoFadeInDuration = 1.5f;
+        elapsedTime = 0f;
+        while (elapsedTime < logoFadeInDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Clamp01(elapsedTime / logoFadeInDuration);
+            logo.color = Color.white.AlphaMultiplied(alpha);
+            float scale = Mathf.Lerp(0.9f, 1.0f, alpha);
+            logo.transform.localScale = new Vector3(scale, scale, 1f);
+            yield return null;
+        }
         logo.color = Color.white;
-        logo.transform.localScale = Vector3.one;
-        originalLogoScale = logo.transform.localScale; 
+        logo.transform.localScale = Vector3.one; 
+        yield return new WaitForSeconds(0.5f);
 
-        startText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
-        startText.transform.localPosition = new(0f, -0.28f, -10f);
-        startText.text = ModTranslation.getString("Prepare");
-        startText.fontStyle = FontStyles.Bold;
-        startText.color = Color.white.AlphaMultiplied(0f); 
-
-        elapsedTime = 0f;
-        float startFadeIn = 0.5f;
-        while (elapsedTime < startFadeIn)
+        if (IsAprilFoolsDay)
         {
-            elapsedTime += Time.deltaTime;
-            float alpha = elapsedTime / startFadeIn;
-            startText.color = Color.white.AlphaMultiplied(alpha);
-            yield return null;
-        }
+            aprilFoolsText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
+            aprilFoolsText.transform.localPosition = new(0f, -0.28f, -10f);
+            aprilFoolsText.text = ModTranslation.getString("AprilFoolsDay");
+            aprilFoolsText.fontStyle = FontStyles.Bold;
+            aprilFoolsText.color = Color.clear;
+            Color aprilFoolsColor = new Color(0f, 1f, 0f);
 
-        float waitTime = 2f;
-        elapsedTime = 0f;
-        while (elapsedTime < waitTime)
-        {
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
+            float aprilFadeIn = 0.8f;
+            elapsedTime = 0f;
+            while (elapsedTime < aprilFadeIn)
+            {
+                elapsedTime += Time.deltaTime;
+                float alpha = Mathf.Clamp01(elapsedTime / aprilFadeIn);
+                aprilFoolsText.color = aprilFoolsColor.AlphaMultiplied(alpha);
+                yield return null;
+            }
 
-        elapsedTime = 0f;
-        float startFadeOut = 0.5f;
-        while (elapsedTime < startFadeOut)
-        {
-            elapsedTime += Time.deltaTime;
-            float alpha = 1f - (elapsedTime / startFadeOut);
-            startText.color = Color.white.AlphaMultiplied(alpha);
-            yield return null;
+            float aprilWaitTime = 3f;
+            elapsedTime = 0f;
+            while (elapsedTime < aprilWaitTime)
+            {
+                elapsedTime += Time.deltaTime;
+                float flicker = Mathf.Sin(Time.time * 8f) * 0.1f;
+                aprilFoolsText.alpha = Mathf.Clamp01(1f + flicker);
+                yield return null;
+            }
+
+            float aprilFadeOut = 0.8f;
+            elapsedTime = 0f;
+            while (elapsedTime < aprilFadeOut)
+            {
+                elapsedTime += Time.deltaTime;
+                float alpha = 1f - Mathf.Clamp01(elapsedTime / aprilFadeOut);
+                aprilFoolsText.color = aprilFoolsColor.AlphaMultiplied(alpha);
+                yield return null;
+            }
+            UnityEngine.Object.Destroy(aprilFoolsText.gameObject);
         }
-        Object.Destroy(startText.gameObject);
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
 
         loadText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
         loadText.transform.localPosition = new(0f, -0.28f, -10f);
         loadText.fontStyle = TMPro.FontStyles.Bold;
         loadText.text = ModTranslation.getString("Loading");
-        loadText.color = Color.white.AlphaMultiplied(0.3f);
+        loadText.color = Color.clear;
 
-        _scaleCoroutine = __instance.StartCoroutine(ScaleLoop(logo.transform, originalLogoScale).WrapToIl2Cpp());
+        float loadFadeIn = 0.5f;
+        elapsedTime = 0f;
+        while (elapsedTime < loadFadeIn)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Clamp01(elapsedTime / loadFadeIn);
+            loadText.color = Color.white.AlphaMultiplied(alpha); 
+            yield return null;
+        }
 
         {
-            loadText.text = ModTranslation.getString("Motd");
+            yield return TextFadeTransition(ModTranslation.getString("Motd"));
             _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("Server");
+
+            yield return TextFadeTransition(ModTranslation.getString("Server"));
             TheOtherRolesEditedPlugin.UpdateRegions();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("Harmony");
+
+            yield return TextFadeTransition(ModTranslation.getString("Harmony"));
             TheOtherRolesEditedPlugin.Instance.Harmony.PatchAll();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("Building");
+
+            yield return TextFadeTransition(ModTranslation.getString("Building"));
             CustomOptionHolder.Load();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("Modcolor");
+
+            yield return TextFadeTransition(ModTranslation.getString("Modcolor"));
             CustomColors.Load();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("Modsound");
-            SoundEffectsManager.Load();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("Modhat");
+
+            yield return TextFadeTransition(ModTranslation.getString("Modhat"));
             CustomHatManager.LoadHats();
-            yield return new WaitForSeconds(0.5f);
+
             var hatsLoader = CustomHatManager.Loader;
             float downloadStartTime = Time.time;
             int lastDownloadedCount = 0;
             float lastProgressTime = Time.time;
-            const float maxWaitTime = 120f; // 最大等待时间2分钟
-            const float stallTimeout = 30f; // 停滞超时30秒
+            const float maxWaitTime = 120f;
+            const float stallTimeout = 30f;
 
             while (!hatsLoader.isRunning && Time.time - downloadStartTime < 2f)
             {
@@ -137,7 +176,8 @@ public static class LoadPatch
                    Time.time - downloadStartTime < maxWaitTime &&
                    Time.time - lastProgressTime < stallTimeout)
             {
-                loadText.text = $"{ModTranslation.getString("Downloadhat")}: {hatsLoader.downloadedFiles}/{hatsLoader.totalFilesToDownload}";
+                string downloadText = $"{ModTranslation.getString("Downloadhat")}: {hatsLoader.downloadedFiles}/{hatsLoader.totalFilesToDownload}";
+                loadText.text = downloadText;
 
                 if (hatsLoader.downloadedFiles > lastDownloadedCount)
                 {
@@ -152,54 +192,53 @@ public static class LoadPatch
             {
                 if (Time.time - downloadStartTime >= maxWaitTime)
                 {
-                    loadText.text = ModTranslation.getString("Toolong");
+                    yield return TextFadeTransition(ModTranslation.getString("Toolong"));
                 }
                 else if (Time.time - lastProgressTime >= stallTimeout)
                 {
-                    loadText.text = ModTranslation.getString("Skipping");
+                    yield return TextFadeTransition(ModTranslation.getString("Skipping"));
                 }
                 yield return new WaitForSeconds(1f);
             }
             else
             {
-                loadText.text = ModTranslation.getString("Hatcomplete");
-                yield return new WaitForSeconds(0.5f);
+                yield return TextFadeTransition(ModTranslation.getString("Hatcomplete"));
             }
+
 #if PC
-            loadText.text = ModTranslation.getString("Modcursor");
+            yield return TextFadeTransition(ModTranslation.getString("Modcursor"));
             if (TheOtherRolesEditedPlugin.ToggleCursor.Value) Helpers.enableCursor(true);
-            yield return new WaitForSeconds(0.5f);
 
             if (BepInExUpdater.UpdateRequired)
             {
-                loadText.text = ModTranslation.getString("BepInEx");
+                yield return TextFadeTransition(ModTranslation.getString("BepInEx"));
                 TheOtherRolesEditedPlugin.Instance.AddComponent<BepInExUpdater>();
                 yield return new WaitForSeconds(0.5f);
                 yield return null;
             }
 #endif
-            loadText.text = ModTranslation.getString("Modupdates");
+            yield return TextFadeTransition(ModTranslation.getString("Modupdates"));
             TheOtherRolesEditedPlugin.Instance.AddComponent<ModUpdater>();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("AFD");
+
+            yield return TextFadeTransition(ModTranslation.getString("AFD"));
             EventUtility.Load();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("Submerged");
+
+            yield return TextFadeTransition(ModTranslation.getString("Submerged"));
             SubmergedCompatibility.Initialize();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("UI");
+
+            yield return TextFadeTransition(ModTranslation.getString("UI"));
             MainMenuPatch.addSceneChangeCallbacks();
-            yield return new WaitForSeconds(0.5f);
-            loadText.text = ModTranslation.getString("Rolesintroduction");
+
+            yield return TextFadeTransition(ModTranslation.getString("Rolesintroduction"));
             _ = RoleInfo.loadReadme();
-            yield return new WaitForSeconds(0.5f);
 
             AddToKillDistanceSetting.addKillDistance();
 
             TheOtherRolesEditedPlugin.Logger.LogInfo("Loading TORE completed!");
         }
 
-        loadText.text = ModTranslation.getString("LoadingComplete");
+        yield return TextFadeTransition(ModTranslation.getString("LoadingComplete"));
+
         for (int i = 0; i < 3; i++)
         {
             loadText.gameObject.SetActive(false);
@@ -207,20 +246,24 @@ public static class LoadPatch
             loadText.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.03f);
         }
-        GameObject.Destroy(loadText.gameObject);
 
-        if (_scaleCoroutine != null)
+        float completeFadeOut = 0.8f;
+        elapsedTime = 0f;
+        while (elapsedTime < completeFadeOut)
         {
-            __instance.StopCoroutine(_scaleCoroutine);
-            logo.transform.localScale = Vector3.one;
+            elapsedTime += Time.deltaTime;
+            float alpha = 1f - Mathf.Clamp01(elapsedTime / completeFadeOut);
+            loadText.color = Color.white.AlphaMultiplied(alpha);
+            yield return null;
         }
+        UnityEngine.Object.Destroy(loadText.gameObject);
 
         float fadeOutDuration = 2f;
         elapsedTime = 0f;
         while (elapsedTime < fadeOutDuration)
         {
             elapsedTime += Time.deltaTime;
-            float alpha = 1f - (elapsedTime / fadeOutDuration);
+            float alpha = 1f - Mathf.Clamp01(elapsedTime / fadeOutDuration);
             bg.color = Color.white.AlphaMultiplied(alpha);
             logo.color = Color.white.AlphaMultiplied(alpha);
             yield return null;
@@ -232,15 +275,28 @@ public static class LoadPatch
         __instance.startedSceneLoad = true;
     }
 
-    private static IEnumerator ScaleLoop(Transform targetTransform, Vector3 originalScale)
+    private static IEnumerator TextFadeTransition(string newText, float fadeOutTime = 0.3f, float fadeInTime = 0.3f, float waitTime = 0.5f)
     {
-        while (true)
+        float elapsed = 0f;
+        while (elapsed < fadeOutTime)
         {
-            float pingPongValue = Mathf.PingPong(Time.time * _scaleSpeed, 1f);
-            float currentScaleRatio = 1f + (pingPongValue * _scaleRange);
-            targetTransform.localScale = originalScale * currentScaleRatio;
+            elapsed += Time.deltaTime;
+            float alpha = 1f - Mathf.Clamp01(elapsed / fadeOutTime);
+            loadText.color = Color.white.AlphaMultiplied(alpha); 
             yield return null;
         }
+
+        loadText.text = newText;
+        elapsed = 0f;
+        while (elapsed < fadeInTime)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Clamp01(elapsed / fadeInTime);
+            loadText.color = Color.white.AlphaMultiplied(alpha);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(waitTime);
     }
 
     static bool loadedTheOtherRoles = false;

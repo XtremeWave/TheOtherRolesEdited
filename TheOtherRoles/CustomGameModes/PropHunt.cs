@@ -119,10 +119,6 @@ namespace TheOtherRolesEdited.CustomGameModes {
             duplicatedCollider = new();
         }
 
-        public static Sprite getIntroSprite(int index) {
-            return Helpers.loadSpriteFromResources($"TheOtherRolesEdited.Resources.IntroAnimation.intro_{index + 1000}.png", 150f, cache: false);
-        }
-
         public static void updateWhitelistedObjects(bool debug=false) {
             string allNames = Helpers.readTextFromResources("TheOtherRolesEdited.Resources.Txt.Props.txt");
             if (debug) {
@@ -412,10 +408,9 @@ namespace TheOtherRolesEdited.CustomGameModes {
         }
 #if PC
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
-#else
-                [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartSFX))]
-        [HarmonyPatch(typeof(FungleShipStatus), nameof(FungleShipStatus.StartSFX))]
-
+#endif
+#if ANDROID
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin))]
 #endif
         [HarmonyPostfix]
         public static void IntroCutsceneDestroyPatch()

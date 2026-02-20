@@ -9,141 +9,138 @@ using Assets.InnerNet;
 using BepInEx.Unity.IL2CPP;
 using System.Linq;
 using static UnityEngine.UI.Button;
-using TheOtherRolesEdited.Utilities;
 using System.Collections.Generic;
 using TMPro;
 
-namespace TheOtherRolesEdited.Modules
+namespace TheOtherRolesEdited.Modules;
+
+[HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
+public class MainMenuPatch
 {
-    [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
-    public class MainMenuPatch
+    private static bool horseButtonState = TORMapOptions.enableHorseMode;
+    //private static Sprite horseModeOffSprite = null;
+    //private static Sprite horseModeOnSprite = null;
+    //private static AnnouncementPopUp popUp;
+    public static GameObject modScreen = null;
+    internal static TMP_FontAsset fontAssetVersionShower;
+    internal static TMP_FontAsset fontAsset;
+    private static void ForceSetButtonText(GameObject button, string text)
     {
-        private static bool horseButtonState = TORMapOptions.enableHorseMode;
-        //private static Sprite horseModeOffSprite = null;
-        //private static Sprite horseModeOnSprite = null;
-        //private static AnnouncementPopUp popUp;
-        public static GameObject modScreen = null;
-        internal static TMP_FontAsset fontAssetVersionShower;
+        var translator = button.GetComponentInChildren<TextTranslatorTMP>();
+        if (translator != null)
+            UnityEngine.Object.Destroy(translator);
 
-        private static void Prefix(MainMenuManager __instance)
+        var tmp = button.GetComponentInChildren<TMPro.TMP_Text>();
+        if (tmp != null)
         {
-            SoundEffectsManager.Load();
-            var template = GameObject.Find("CreditsButton");
-            var Edited = GameObject.Find("newsButton");
+            tmp.text = text;
+            tmp.ForceMeshUpdate();
+        }
+    }
 
-#if PC
-            var buttonQQ = UnityEngine.Object.Instantiate(template, template.transform.parent);
-            var buttonFK = UnityEngine.Object.Instantiate(template, template.transform.parent);
-            var buttonGH = UnityEngine.Object.Instantiate(template, template.transform.parent);
-            buttonQQ.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.43f);
-            buttonFK.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.36f);
-            buttonGH.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.36f);
+    private static void Prefix(MainMenuManager __instance)
+    {
+        SoundEffectsManager.Load();
+        var template = GameObject.Find("CreditsButton");
+        var websiteButton = UnityEngine.Object.Instantiate(template, template.transform.parent);
+        var githubButton = UnityEngine.Object.Instantiate(template, template.transform.parent);
+      
+        //position
+        websiteButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.36f);
+        githubButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.36f);
+        
+        //scale
+        var scalerList = __instance.mainMenuUI.GetComponent<SlicedAspectScaler>();
+        scalerList.objectsToScale.Add(websiteButton.GetComponent<AspectScaledAsset>());
+        scalerList.objectsToScale.Add(githubButton.GetComponent<AspectScaledAsset>());
 
-            //FK button
-            var textFK = buttonFK.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
+        //FK button
+        websiteButton.name = "WebsiteButton";
+        ForceSetButtonText(websiteButton, ModTranslation.getString("ModWebsite"));
+        PassiveButton PassiveWebsiteButton = websiteButton.GetComponent<PassiveButton>();
+        PassiveWebsiteButton.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
+        PassiveWebsiteButton.OnClick = new Button.ButtonClickedEvent();
+        PassiveWebsiteButton.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://tore.amongusclub.cn/")));
+        PassiveWebsiteButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
+        PassiveWebsiteButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
+        Color originalColorPassiveWebsiteButton = PassiveWebsiteButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
+        PassiveWebsiteButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorPassiveWebsiteButton * 0.6f;
+
+        //Github button
+        githubButton.name = "GithubButton";
+        ForceSetButtonText(githubButton, "Github");
+        PassiveButton passiveGithubButton = githubButton.GetComponent<PassiveButton>();
+        passiveGithubButton.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
+        passiveGithubButton.OnClick = new Button.ButtonClickedEvent();
+        passiveGithubButton.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://github.com/XtremeWave/TheOtherRolesEdited")));
+        passiveGithubButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
+        passiveGithubButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
+        Color originalColorpassiveGithubButton = passiveGithubButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
+        passiveGithubButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveGithubButton * 0.6f;
+
+        // TOR credits button
+        if (template == null) return;
+        var creditsButton = Object.Instantiate(template, template.transform.parent);
+        scalerList.objectsToScale.Add(creditsButton.GetComponent<AspectScaledAsset>());
+        creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.43f);
+        creditsButton.name = "creditsButton";
+        ForceSetButtonText(creditsButton, ModTranslation.getString("TOREcredits"));
+        PassiveButton passiveCreditsButton = creditsButton.GetComponent<PassiveButton>();
+        passiveCreditsButton.OnClick = new Button.ButtonClickedEvent();
+        passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
+        passiveCreditsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
+        Color originalColorpassiveCreditsButton = passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
+        passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveCreditsButton * 0.6f;
+        passiveCreditsButton.activeTextColor = Color.white;
+        passiveCreditsButton.inactiveTextColor = Color.white;
+
+
+        passiveCreditsButton.OnClick.AddListener((System.Action)delegate
+        {
+            MainMenuManagerPatch.HideRightPanel();
+            void ShowPopup(string text)
             {
-                textFK.SetText($"{ModTranslation.getString("ModWebsite")}");
-            })));
-            PassiveButton passiveButtonFK = buttonFK.GetComponent<PassiveButton>();
-            passiveButtonFK.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
-            passiveButtonFK.OnClick = new Button.ButtonClickedEvent();
-            passiveButtonFK.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://tore.amongusclub.cn/")));
-            passiveButtonFK.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
-            passiveButtonFK.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
-            Color originalColorpassiveButtonFK = passiveButtonFK.inactiveSprites.GetComponent<SpriteRenderer>().color;
-            passiveButtonFK.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonFK * 0.6f;
+                var popup = GameObject.Instantiate(DiscordManager.Instance.discordPopup, Camera.main!.transform);
 
-            //Github button
-            var textGH = buttonGH.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
-            {
-                textGH.SetText("Github");
-            })));
-            PassiveButton passiveButtonGH = buttonGH.GetComponent<PassiveButton>();
-            passiveButtonGH.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
-            passiveButtonGH.OnClick = new Button.ButtonClickedEvent();
-            passiveButtonGH.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://github.com/XtremeWave/TheOtherRolesEdited")));
-            passiveButtonGH.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
-            passiveButtonGH.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
-            Color originalColorpassiveButtonGH = passiveButtonGH.inactiveSprites.GetComponent<SpriteRenderer>().color;
-            passiveButtonGH.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonGH * 0.6f;
+                var background = popup.transform.Find("Background").GetComponent<SpriteRenderer>();
+                var size = background.size;
+                size.x *= 2.5f;
+                background.size = size;
+                background.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Background.png", 150f);
+                background.transform.localScale = new Vector3(1.2f, 3.16f, 1f);
+                popup.TextAreaTMP.fontSizeMin = 2;
+                popup.TextAreaTMP.rectTransform.localPosition = new Vector3(-3.2f, 0.06f);
+                popup.TextAreaTMP.font = fontAssetVersionShower;
+                popup.Show(text);
 
-            //QQ button
-            var textQQ = buttonQQ.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
-            {
-                textQQ.SetText($"{ModTranslation.getString("QQGroup")}");
-            })));
-            PassiveButton passiveButtonQQ = buttonQQ.GetComponent<PassiveButton>();
-            passiveButtonQQ.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
-            passiveButtonQQ.OnClick = new Button.ButtonClickedEvent();
-            passiveButtonQQ.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://qm.qq.com/q/xyaS08h3Lq")));
-            passiveButtonQQ.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
-            passiveButtonQQ.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
-            Color originalColorpassiveButtonQQ = passiveButtonQQ.inactiveSprites.GetComponent<SpriteRenderer>().color;
-            passiveButtonQQ.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButtonQQ * 0.6f;
-#endif
-            // TOR credits button
-            if (template == null) return;
-            var creditsButton = Object.Instantiate(template, template.transform.parent);
-            var textCreditsButton = creditsButton.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
-            {
-                textCreditsButton.SetText($"{ModTranslation.getString("TOREcredits")}");
-            })));
-            PassiveButton passiveCreditsButton = creditsButton.GetComponent<PassiveButton>();
-
-            passiveCreditsButton.OnClick = new Button.ButtonClickedEvent();
-            passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
-            passiveCreditsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
-            Color originalColorpassiveCreditsButton = passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
-            passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveCreditsButton * 0.6f;
-            passiveCreditsButton.activeTextColor = Color.white;
-            passiveCreditsButton.inactiveTextColor = Color.white;
-#if ANDROID
-            creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.5f);
-            passiveCreditsButton.transform.localScale = new Vector3(1f, 0.84f, 0);
-#else
-            creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.43f);
-#endif
-
-
-            passiveCreditsButton.OnClick.AddListener((System.Action)delegate
-            {
-                void ShowPopup(string text)
+                var exitBtn = popup.transform.Find("ExitGame");
+                if (exitBtn != null)
                 {
-                    var popup = GameObject.Instantiate(DiscordManager.Instance.discordPopup, Camera.main!.transform);
-
-                    var background = popup.transform.Find("Background").GetComponent<SpriteRenderer>();
-                    var size = background.size;
-                    size.x *= 2.5f;
-                    background.size = size;
-                    background.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Background.png", 150f);
-                    background.transform.localScale = new Vector3(1.2f, 3.16f, 1f);
-                    popup.TextAreaTMP.fontSizeMin = 2;
-                    popup.TextAreaTMP.rectTransform.localPosition = new Vector3(-3.2f, 0.06f);
-                    popup.TextAreaTMP.font = fontAssetVersionShower;
-                    popup.Show(text);
-
-                    var exitBtn = popup.transform.Find("ExitGame");
-                    if (exitBtn != null)
+                    var btnSpriteRenderer = exitBtn.GetComponent<SpriteRenderer>();
+                    if (btnSpriteRenderer != null)
                     {
-                        exitBtn.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
-                        var pos = exitBtn.localPosition;
-                        pos.y -= 2.26f;
-                        exitBtn.localPosition = pos;
-
-                        var buttonText = exitBtn.transform.GetComponentInChildren<TMPro.TMP_Text>();
-                        __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
+                        Sprite customBgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Close.png", 100f);
+                        if (customBgSprite != null)
                         {
-                            buttonText.SetText($"{ModTranslation.getString("Close")}");
-                            buttonText.font = fontAssetVersionShower;
-                        })));
+                            btnSpriteRenderer.sprite = customBgSprite;
+                        }
                     }
-                }
+                    exitBtn.transform.localScale = new Vector3(0.45f, 1.6f, 1f);
+                    var pos = exitBtn.localPosition;
+                    pos.x = 4.2364f;
+                    pos.y = 2.4724f;
+                    exitBtn.localPosition = pos;
 
-                string creditsString = @$"<size=60%>
+                    var buttonText = exitBtn.transform.GetComponentInChildren<TMPro.TMP_Text>();
+                    __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
+                    {
+                        buttonText.SetText($"");
+                        buttonText.font = fontAsset;
+                    })));
+                }
+            }
+
+            string creditsString = @$"<size=60%>
 <align=""left"">★<b>Github 贡献者:</b>
 Alex2911    amsyarasyiq    MaximeGillot
 Psynomit    probablyadnf    JustASysAdmin
@@ -170,82 +167,86 @@ Crowded-Mod - 我们对 10 人以上玩家大厅的实现方式，灵感源自 C
 Goose-Goose-Duck - 秃鹫角色的创意源自 Slushiegoose
 TheEpicRoles - 首刀保护（选用部分代码）以及菜单选项的创意（选用部分代码）源自 LaicosVK、DasMonschta、Nova
 轮抽选角 - 音乐源自 Youtube【Unreal Superhero 3 by Kenët & Rez】
-<b>编辑时间: 2025.11.15</b></size></align>";
+<b>编辑时间: 2025.11.15</b> </size></align>";
 
-                string credits = $@"<size=150%>TORE贡献者</size>";
+            string credits = $@"<size=150%>TORE贡献者</size>";
 
-                ShowPopup(credits + creditsString);
-            });
-        }
-        private static void CheckAndUnpatch()
+            ShowPopup(credits + creditsString);
+        });
+    }
+    private static void CheckAndUnpatch()
+    {
+        // 获取所有已加载的插件
+        var loadedPlugins = IL2CPPChainloader.Instance.Plugins.Values;
+        // 检查是否有目标插件
+        var targetPlugin = loadedPlugins.FirstOrDefault(plugin => plugin.Metadata.Name == "MalumMenu");
+
+        if (targetPlugin != null)
         {
-            // 获取所有已加载的插件
-            var loadedPlugins = IL2CPPChainloader.Instance.Plugins.Values;
-            // 检查是否有目标插件
-            var targetPlugin = loadedPlugins.FirstOrDefault(plugin => plugin.Metadata.Name == "MalumMenu");
-
-            if (targetPlugin != null)
-            {
-                TheOtherRolesEditedPlugin.Logger.LogMessage("已检测到您使用了MM外挂.\n TORE将不再运行\n删除MalumMenu.dll即可恢复");
-                Harmony.UnpatchAll();//当进入MainMenu时检测加载如果有MM 就自动关闭
-            }
+            TheOtherRolesEditedPlugin.Logger.LogMessage("已检测到您使用了MM外挂.\n TORE将不再运行\n删除MalumMenu.dll即可恢复");
+            Harmony.UnpatchAll();//当进入MainMenu时检测加载如果有MM 就自动关闭
         }
+    }
 
-        public static void addSceneChangeCallbacks()
+    public static void addSceneChangeCallbacks()
+    {
+        SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)((scene, _) =>
         {
-            SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)((scene, _) =>
+            if (!scene.name.Equals("MatchMaking", StringComparison.Ordinal)) return;
+            TORMapOptions.gameMode = CustomGamemodes.Classic;
+            // Add buttons For Guesser Mode, Hide N Seek in this scene.
+            // find "HostLocalGameButton"
+            var template = GameObject.FindObjectOfType<HostLocalGameButton>();
+            var gameButton = template.transform.FindChild("CreateGameButton");
+            var gameButtonPassiveButton = gameButton.GetComponentInChildren<PassiveButton>();
+
+            var guesserButton = GameObject.Instantiate<Transform>(gameButton, gameButton.parent);
+            guesserButton.transform.localPosition = new Vector3(2.115f, -0.257f);
+            var guesserButtonText = guesserButton.GetComponentInChildren<TMPro.TextMeshPro>();
+            var guesserButtonPassiveButton = guesserButton.GetComponentInChildren<PassiveButton>();
+
+            guesserButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
+            guesserButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
             {
-                if (!scene.name.Equals("MatchMaking", StringComparison.Ordinal)) return;
-                TORMapOptions.gameMode = CustomGamemodes.Classic;
-                // Add buttons For Guesser Mode, Hide N Seek in this scene.
-                // find "HostLocalGameButton"
-                var template = GameObject.FindObjectOfType<HostLocalGameButton>();
-                var gameButton = template.transform.FindChild("CreateGameButton");
-                var gameButtonPassiveButton = gameButton.GetComponentInChildren<PassiveButton>();
-
-                var guesserButton = GameObject.Instantiate<Transform>(gameButton, gameButton.parent);
-                guesserButton.transform.localPosition += new Vector3(0f, -0.5f);
-                var guesserButtonText = guesserButton.GetComponentInChildren<TMPro.TextMeshPro>();
-                var guesserButtonPassiveButton = guesserButton.GetComponentInChildren<PassiveButton>();
-
-                guesserButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
-                guesserButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
-                {
-                    TORMapOptions.gameMode = CustomGamemodes.Guesser;
-                    template.OnClick();
-                }));
-
-                var HideNSeekButton = GameObject.Instantiate<Transform>(gameButton, gameButton.parent);
-                HideNSeekButton.transform.localPosition += new Vector3(1.7f, -0.5f);
-                var HideNSeekButtonText = HideNSeekButton.GetComponentInChildren<TMPro.TextMeshPro>();
-                var HideNSeekButtonPassiveButton = HideNSeekButton.GetComponentInChildren<PassiveButton>();
-
-                HideNSeekButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
-                HideNSeekButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
-                {
-                    TORMapOptions.gameMode = CustomGamemodes.HideNSeek;
-                    template.OnClick();
-                }));
-
-                var PropHuntButton = GameObject.Instantiate<Transform>(gameButton, gameButton.parent);
-                PropHuntButton.transform.localPosition += new Vector3(3.4f, -0.5f);
-                var PropHuntButtonText = PropHuntButton.GetComponentInChildren<TMPro.TextMeshPro>();
-                var PropHuntButtonPassiveButton = PropHuntButton.GetComponentInChildren<PassiveButton>();
-
-                PropHuntButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
-                PropHuntButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
-                {
-                    TORMapOptions.gameMode = CustomGamemodes.PropHunt;
-                    template.OnClick();
-                }));
-
-                template.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) =>
-                {
-                    guesserButtonText.SetText($"{ModTranslation.getString("Guesser")}");
-                    HideNSeekButtonText.SetText($"{ModTranslation.getString("HideNSeek")}");
-                    PropHuntButtonText.SetText($"{ModTranslation.getString("PropHunt")}");
-                })));
+                TORMapOptions.gameMode = CustomGamemodes.Guesser;
+                template.OnClick();
             }));
-        }
+
+            var HideNSeekButton = GameObject.Instantiate<Transform>(gameButton, gameButton.parent);
+            HideNSeekButton.transform.localPosition = new Vector3(3.815f, -0.257f);
+            var HideNSeekButtonText = HideNSeekButton.GetComponentInChildren<TMPro.TextMeshPro>();
+            var HideNSeekButtonPassiveButton = HideNSeekButton.GetComponentInChildren<PassiveButton>();
+
+            HideNSeekButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
+            HideNSeekButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
+            {
+                TORMapOptions.gameMode = CustomGamemodes.HideNSeek;
+                template.OnClick();
+            }));
+
+            var PropHuntButton = GameObject.Instantiate<Transform>(gameButton, gameButton.parent);
+            PropHuntButton.transform.localPosition += new Vector3(0f, -0.5f);
+            var PropHuntButtonText = PropHuntButton.GetComponentInChildren<TMPro.TextMeshPro>();
+            var PropHuntButtonPassiveButton = PropHuntButton.GetComponentInChildren<PassiveButton>();
+
+            PropHuntButtonPassiveButton.OnClick = new Button.ButtonClickedEvent();
+            PropHuntButtonPassiveButton.OnClick.AddListener((System.Action)(() =>
+            {
+                TORMapOptions.gameMode = CustomGamemodes.PropHunt;
+                template.OnClick();
+            }));
+
+            template.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) =>
+            {
+                guesserButtonText.SetText($"{ModTranslation.getString("Guesser")}");
+                HideNSeekButtonText.SetText($"{ModTranslation.getString("HideNSeek")}");
+                PropHuntButtonText.SetText($"{ModTranslation.getString("PropHunt")}");
+            })));
+        }));
+    }
+
+    internal static void ForceSetButtonText(GameObject modeButton, object v)
+    {
+        throw new NotImplementedException();
     }
 }

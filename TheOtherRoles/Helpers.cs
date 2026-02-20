@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
 using Hazel;
 using Reactor.Utilities.Extensions;
@@ -25,6 +26,7 @@ namespace TheOtherRolesEdited
 
     public enum MurderAttemptResult
     {
+        ReverseKill,
         PerformKill,
         SuppressKill,
         BlankKill,
@@ -43,16 +45,21 @@ namespace TheOtherRolesEdited
         public static string previousEndGameSummary = "";
         public static Dictionary<string, Sprite> CachedSprites = new();
 
-        public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit, bool cache = true)
+        public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit)
         {
             try
             {
-                if (cache && CachedSprites.TryGetValue(path + pixelsPerUnit, out var sprite)) return sprite;
-                Texture2D texture = loadTextureFromResources(path);
-                sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-                if (cache) sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
-                if (!cache) return sprite;
-                return CachedSprites[path + pixelsPerUnit] = sprite;
+                var tex = new Texture2D(0, 0, TextureFormat.RGBA32, false)
+                {
+                    wrapMode = TextureWrapMode.Clamp
+                };
+                Stream myStream = Assembly.GetCallingAssembly().GetManifestResourceStream(path);
+                byte[] data = myStream.ReadFully();
+                ImageConversion.LoadImage(tex, data, false);
+                var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f),
+                    pixelsPerUnit);
+                sprite.DontDestroy();
+                return sprite;
             }
             catch
             {
@@ -60,7 +67,6 @@ namespace TheOtherRolesEdited
             }
             return null;
         }
-
         public static void showTargetNameOnButtonExplicit(PlayerControl target, CustomButton button, string defaultText)
         {
             var text = defaultText;
@@ -171,20 +177,6 @@ namespace TheOtherRolesEdited
             StreamReader textStreamReader = new StreamReader(stream);
             return textStreamReader.ReadToEnd();
         }
-        public static bool isChinese()
-        {
-            try
-            {
-                var name = CultureInfo.CurrentUICulture.Name;
-                if (name.StartsWith("zh")) return true;
-                return false;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         public static string readTextFromFile(string path)
         {
             Stream stream = File.OpenRead(path);
@@ -454,6 +446,10 @@ namespace TheOtherRolesEdited
             var sabSystem = ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>();
             return sabSystem.Timer;
         }
+        public static string ColorString(Color c, string s)
+        {
+            return string.Format("<color=#{0:X2}{1:X2}{2:X2}{3:X2}>{4}</color>", ToByte(c.r), ToByte(c.g), ToByte(c.b), ToByte(c.a), s);
+        }
         public static bool canUseSabotage()
         {
             var sabSystem = ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>();
@@ -624,6 +620,8 @@ namespace TheOtherRolesEdited
                 roleCouldUse = true;
             else if (Thief.canUseVents && Thief.thief != null && Thief.thief == player)
                 roleCouldUse = true;
+            else if (Undertaker.deadBodyDraged != null && !Undertaker.canDragAndVent && Undertaker.undertaker == player)
+                roleCouldUse = false;
             else if (player.Data?.Role != null && player.Data.Role.CanVent)
             {
                 if (Janitor.janitor != null && Janitor.janitor == PlayerControl.LocalPlayer)
@@ -684,7 +682,7 @@ namespace TheOtherRolesEdited
             {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.shieldedMurderAttempt();
+                RPCProcedure.shieldedMurderAttempt(0);
                 SoundEffectsManager.play("fail");
                 return MurderAttemptResult.SuppressKill;
             }
@@ -706,6 +704,28 @@ namespace TheOtherRolesEdited
                 }
                 return MurderAttemptResult.SuppressKill;
             }
+
+            // Kill the killer if Paranoia is on Protection
+            else if (Paranoia.paranoia != null && Paranoia.ProtectionActive && Paranoia.paranoia == target)
+            {
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.ParanoiaProtection, Hazel.SendOption.Reliable, -1);
+                writer.Write(target.PlayerId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.paranoiaProtection();
+                return MurderAttemptResult.ReverseKill;
+            }
+            // Kill the killer if the Veteran is on alert
+            else if (Veteran.veteran != null && target == Veteran.veteran && Veteran.alertActive)
+            {
+                if (Medic.shielded != null && Medic.shielded == target)
+                {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
+                    writer.Write(target.PlayerId);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.shieldedMurderAttempt(killer.PlayerId);
+                }
+                return MurderAttemptResult.ReverseKill;
+            }            
 
             // Thief if hit crew only kill if setting says so, but also kill the thief.
             else if (Thief.isFailedThiefKill(target, killer, targetRole))
@@ -750,6 +770,10 @@ namespace TheOtherRolesEdited
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.uncheckedMurderPlayer(killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : (byte)0);
         }
+        public static MurderAttemptResult checkMuderAttemptAndKill(PlayerControl killer, PlayerControl target, bool isMeetingStart = false, bool showAnimation = true)
+        {
+            return checkMurderAttemptAndKill(killer, target, isMeetingStart, showAnimation);
+        }
 
         public static MurderAttemptResult checkMurderAttemptAndKill(PlayerControl killer, PlayerControl target, bool isMeetingStart = false, bool showAnimation = true, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false)
         {
@@ -776,6 +800,35 @@ namespace TheOtherRolesEdited
                 })));
             }
             return murder;
+        }
+        public static void SetAsUIAspectContent(this GameObject obj, AspectPosition.EdgeAlignments alignment, Vector3 distanceFromEdge)
+        {
+            var aspectPos = obj.AddComponent<AspectPosition>();
+            aspectPos.Alignment = alignment;
+            aspectPos.parentCam = HudManager.InstanceExists ? HudManager.Instance.UICamera : Camera.main;
+            aspectPos.DistanceFromEdge = distanceFromEdge;
+            aspectPos.AdjustPosition();
+        }
+
+        public static void AddScaledSprite(this AspectScaledAsset scaledAsset, SpriteRenderer renderer)
+        {
+            if (scaledAsset.initialized)
+                scaledAsset.allSprites.Add(new(renderer.size.x, renderer));
+            else
+                scaledAsset.spritesToScale.Add(renderer);
+        }
+
+        public static bool checkAndDoVetKill(PlayerControl target)
+        {
+            bool shouldVetKill = (Veteran.veteran == target && Veteran.alertActive);
+            if (shouldVetKill)
+            {
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.VeteranKill, Hazel.SendOption.Reliable, -1);
+                writer.Write(CachedPlayer.LocalPlayer.PlayerControl.PlayerId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.veteranKill(CachedPlayer.LocalPlayer.PlayerControl.PlayerId);
+            }
+            return shouldVetKill;
         }
 
         public static void shareGameVersion()
@@ -927,6 +980,128 @@ namespace TheOtherRolesEdited
             if (nativeData.IsCreated)
                 return nativeData.ToArray();
             return null;
+        }
+        public static bool isChinese()
+        {
+            try
+            {
+                var name = CultureInfo.CurrentUICulture.Name;
+                if (name.StartsWith("zh")) return true;
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public static T FindAsset<T>(string name) where T : Il2CppObjectBase
+        {
+            foreach (var asset in UnityEngine.Object.FindObjectsOfTypeIncludingAssets(Il2CppType.Of<T>()))
+            {
+                if (asset.name == name) return asset.Cast<T>();
+            }
+            return null;
+        }
+        public static GameObject CreateObject(string objName, Transform parent, Vector3 localPosition, int? layer = null)
+        {
+            var obj = new GameObject(objName);
+            obj.transform.SetParent(parent);
+            obj.transform.localPosition = localPosition;
+            obj.transform.localScale = new Vector3(1f, 1f, 1f);
+            if (layer.HasValue) obj.layer = layer.Value;
+            else if (parent != null) obj.layer = parent.gameObject.layer;
+            return obj;
+        }
+
+        public static T CreateObject<T>(string objName, Transform parent, Vector3 localPosition, int? layer = null) where T : Component
+        {
+            return CreateObject(objName, parent, localPosition, layer).AddComponent<T>();
+        }
+
+        public static void SetModText(this TextTranslatorTMP text, string translationKey)
+        {
+            text.TargetText = (StringNames)short.MaxValue;
+            text.defaultStr = translationKey;
+        }
+        public struct TextFeatures
+        {
+            public float fontSizeMultiplier;
+            public float lineSpacingOffset;
+            public float heightMultiplier;
+            public float topMarginMultiplier;
+            public float scrollSpeedMultiplier;
+        }
+
+        public static TextFeatures AnalyzeTextFeatures(string text)
+        {
+            TextFeatures features = new()
+            {
+                fontSizeMultiplier = 1f,
+                lineSpacingOffset = 0f,
+                heightMultiplier = 1f,
+                topMarginMultiplier = 1f,
+                scrollSpeedMultiplier = 0.08f
+            };
+
+            bool hasCJK = System.Text.RegularExpressions.Regex.IsMatch(
+                text, @"[\p{IsHiragana}\p{IsKatakana}\p{IsCJKUnifiedIdeographs}]");
+
+            bool hasComplexScript = System.Text.RegularExpressions.Regex.IsMatch(
+                text, @"[\p{IsArabic}\p{IsThai}]");
+
+            if (hasCJK)
+            {
+                features.fontSizeMultiplier = 0.85f;
+                features.lineSpacingOffset = -20f;
+                features.heightMultiplier = 1.15f;
+                features.scrollSpeedMultiplier = 0.05f;
+
+                bool hasKana = text.Any(c => c >= '\u3040' && c <= '\u30FF');
+                if (hasKana)
+                {
+                    features.topMarginMultiplier = 0.8f;
+                    features.heightMultiplier = 1.25f;
+                }
+            }
+            else if (hasComplexScript)
+            {
+                features.fontSizeMultiplier = 0.9f;
+                features.lineSpacingOffset = -10f;
+                features.heightMultiplier = 1.2f;
+                features.scrollSpeedMultiplier = 0.06f;
+            }
+
+            float avgLineLength = (float)text.Split('\n').Average(line => line.Length);
+            if (avgLineLength > 60)
+            {
+                features.fontSizeMultiplier *= 0.95f;
+                features.lineSpacingOffset -= 5f;
+            }
+
+            return features;
+        }
+        public static void DoTransitionFade(this TransitionFade transitionFade, GameObject transitionFrom, GameObject transitionTo, Action onTransition, Action callback)
+        {
+            if (transitionTo) transitionTo!.SetActive(false);
+
+            IEnumerator Coroutine()
+            {
+                yield return Effects.ColorFade(transitionFade.overlay, Color.clear, Color.black, 0.1f);
+                if (transitionFrom && transitionFrom!.gameObject) transitionFrom.gameObject.SetActive(false);
+                if (transitionTo && transitionTo!.gameObject) if (transitionTo != null) transitionTo.gameObject.SetActive(true);
+                onTransition.Invoke();
+                yield return null;
+                yield return Effects.ColorFade(transitionFade.overlay, Color.black, Color.clear, 0.1f);
+                callback.Invoke();
+                yield break;
+            }
+
+            transitionFade.StartCoroutine(Coroutine().WrapToIl2Cpp());
+        }
+
+        internal static object CreateObject<T>(string v, GameObject gameSettingsButton, Vector3 vector3)
+        {
+            throw new NotImplementedException();
         }
     }
 }

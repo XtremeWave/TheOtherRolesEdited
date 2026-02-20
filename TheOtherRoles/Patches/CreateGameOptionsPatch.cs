@@ -39,6 +39,8 @@ internal class CreateGameOptionsPatch
             __instance.levelButtons[0].transform.parent.gameObject.SetActive(false);
             GameObject.Find("ModeOptions").transform.SetLocalY(-2.52f);
             GameObject.Find("ServerOption").transform.SetLocalY(-0.86f);
+            GameObject.Find("ModeOptions").transform.GetChild(2).gameObject.SetActive(false);
+
             __instance.serverDropdown.transform.SetLocalY(-0.6f);
 
             __instance.modeButtons[0].OnClick.AddListener((Action)(() =>
@@ -60,7 +62,7 @@ internal class CreateGameOptionsPatch
             modeButtonGS = Object.Instantiate(__instance.modeButtons[0], __instance.modeButtons[0].transform);
             modeButtonGS.name = "TORGUESSER";
             changeButtonText(modeButtonGS, $"{ModTranslation.getString("Guesser")}");
-            modeButtonGS.transform.SetLocalX(5.86f);
+            modeButtonGS.transform.SetLocalX(2.9296f);
             modeButtonGS.OnClick.RemoveAllListeners();
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p => modeButtonGS.SelectButton(false))));
             modeButtonGS.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("GuesserTip")}")));
@@ -79,8 +81,7 @@ internal class CreateGameOptionsPatch
             modeButtonHK = Object.Instantiate(modeButtonGS, __instance.modeButtons[0].transform);
             modeButtonHK.name = "TORHIDENSEEK";
             changeButtonText(modeButtonHK, $"{ModTranslation.getString("HideNSeek")}");
-            modeButtonHK.transform.SetLocalX(0);
-            modeButtonHK.transform.SetLocalY(-0.9f);
+            modeButtonHK.transform.SetLocalX(5.8608f);
             modeButtonHK.OnClick.RemoveAllListeners();
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p => modeButtonHK.SelectButton(false))));
             modeButtonHK.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("HideNSeekTip")}")));
@@ -99,7 +100,8 @@ internal class CreateGameOptionsPatch
             modeButtonPH = Object.Instantiate(modeButtonHK, __instance.modeButtons[0].transform);
             modeButtonPH.name = "TORPROPHUNT";
             changeButtonText(modeButtonPH, $"{ModTranslation.getString("PropHunt")}");
-            modeButtonPH.transform.SetLocalX(2.91f);
+            modeButtonPH.transform.SetLocalX(0);
+            modeButtonPH.transform.SetLocalY(-0.9f);
             modeButtonPH.OnClick.RemoveAllListeners();
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p => modeButtonPH.SelectButton(false))));
             modeButtonPH.OnMouseOver.AddListener((Action)(() => __instance.tooltip.SetText($"{ModTranslation.getString("PropHuntTip")}")));

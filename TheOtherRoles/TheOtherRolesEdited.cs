@@ -65,6 +65,9 @@ namespace TheOtherRolesEdited
             Yoyo.clearAndReload();
             Miner.clearAndReload();
             Blackmailer.clearAndReload();
+            Paranoia.clearAndReload();
+            Undertaker.clearAndReload();
+            Veteran.clearAndReload();
 
             // Modifier
             Bait.clearAndReload();
@@ -270,6 +273,7 @@ namespace TheOtherRolesEdited
             public static float cooldown = 30f;
             public static bool canKillNeutrals = false;
             public static bool spyCanDieToSheriff = false;
+            public static bool madmateKillerCanDieToSheriff = false;
 
             public static PlayerControl currentTarget;
 
@@ -659,6 +663,34 @@ public static class Medic {
             limitSoulDuration = CustomOptionHolder.seerLimitSoulDuration.getBool();
             soulDuration = CustomOptionHolder.seerSoulDuration.getFloat();
             mode = CustomOptionHolder.seerMode.getSelection();
+        }
+    }
+    public static class Undertaker
+    {
+        public static PlayerControl undertaker;
+        public static Color color = Palette.ImpostorRed;
+
+        public static float dragingDelaiAfterKill = 0f;
+
+        public static bool isDraging = false;
+        public static DeadBody deadBodyDraged = null;
+        public static bool canDragAndVent = false;
+
+        private static Sprite buttonSprite;
+        public static Sprite getButtonSprite()
+        {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UndertakerDragButton.png", 115f);
+            return buttonSprite;
+        }
+
+        public static void clearAndReload()
+        {
+            undertaker = null;
+            isDraging = false;
+            canDragAndVent = CustomOptionHolder.undertakerCanDragAndVent.getBool();
+            deadBodyDraged = null;
+            dragingDelaiAfterKill = CustomOptionHolder.undertakerDragingDelaiAfterKill.getFloat();
         }
     }
 
@@ -1803,6 +1835,64 @@ public static class Medic {
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
         }
     }
+    public static class Paranoia
+    {
+        public static PlayerControl paranoia;
+        public static Color color = new Color32(218, 112, 214, byte.MaxValue);
+
+        public static float ProtectionDuration = 3f;
+        public static float cooldown = 30f;
+
+        public static int remainingProtections = 5;
+
+        public static bool ProtectionActive = false;
+
+        private static Sprite buttonSprite;
+        public static Sprite getButtonSprite()
+        {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.ProtectionButton.png", 115f);
+            return buttonSprite;
+        }
+
+        public static void clearAndReload()
+        {
+            paranoia = null;
+            ProtectionActive = false;
+            ProtectionDuration = CustomOptionHolder.paranoiaProtectionDuration.getFloat();
+            cooldown = CustomOptionHolder.paranoiaCooldown.getFloat();
+            remainingProtections = Mathf.RoundToInt(CustomOptionHolder.paranoiaProtectionNumber.getFloat());
+        }
+    }
+
+    public static class Veteran
+    {
+        public static PlayerControl veteran;
+        public static Color color = new Color32(255, 77, 0, byte.MaxValue);
+
+        public static float alertDuration = 3f;
+        public static float cooldown = 30f;
+
+        public static bool alertActive = false;
+
+        private static Sprite buttonSprite;
+        public static Sprite getButtonSprite()
+        {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.AlertButton.png", 115f);
+            return buttonSprite;
+        }
+
+        public static void clearAndReload()
+        {
+            veteran = null;
+            alertActive = false;
+            alertDuration = CustomOptionHolder.veteranAlertDuration.getFloat();
+            cooldown = CustomOptionHolder.veteranCooldown.getFloat();
+        }
+    }
+
+
 
     public static class Blackmailer
     {

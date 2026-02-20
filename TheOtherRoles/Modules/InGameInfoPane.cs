@@ -1,99 +1,94 @@
 using HarmonyLib;
 using UnityEngine;
+using TMPro;
 using System;
+using Object = UnityEngine.Object;
 using UnityEngine.UI;
 
 namespace TheOtherRolesEdited.Modules;
 
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
-public static class GameStartManagePatch
+public static class abbb
 {
     private static bool isAspectSizeVisible = true;
     private static GameObject aspectSizeCache;
-    private static GameObject closeAspectButton;
-    private static float animationProgress = 1f; // 动画进度(0-1)
-    private static bool isAnimating = false; // 是否正在动画中
-    private static Vector3 startPosition = Vector3.zero; // 起始位置(0,0,0)
-    private static Vector3 targetPosition = new Vector3(4.4f, 0f, 0f); // 目标位置
+    private static PassiveButton startButtonCache;
+    private static TextMeshPro startButtonTextCache;
+    private static bool isEventBound = false;
+    private static bool isButtonInstantiated = false;
 
     public static void Postfix(GameStartManager __instance)
     {
-        if (aspectSizeCache == null)
-        {
-            aspectSizeCache = GameObject.Find("AspectSize");
-            if (aspectSizeCache != null)
-            {
-                var background = aspectSizeCache.transform.Find("Background")?.GetComponent<SpriteRenderer>();
-                if (background != null)
-                {
-                    background.color = new Color(0f, 0.6f, 255f);
-                }
-                aspectSizeCache.transform.localPosition = targetPosition;
-                InitializeCloseAspectButton();
-            }
-            return;
-        }
+        InitCaches(__instance);
 
-        if (isAnimating)
+        if (aspectSizeCache == null || startButtonCache == null || startButtonTextCache == null) return;
+
+        if (!isEventBound)
         {
-            UpdateAnimation();
+            startButtonCache.OnClick.AddListener((Action)(() => ToggleAspectSizeVisibility()));
+            isEventBound = true;
         }
 
         if (Input.GetKeyDown(KeyCode.H))
         {
-            ToggleAspectVisibility();
+            ToggleAspectSizeVisibility();
         }
     }
 
-    private static void InitializeCloseAspectButton()
+    private static void InitCaches(GameStartManager __instance)
     {
-        if (aspectSizeCache == null || closeAspectButton != null) return;
-        closeAspectButton = new GameObject("CloseAspectButton");
-        closeAspectButton.transform.SetParent(aspectSizeCache.transform);
-        closeAspectButton.transform.localPosition = new Vector3(-4.2773f * GetResolutionOffset(), -1.7491f, 1f);
-        closeAspectButton.transform.localScale = new Vector3(1f, 1f, 1f);
-        var collider = closeAspectButton.AddComponent<BoxCollider2D>();
-        collider.size = new Vector2(0.6f, 1.5f);
-        var spriteRenderer = closeAspectButton.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.RightPanelCloseButton.png", 100f);
-        spriteRenderer.color = new Color(0f, 0.6f, 255f); 
-        var passiveButton = closeAspectButton.AddComponent<PassiveButton>();
-        passiveButton.OnClick = new Button.ButtonClickedEvent();
-        passiveButton.OnClick.AddListener((Action)ToggleAspectVisibility);
-        passiveButton.OnMouseOver = new Button.ButtonClickedEvent();
-        passiveButton.OnMouseOver.AddListener((System.Action)(() => spriteRenderer.color = new Color(0f, 0f, 255f)));
-        passiveButton.OnMouseOut = new Button.ButtonClickedEvent();
-        passiveButton.OnMouseOut.AddListener((System.Action)(() => spriteRenderer.color = new Color(0f, 0.6f, 255f)));
-    }
-
-    private static void ToggleAspectVisibility()
-    {
-        if (aspectSizeCache == null || isAnimating) return;
-
-        isAspectSizeVisible = !isAspectSizeVisible;
-        isAnimating = true;
-        animationProgress = isAspectSizeVisible ? 0f : 1f;
-    }
-
-    private static void UpdateAnimation()
-    {
-        float animationSpeed = 2.4f;
-        animationProgress += (isAspectSizeVisible ? 1f : -1f) * Time.deltaTime * animationSpeed;
-        animationProgress = Mathf.Clamp01(animationProgress);
-
-        Vector3 currentPosition = Vector3.Lerp(startPosition, targetPosition, animationProgress);
-        aspectSizeCache.transform.localPosition = currentPosition;
-
-        if ((isAspectSizeVisible && animationProgress >= 1f) ||
-            (!isAspectSizeVisible && animationProgress <= 0f))
+        if (aspectSizeCache == null)
         {
-            isAnimating = false;
-            aspectSizeCache.transform.localPosition = isAspectSizeVisible ? targetPosition : startPosition;
+            aspectSizeCache = GameObject.Find("AspectSize");
+
+            if (aspectSizeCache != null)
+            {
+                isAspectSizeVisible = aspectSizeCache.activeSelf;
+            }
+        }
+
+        if ((!isButtonInstantiated || startButtonCache == null || !startButtonCache.gameObject.activeInHierarchy)
+            && __instance.StartButton != null)
+        {
+            if (startButtonCache != null)
+            {
+                Object.Destroy(startButtonCache.gameObject);
+            }
+
+            GameObject newButtonObj = Object.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.transform.parent);
+            newButtonObj.name = "ShowHideButton";
+            newButtonObj.SetActive(true);
+            startButtonCache = newButtonObj.GetComponent<PassiveButton>();
+            startButtonCache.transform.Find("Inactive")?.gameObject.SetActive(true);
+            startButtonCache.enabled = true;
+            startButtonCache.gameObject.SetActive(true);
+            startButtonCache.transform.GetChild(5).gameObject.SetActive(false);
+            startButtonCache.OnClick = new Button.ButtonClickedEvent();
+            startButtonTextCache = newButtonObj.GetComponentInChildren<TextMeshPro>();
+            startButtonCache.transform.localPosition = new Vector3(1.1073f, -0.26f, 0f);
+            startButtonCache.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+            startButtonCache.OnClick.AddListener((Action)(() => ToggleAspectSizeVisibility()));
+            isEventBound = true;
+            UpdateStartButtonText();
+            isButtonInstantiated = true;
         }
     }
 
-    private static float GetResolutionOffset()
+    private static void ToggleAspectSizeVisibility()
     {
-        return (float)Screen.width / Screen.height / (16f / 9f);
+        isAspectSizeVisible = !isAspectSizeVisible;
+        if (aspectSizeCache != null)
+        {
+            aspectSizeCache.SetActive(isAspectSizeVisible);
+        }
+        UpdateStartButtonText();
+    }
+
+    private static void UpdateStartButtonText()
+    {
+        if (startButtonTextCache != null)
+        {
+            startButtonTextCache.text = isAspectSizeVisible ? "隐藏" : "显示";
+        }
     }
 }

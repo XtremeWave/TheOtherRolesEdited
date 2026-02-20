@@ -29,6 +29,7 @@ namespace TheOtherRolesEdited.Patches
                 if (!TORMapOptions.enableSoundEffects) SoundEffectsManager.stopAll();
                  return TORMapOptions.enableSoundEffects;
                 }, TheOtherRolesEditedPlugin.EnableSoundEffects.Value,0),
+
         };
 
         private static GameObject popUp;
@@ -165,15 +166,14 @@ namespace TheOtherRolesEdited.Patches
 
         private static void CheckSetTitle()
         {
-            if (!popUp || popUp.GetComponentInChildren<TextMeshPro>() || !titleText) return;
+            if (popUp == null || titleText == null || titleTextTitle != null) return;
 
             var title = titleTextTitle = Object.Instantiate(titleText, popUp.transform);
             title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.3f;
             title.gameObject.SetActive(true);
-            title.text =ModTranslation.getString("modOptionsText");
+            title.text = ModTranslation.getString("modOptionsText");
             title.name = "TitleText";
         }
-
         private static void SetUpOptions()
         {
             if (popUp.transform.GetComponentInChildren<ToggleButtonBehaviour>()) return;

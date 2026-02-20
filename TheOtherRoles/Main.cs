@@ -37,9 +37,10 @@ namespace TheOtherRolesEdited
 
     public class TheOtherRolesEditedPlugin : BasePlugin
     {
-        public const string Id = "TheOtherRolesEdited";
+        public const string Id = "me.farewell.theotherrolesedited";
+        public const string Title = "TheOtherRolesEdited"; 
         public const string Name = "TORE";
-        public const string VersionString = "1.3.1";
+        public const string VersionString = "2.0.0";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
         public const string Team = "XtremeWave ";
@@ -154,6 +155,8 @@ namespace TheOtherRolesEdited
             _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
 
 #endif
+            Ip = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
+            Port = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
             GhostsSeeInformation = Config.Bind("Custom", "Ghosts See Remaining Tasks", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
@@ -167,13 +170,9 @@ namespace TheOtherRolesEdited
             ShowVentsOnMap = Config.Bind("Custom", "Show vent positions on minimap", false);
             ShowChatNotifications = Config.Bind("Custom", "Show Chat Notifications", true);
             ToggleCursor = Config.Bind("Custom", "Better Cursor", true);
-
-            Ip = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
-            Port = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
             defaultRegions = ServerManager.DefaultRegions;
             // Removes vanilla Servers
             ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
-
             Harmony.PatchAll(typeof(LoadPatch));
 
             // Reactor Credits (future use?)

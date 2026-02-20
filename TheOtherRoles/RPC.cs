@@ -19,6 +19,7 @@ using Assets.CoreScripts;
 using Reactor.Utilities.Extensions;
 using TheOtherRolesEdited.Players;
 using TheOtherRolesEdited.Modules;
+using MS.Internal.Xml.XPath;
 namespace TheOtherRolesEdited
 {
     public enum RoleId {
@@ -42,6 +43,7 @@ namespace TheOtherRolesEdited
         Hacker,
         Tracker,
         Vampire,
+        Undertaker,
         Snitch,
         Jackal,
         Sidekick,
@@ -67,6 +69,8 @@ namespace TheOtherRolesEdited
         Bomber,
         Yoyo,
         Miner,
+        Paranoia,
+        Veteran,
         Blackmailer,
         Crewmate,
         Impostor,
@@ -88,7 +92,7 @@ namespace TheOtherRolesEdited
 
     enum CustomRPC
     {
-       
+        UncheckedSetVanilaRole,
         ResetVaribles = 100,
         ShareOptions,
         ForceEnd,
@@ -105,9 +109,11 @@ namespace TheOtherRolesEdited
         ShareGamemode,
         StopStart,
         RevivePlayer,
+        ParanoiaProtection,
+        DragBody,
+        DropBody,
 
         // Role functionality
-
         EngineerFixLights = 120,
         EngineerFixSubmergedOxygen,
         EngineerUsedRepair,
@@ -161,6 +167,9 @@ namespace TheOtherRolesEdited
         BreakArmor,
         Disperse,
         Mine,
+        VeteranAlert,
+        VeteranKill,
+
         // Gamemode
         SetGuesserGm,
         HuntedShield,
@@ -348,6 +357,12 @@ namespace TheOtherRolesEdited
                     case RoleId.Eraser:
                         Eraser.eraser = player;
                         break;
+                    case RoleId.Undertaker:
+                        Undertaker.undertaker = player;
+                        break;
+                    case RoleId.Veteran:
+                        Veteran.veteran = player;
+                        break;
                     case RoleId.Spy:
                         Spy.spy = player;
                         break;
@@ -386,6 +401,9 @@ namespace TheOtherRolesEdited
                         break;
                     case RoleId.Lawyer:
                         Lawyer.lawyer = player;
+                        break;
+                    case RoleId.Paranoia:
+                        Paranoia.paranoia = player;
                         break;
                     case RoleId.Prosecutor:
                         Lawyer.lawyer = player;
@@ -560,6 +578,25 @@ namespace TheOtherRolesEdited
                 }
             }
         }
+        public static void dragBody(byte playerId)
+        {
+            DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == playerId)
+                {
+                    Undertaker.deadBodyDraged = array[i];
+                }
+            }
+        }
+
+        public static void dropBody(byte playerId)
+        {
+            if (Undertaker.undertaker == null || Undertaker.deadBodyDraged == null) return;
+            var deadBody = Undertaker.deadBodyDraged;
+            Undertaker.deadBodyDraged = null;
+            deadBody.transform.position = new Vector3(Undertaker.undertaker.GetTruePosition().x, Undertaker.undertaker.GetTruePosition().y, Undertaker.undertaker.transform.position.z);
+        }
 
         public static void timeMasterRewindTime() {
                     TimeMaster.RewindTime();
@@ -578,7 +615,7 @@ namespace TheOtherRolesEdited
             Medic.futureShielded = null;
         }
 
-        public static void shieldedMurderAttempt() {
+        public static void shieldedMurderAttempt(byte blank) {
             if (Medic.shielded == null || Medic.medic == null) return;
             
             bool isShieldedAndShow = Medic.shielded == PlayerControl.LocalPlayer && Medic.showAttemptToShielded;
@@ -751,7 +788,8 @@ namespace TheOtherRolesEdited
             if (player == SecurityGuard.securityGuard) SecurityGuard.clearAndReload();
             if (player == Medium.medium) Medium.clearAndReload();
             if (player == Trapper.trapper) Trapper.clearAndReload();
-
+            if (player == Paranoia.paranoia) Paranoia.clearAndReload();
+            if (player == Veteran.veteran) Veteran.clearAndReload();
             // Impostor roles
             if (player == Morphling.morphling) Morphling.clearAndReload();
             if (player == Camouflager.camouflager) Camouflager.clearAndReload();
@@ -769,7 +807,7 @@ namespace TheOtherRolesEdited
             if (player == Yoyo.yoyo) Yoyo.clearAndReload();
             if (player == Miner.miner) Miner.clearAndReload();
             if (player == Blackmailer.blackmailer) Blackmailer.clearAndReload();
-
+            if (player == Undertaker.undertaker) Undertaker.clearAndReload();
             // Other roles
             if (player == Jester.jester) Jester.clearAndReload();
             if (player == Arsonist.arsonist) Arsonist.clearAndReload();
@@ -1105,6 +1143,31 @@ namespace TheOtherRolesEdited
             }
         }
 
+        public static void paranoiaProtection()
+        {
+            Paranoia.ProtectionActive = true;
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Paranoia.ProtectionDuration, new Action<float>((p) => {
+                if (p == 1f) Paranoia.ProtectionActive = false;
+            })));
+        }
+        public static void veteranAlert()
+        {
+            Veteran.alertActive = true;
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Veteran.alertDuration, new Action<float>((p) => {
+                if (p == 1f) Veteran.alertActive = false;
+            })));
+        }
+
+        public static void veteranKill(byte targetId)
+        {
+            if (CachedPlayer.LocalPlayer.PlayerControl == Veteran.veteran)
+            {
+                PlayerControl player = Helpers.playerById(targetId);
+                Helpers.checkMuderAttemptAndKill(Veteran.veteran, player);
+            }
+        }
+
+
         public static void placeCamera(byte[] buff) {
             var referenceCamera = UnityEngine.Object.FindObjectOfType<SurvCamera>(); 
             if (referenceCamera == null) return; // Mira HQ
@@ -1345,6 +1408,8 @@ namespace TheOtherRolesEdited
             if (target == Warlock.warlock) Warlock.warlock = thief;
             if (target == Blackmailer.blackmailer) Blackmailer.blackmailer = thief;
             if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = thief;
+            if (target == Undertaker.undertaker) Undertaker.undertaker = thief;
+            if (target == Veteran.veteran) Veteran.veteran = thief;
             if (target == Witch.witch) {
                 Witch.witch = thief;
                 if (MeetingHud.Instance) 
@@ -1736,7 +1801,7 @@ namespace TheOtherRolesEdited
                     RPCProcedure.medicSetShielded(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.ShieldedMurderAttempt:
-                    RPCProcedure.shieldedMurderAttempt();
+                    RPCProcedure.shieldedMurderAttempt(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.ShifterShift:
                     RPCProcedure.shifterShift(reader.ReadByte());
@@ -1857,6 +1922,15 @@ namespace TheOtherRolesEdited
                 case (byte)CustomRPC.ThiefStealsRole:
                     byte thiefTargetId = reader.ReadByte();
                     RPCProcedure.thiefStealsRole(thiefTargetId);
+                    break;
+                case (byte)CustomRPC.ParanoiaProtection:
+                    RPCProcedure.paranoiaProtection();
+                    break;
+                case (byte)CustomRPC.VeteranAlert:
+                    RPCProcedure.veteranAlert();
+                    break;
+                case (byte)CustomRPC.VeteranKill:
+                    RPCProcedure.veteranKill(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.SetTrap:
                     RPCProcedure.setTrap(reader.ReadBytesAndSize());

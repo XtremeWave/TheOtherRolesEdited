@@ -2,11 +2,11 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
-      "AmongUs.GameLibs.Android": {
+      "AmongUs.GameLibs.Steam": {
         "type": "Direct",
-        "requested": "[2025.9.9, )",
-        "resolved": "2025.9.9",
-        "contentHash": "gOLG14GaPqbb6M305qc2RDhF3gYFm1+2gjCAin1+miy/Xe+g4iNA+sKjopNpZylvpHjQl7Bp7RzkcKg1f4Q5tw=="
+        "requested": "[2025.11.18, )",
+        "resolved": "2025.11.18",
+        "contentHash": "iIfwrgNDunMDAjEB21s0AFZs6gzD1L9Ne6qJKsrveLaPgRhOljXLdeE1tkUCWnZRiPSLF4wU6IuCvTyI7sAIhA=="
       },
       "BepInEx.IL2CPP.MSBuild": {
         "type": "Direct",
@@ -33,12 +33,18 @@
       },
       "Reactor": {
         "type": "Direct",
-        "requested": "[2.3.1, )",
-        "resolved": "2.3.1",
-        "contentHash": "CsFs84aM3PA6+74TzHEAUayXOosYBJEJKf1Ebs3CpL10RMLrj+WRAWrpgFoNd9qS+pIzQflW76Q5Pgg/aOQ40w==",
+        "requested": "[2.5.0-ci.371, )",
+        "resolved": "2.5.0-ci.371",
+        "contentHash": "LMKHi2CPACJJkBK117HT6zKS8mkv1c/RUZusYlnFExS2nGCD/haqf+YkTXyK561T5+BSg0m0R4ubSG30cdYDNg==",
         "dependencies": {
-          "BepInEx.Unity.IL2CPP": "6.0.0-be.679"
+          "BepInEx.Unity.IL2CPP": "6.0.0-be.735"
         }
+      },
+      "YamlDotNet": {
+        "type": "Direct",
+        "requested": "[16.3.0, )",
+        "resolved": "16.3.0",
+        "contentHash": "SgMOdxbz8X65z8hraIs6hOEdnkH6hESTAIUa7viEngHOYaH+6q5XJmwr1+yb9vJpNQ19hCQY69xbFsLtXpobQA=="
       },
       "AsmResolver": {
         "type": "Transitive",

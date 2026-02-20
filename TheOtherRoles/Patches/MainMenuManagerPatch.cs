@@ -13,8 +13,6 @@ namespace TheOtherRolesEdited;
 [HarmonyPatch(typeof(MainMenuManager))]
 public static class MainMenuManagerPatch
 {
-    public static bool ShowedBak = false;
-    private static bool ShowingPanel = false;
     public static MainMenuManager Instance { get; private set; }
 
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenGameModeMenu))]
@@ -31,6 +29,8 @@ public static class MainMenuManagerPatch
     {
         ShowingPanel = false;
         AccountManager.Instance?.transform?.FindChild("AccountTab/AccountWindow")?.gameObject?.SetActive(false);
+        if (MainMenuSetUpPatch.credentialObject != null) MainMenuSetUpPatch.credentialObject.SetActive(false);
+        if (MainMenuSetUpPatch.BackButton != null) MainMenuSetUpPatch.BackButton.SetActive(false);
     }
 
     public static void ShowRightPanelImmediately()
@@ -39,6 +39,9 @@ public static class MainMenuManagerPatch
         TitleLogoPatch.RightPanel.transform.localPosition = TitleLogoPatch.RightPanelOp;
         Instance.OpenGameModeMenu();
     }
+    
+    public static bool ShowedBak = false;
+    private static bool ShowingPanel = false;
 
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.LateUpdate)), HarmonyPostfix]
     public static void MainMenuManager_LateUpdate()
@@ -49,13 +52,8 @@ public static class MainMenuManagerPatch
         var pos3 = new Vector3(
             TitleLogoPatch.RightPanelOp.x * TitleLogoPatch.GetResolutionOffset(),
             TitleLogoPatch.RightPanelOp.y, TitleLogoPatch.RightPanelOp.z);
-#if PC
-        var lerp1 = Vector3.Lerp(pos1, ShowingPanel ? pos3 : TitleLogoPatch.RightPanelOp + new Vector3(10f, 0f, 0f),
-            Time.deltaTime * (ShowingPanel ? 3f : 2f));
-#else
         var lerp1 = Vector3.Lerp(pos1, ShowingPanel ? pos3 : TitleLogoPatch.RightPanelOp + new Vector3(20f, 0f, 0f),
             Time.deltaTime * (ShowingPanel ? 3f : 2f));
-#endif
         if (ShowingPanel
                 ? TitleLogoPatch.RightPanel.transform.localPosition.x > pos3.x + 0.03f
                 : TitleLogoPatch.RightPanel.transform.localPosition.x < TitleLogoPatch.RightPanelOp.x + 29f
@@ -68,8 +66,8 @@ public static class MainMenuManagerPatch
         Vector3 lerp2 = Vector3.Lerp(pos2, new Vector3(pos2.x, 7.1f, pos2.z), Time.deltaTime * 1.4f);
         bak.transform.position = lerp2;
         if (pos2.y > 7f) ShowedBak = true;
-    }
 
+    } 
     //∑¿÷π ˜¿¡§Œsbº‡ª§»ÀºÏ≤‚
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.LateUpdate))]
     public static void Prefix(MainMenuManager __instance)

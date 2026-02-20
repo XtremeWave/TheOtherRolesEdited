@@ -15,14 +15,15 @@ public static class CustomHatManager
     public const string InnerslothPackageName = "官方帽子";
     public const string DeveloperPackageName = "开发者帽子";
 
-     internal static string RepositoryUrl
-     {
-         get
-         {
-             return $"https://mcbbs.amongusclub.cn:22032/TheOtherHats";
-         }
-     }
-
+    internal static readonly Tuple<string, string> Repository = new("XtremeWave", "TheOtherHats");
+    internal static string RepositoryUrl
+    {
+        get
+        {
+            var (owner, repository) = Repository;
+            return (Helpers.isChinese() ? "https://download.hayashiume.top/" : "") + $"https://raw.githubusercontent.com/{owner}/{repository}/master";
+        }
+    }
 
     internal static readonly string ManifestFileName = "CustomHats.json";
 

@@ -41,6 +41,7 @@ namespace TheOtherRolesEdited.Objects {
         public KeyCode? originalHotkey;
         public string buttonText;
         public bool isHandcuffed = false;
+        public string actionName = null;
         private static readonly int Desat = Shader.PropertyToID("_Desat");
 
         public static class ButtonPositions
@@ -92,7 +93,9 @@ namespace TheOtherRolesEdited.Objects {
             this.showButtonText = (actionButtonRenderer.sprite == Sprite || buttonText != "");
             button.OnClick = new Button.ButtonClickedEvent();
             button.OnClick.AddListener((UnityEngine.Events.UnityAction)onClickEvent);
+            setKeyBind();
             setActive(false);
+            setLabelType(abilityTexture);
         }
 
         public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool mirror = false, string buttonText = "", ButtonLabelType abilityTexture = ButtonLabelType.KillButton)
@@ -115,6 +118,23 @@ namespace TheOtherRolesEdited.Objects {
                     actionButton.cooldownTimerText.color = new Color(0F, 0.8F, 0F);
                     this.isEffectActive = true;
                 }
+            }
+        }
+     
+        internal GameObject UsesIcon = null!;
+        public TMPro.TextMeshPro ShowUsesIcon(int iconVariation)
+        {
+            if (UsesIcon) GameObject.Destroy(UsesIcon);
+            UsesIcon = ButtonEffect.ShowUsesIcon(actionButton, iconVariation, out var text);
+            return text;
+        }
+
+        public void setKeyBind()
+        {
+            if (hotkey is not null and not KeyCode.None)
+            {
+                actionButtonGameObject.ForEachChild((Il2CppSystem.Action<GameObject>)((c) => { if (c.name.Equals("HotKeyGuide")) GameObject.Destroy(c); }));
+                ButtonEffect.SetKeyGuide(actionButtonGameObject, (KeyCode)hotkey, action: actionName);
             }
         }
 
@@ -214,6 +234,23 @@ namespace TheOtherRolesEdited.Objects {
                 actionButtonGameObject.SetActive(false);
                 actionButtonRenderer.enabled = false;
             }
+        }
+
+        public void setLabelType(ButtonLabelType labelType)
+        {
+            Material mat = null;
+            switch (labelType)
+            {
+                case ButtonLabelType.UseButton:
+                    mat = hudManager.UseButton.fastUseSettings[ImageNames.UseButton].FontMaterial; break;
+                case ButtonLabelType.AdminButton:
+                    mat = hudManager.UseButton.fastUseSettings[ImageNames.PolusAdminButton].FontMaterial; break;
+                case ButtonLabelType.KillButton:
+                    mat = RoleManager.Instance.GetRole(RoleTypes.Shapeshifter).Ability.FontMaterial; break;
+                case ButtonLabelType.HauntButton:
+                    mat = RoleManager.Instance.GetRole(RoleTypes.Engineer).Ability.FontMaterial; break;
+            }
+            if (mat != null) actionButton.buttonLabelText.SetSharedMaterial(mat);
         }
 
         public void Update()

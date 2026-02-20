@@ -17,6 +17,7 @@ using TheOtherRolesEdited.Patches;
 using Reactor.Utilities.Extensions;
 using TheOtherRolesEdited.Modules;
 using static TheOtherRolesEdited.Patches.CredentialsPatch;
+using Il2CppSystem.Security.Cryptography;
 
 namespace TheOtherRolesEdited.Modules;
 
@@ -33,6 +34,7 @@ internal class TitleLogoPatch
     public static GameObject CloseRightButton;
     public static GameObject Tint;
     public static GameObject Sizer;
+
     public static Vector3 RightPanelOp;
 
     private static Sprite logoSprite1;
@@ -49,11 +51,7 @@ internal class TitleLogoPatch
 
     private static void Postfix(MainMenuManager __instance)
     {
-#if PC
-        ResolutionManager.SetResolution(1920, 1080, true);
-#endif
         EnterCodePatch.ifFirst = true;
-
         GameObject.Find("BackgroundTexture")?.SetActive(!MainMenuManagerPatch.ShowedBak);
 
         var friendsButton = UpdateFriendCodeUIPatch.FriendsButton.GetComponent<PassiveButton>();
@@ -65,7 +63,7 @@ internal class TitleLogoPatch
         Color originalColorfriendsButton = friendsButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
         friendsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorfriendsButton * 0.6f;
         friendsButton.activeSprites.GetComponent<SpriteRenderer>().color = originalColorfriendsButton * 0.75f;
-
+        
         Background = new GameObject("TORE Background");
         Background.transform.position = new Vector3(0, 0, 520f);
         Background.transform.localScale = new Vector3(Mathf.Max(GetResolutionOffset(), 1), Mathf.Max(GetResolutionOffset(), 1), 1);
@@ -90,67 +88,37 @@ internal class TitleLogoPatch
         var month = now.Month;
         var day = now.Day;
         logoRenderer = AULogo.GetComponent<SpriteRenderer>();
-#if PC
-        AULogo.transform.localPosition += new Vector3(-0.35f, 0.28f, 0);
+        AULogo.transform.localPosition += new Vector3(-0.4f, 0.28f, 0);
         AULogo.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
-#else
-        AULogo.transform.localPosition += new Vector3(-0.4f, 0f, 0);
-#endif
         string logoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE.png";
-        if (month == 4 && day == 1)logoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE.png";
+        if (month == 4 && day == 1) logoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-AFT.png";
         logoSprite1 = Helpers.loadSpriteFromResources(logoPath, 150f);
         logoSprite2 = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.AmongUs-Logo.png", 150f);
         logoRenderer.sprite = logoSprite1;
         logoRenderer.color = Color.white; __instance.StartCoroutine(GradientSwitchCoroutine());
-
+      
         if (!(BottomButtonBounds = GameObject.Find("BottomButtonBounds"))) return;
-#if PC
-        BottomButtonBounds.transform.localPosition += new Vector3(-0.35f * GetResolutionOffset(), 0.8f * GetResolutionOffset(), 0);
-#else
-        BottomButtonBounds.transform.localPosition += new Vector3(0.06f, 0.17f, 0);
-#endif
-        DateTime currentDate = DateTime.Now;
-        if (currentDate.Month == 10 && currentDate.Day == 25)
-        {
-            /*__instance.playButton.OnClick.RemoveAllListeners();
-            __instance.playButton.OnClick.AddListener((System.Action)(() => __instance.inventoryButton.OnClick.Invoke()));
-            __instance.inventoryButton.OnClick.AddListener((System.Action)(() => __instance.shopButton.OnClick.Invoke()));
-            __instance.shopButton.OnClick.AddListener((System.Action)(() => __instance.newsButton.OnClick.Invoke()));
-            __instance.myAccountButton.OnClick.AddListener((System.Action)(() => __instance.settingsButton.OnClick.Invoke()));
-            __instance.newsButton.OnClick.AddListener((System.Action)(() => __instance.playButton.OnClick.Invoke()));
-            __instance.settingsButton.OnClick.AddListener((System.Action)(() => __instance.myAccountButton.OnClick.Invoke()));*/
-        }
-#if PC
-        __instance.playButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
-        __instance.inventoryButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
-        __instance.shopButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
-        __instance.myAccountButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
-        __instance.newsButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
-        __instance.settingsButton.transform.localPosition += new Vector3(-0.35f, 0.8f, 0);
+        BottomButtonBounds.transform.localPosition += new Vector3(-0.4f, 0.58f, 0);
+
+        __instance.playButton.transform.localPosition += new Vector3(-0.4f, 1.06f, 0);
+        __instance.inventoryButton.transform.localPosition += new Vector3(-0.4f, 1.06f, 0);
+        __instance.shopButton.transform.localPosition += new Vector3(-0.4f, 1.06f, 0);
+        __instance.myAccountButton.transform.localPosition += new Vector3(-0.4f, 1.1f, 0);
+        __instance.newsButton.transform.localPosition += new Vector3(-0.4f, 1.1f, 0);
+        __instance.settingsButton.transform.localPosition += new Vector3(-0.4f, 1.1f, 0);
+
         __instance.playButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.inventoryButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.shopButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.myAccountButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.newsButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.settingsButton.transform.localScale += new Vector3(0.02f, 0f, 0);
-#else
-        __instance.playButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
-        __instance.inventoryButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
-        __instance.shopButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
-        __instance.myAccountButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
-        __instance.newsButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
-        __instance.settingsButton.transform.localPosition += new Vector3(0f, 0.2f, 0);
-#endif
-
+               
         if (!(RightPanel = GameObject.Find("RightPanel"))) return;
         var rpap = RightPanel.GetComponent<AspectPosition>();
         if (rpap) Object.Destroy(rpap);
         RightPanelOp = RightPanel.transform.localPosition;
-#if PC
-        RightPanel.transform.localPosition = RightPanelOp + new Vector3(10f, 0f, 0f);
-#else
         RightPanel.transform.localPosition = RightPanelOp + new Vector3(20f, 0f, 0f);
-#endif
         RightPanel.GetComponent<SpriteRenderer>().color = new(0f, 0.6f, 255f);
         CloseRightButton = new GameObject("CloseRightPanelButton");
         CloseRightButton.transform.SetParent(RightPanel.transform);
@@ -167,7 +135,7 @@ internal class TitleLogoPatch
         closeRightPassiveButton.OnMouseOut.AddListener((System.Action)(() => closeRightSpriteRenderer.color = new(0f, 0.6f, 255f)));
         closeRightPassiveButton.OnMouseOver = new();
         closeRightPassiveButton.OnMouseOver.AddListener((System.Action)(() => closeRightSpriteRenderer.color = new(0f, 0f, 205f)));
-
+       
         Tint = __instance.screenTint.gameObject;
         var ttap = Tint.GetComponent<AspectPosition>();
         if (ttap) Object.Destroy(ttap);
@@ -185,10 +153,9 @@ internal class TitleLogoPatch
         }
 
         var mainButtonsobj = GameObject.Find("Main Buttons");
-        mainButtonsobj.transform.position = new Vector3(-3.4f * GetResolutionOffset(),
-            mainButtonsobj.transform.position.y, mainButtonsobj.transform.position.z);
+        mainButtonsobj.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
+        mainButtonsobj.transform.position = new Vector3(-3.4f * GetResolutionOffset(),  mainButtonsobj.transform.position.y, mainButtonsobj.transform.position.z);
     }
-
     private static IEnumerator GradientSwitchCoroutine()
     {
         while (logoRenderer != null && AULogo != null)
@@ -238,15 +205,18 @@ internal class TitleLogoPatch
     {
         try
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
-            var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            using MemoryStream ms = new();
-            stream.CopyTo(ms);
-            ImageConversion.LoadImage(texture, ms.ToArray(), false);
+            var texture = new Texture2D(0, 0, TextureFormat.RGBA32, false)
+            {
+                wrapMode = TextureWrapMode.Clamp
+            };
+            Stream myStream = Assembly.GetCallingAssembly().GetManifestResourceStream(path);
+            byte[] data = myStream.ReadFully();
+            ImageConversion.LoadImage(texture, data, false);
             return texture;
         }
         catch
         {
+            System.Console.WriteLine("Error loading texture from resources: " + path);
         }
         return null;
     }
@@ -269,11 +239,11 @@ internal class TitleLogoPatch
     public static void Postfix(VersionShower __instance)
     {
         MainMenuPatch.fontAssetVersionShower = __instance.text.font;
-        LogoPatch.fontAssetVersionShower = __instance.text.font;
         Showpop.fontAssetVersionShower = __instance.text.font;
+        MainMenuSetUpPatch.fontAssetVersionShower = __instance.text.font;
 
         __instance.text.fontSize = 1.5f;
-        __instance.text.text = $"AmongUs v{DestroyableSingleton<ReferenceDataManager>.Instance.Refdata.userFacingVersion}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Id}")} v{TheOtherRolesEditedPlugin.VersionString}";
+        __instance.text.text = $"AmongUs v{DestroyableSingleton<ReferenceDataManager>.Instance.Refdata.userFacingVersion}-{Helpers.GradientColorText("00FFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Title}")} v{TheOtherRolesEditedPlugin.VersionString}";
         __instance.text.text += "\n" + string.Format(ModTranslation.getString("ToDateToday"), TheOtherRolesEditedPlugin.ModUsageCount);
         __instance.text.gameObject.GetComponent<RectTransform>().transform.localPosition += new Vector3(-0.2f, 0.272f, 0f);
         __instance.text.alignment = AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started ? TextAlignmentOptions.Bottom : TextAlignmentOptions.BottomLeft;
@@ -350,14 +320,9 @@ internal class TitleLogoPatch
         [HarmonyPatch(typeof(LobbyViewSettingsPane), nameof(LobbyViewSettingsPane.Awake)), HarmonyPostfix]
         static void Awake()
         {
-#if PC
-            GameObject.Find("RulesPopOutWindow").transform.localScale = new(1.3f, 1.3f, 0.0473f);
-            GameObject.Find("RulesPopOutWindow").transform.localPosition = new(-8.2675f, -3.9114f, -300f);
-#else
-            GameObject.Find("RulesPopOutWindow").transform.localScale = new(1.5f, 1.5f, 0.0473f);
-            GameObject.Find("RulesPopOutWindow").transform.localPosition = new(-10.5889f, -3.9114f, -300f);
-
-#endif
+            // GameObject.Find("RulesPopOutWindow").transform.localScale = new(1.3f, 1.3f, 0.0473f);
+            // GameObject.Find("RulesPopOutWindow").transform.localPosition = new(-8.2675f, -3.9114f, -300f);
+            GameObject.Find("RulesPopOutWindow").transform.localPosition += new Vector3(-0.5f, 0f, 0f);
         }
     }
 
@@ -384,6 +349,16 @@ internal class TitleLogoPatch
             __instance.ModStamp.transform.position = AspectPosition.ComputeWorldPosition(
                 __instance.localCamera, AspectPosition.EdgeAlignments.RightTop,
                 new Vector3(0.4f, offset_y, __instance.localCamera.nearClipPlane + 0.1f));
+        }
+    }
+
+    [HarmonyPatch(typeof(HostLocalGameButton), nameof(HostLocalGameButton.Start))]
+    public static class LocalGameModePatch
+    {
+        static void Postfix(HostLocalGameButton __instance)
+        {
+            if (__instance.TryGetComponent(Il2CppType.Of<FreeplayPopover>(), out _)) return;
+            __instance.transform.FindChild("CreateHnSGameButton")?.gameObject.SetActive(false);
         }
     }
 
@@ -443,6 +418,33 @@ internal class TitleLogoPatch
         {
             foreach (ServerListButton button in __instance.ButtonPool.GetComponentsInChildren<ServerListButton>()) button.gameObject.SetActive(false);
             __instance.FillServerOptions();
+        }
+
+        [HarmonyPatch(typeof(ResolutionManager))]
+        internal class ResolutionManagerPatch
+        {
+            [HarmonyPatch(nameof(ResolutionManager.SetResolution))]
+
+            public static void Postfix(int width, int height)
+            {
+                _ = new LateTask(() =>
+                {
+                    if (!GameObject.Find("MainUI")) return;
+                    var offset = GetResolutionOffset();
+                    CloseRightButton.transform.localPosition = new Vector3(-4.78f * offset, 1.3f, 1.0f);
+                    Tint.transform.localPosition =
+                        new Vector3(-0.0824f * offset, 0.0513f, Tint.transform.localPosition.z);
+                    Sizer.transform.localPosition = new Vector3(-4.0f * offset, 1.4f, -1.0f);
+                    Background.transform.localScale = new Vector3(Mathf.Max(GetResolutionOffset(), 1),
+                        Mathf.Max(GetResolutionOffset(), 1), 1);
+#if PC
+                    var mainButtons = GameObject.Find("Main Buttons");
+                    MainMenuButtonHoverAnimation.RefreshButtons(mainButtons);
+#endif
+                    CloseRightButton.transform.localPosition =
+                        new Vector3(-4.78f * GetResolutionOffset(), 1.3f, 1f);
+                }, 0.01f, "RefreshMenu");
+            }
         }
     }
 }
@@ -555,4 +557,5 @@ public static class GameStartManagerUpdatePatch
         }
     }
 }
+
 //copy from https://github.com/Slok7565/FinalSuspect/blob/FinalSus/FinalSuspect/Modules/Core/Game/Utils.cs#L29
