@@ -56,6 +56,7 @@ namespace TheOtherRolesEdited
         Arsonist,
         EvilGuesser,
         NiceGuesser,
+        PlagueDoctor,
         BountyHunter,
         Vulture,
         Medium,
@@ -169,6 +170,9 @@ namespace TheOtherRolesEdited
         Mine,
         VeteranAlert,
         VeteranKill,
+        PlagueDoctorWin,
+        PlagueDoctorSetInfected,
+        PlagueDoctorUpdateProgress,
 
         // Gamemode
         SetGuesserGm,
@@ -345,6 +349,9 @@ namespace TheOtherRolesEdited
                     case RoleId.Vampire:
                         Vampire.vampire = player;
                         break;
+                    case RoleId.PlagueDoctor:
+                        PlagueDoctor.plagueDoctor = player;
+                       break;
                     case RoleId.Snitch:
                         Snitch.snitch = player;
                         break;
@@ -644,7 +651,7 @@ namespace TheOtherRolesEdited
                 }
                 return;
             }
-            
+
             Shifter.shiftRole(oldShifter, player);
 
             // Set cooldowns to max for both players
@@ -698,6 +705,30 @@ namespace TheOtherRolesEdited
             position.x = BitConverter.ToSingle(buff, 0*sizeof(float));
             position.y = BitConverter.ToSingle(buff, 1*sizeof(float));
             new Garlic(position);
+        }
+        public static void plagueDoctorWin()
+        {
+            PlagueDoctor.triggerPlagueDoctorWin = true;
+            var livingPlayers = PlayerControl.AllPlayerControls.GetFastEnumerator().ToArray().Where(p => p != PlagueDoctor.plagueDoctor && !p.Data.IsDead);
+            foreach (PlayerControl p in livingPlayers)
+            {
+                if (!p.Data.IsDead) p.Exiled();
+                GameHistory.overrideDeathReasonAndKiller(p, DeadPlayer.CustomDeathReason.Disease, PlagueDoctor.plagueDoctor);
+            }
+        }
+
+        public static void plagueDoctorInfected(byte targetId)
+        {
+            var p = Helpers.playerById(targetId);
+            if (!PlagueDoctor.infected.ContainsKey(targetId))
+            {
+                PlagueDoctor.infected[targetId] = p;
+            }
+        }
+
+        public static void plagueDoctorProgress(byte targetId, float progress)
+        {
+            PlagueDoctor.progress[targetId] = progress;
         }
 
         public static void trackerUsedTracker(byte targetId) {
@@ -790,6 +821,7 @@ namespace TheOtherRolesEdited
             if (player == Trapper.trapper) Trapper.clearAndReload();
             if (player == Paranoia.paranoia) Paranoia.clearAndReload();
             if (player == Veteran.veteran) Veteran.clearAndReload();
+
             // Impostor roles
             if (player == Morphling.morphling) Morphling.clearAndReload();
             if (player == Camouflager.camouflager) Camouflager.clearAndReload();
@@ -825,6 +857,7 @@ namespace TheOtherRolesEdited
             if (player == Lawyer.lawyer) Lawyer.clearAndReload();
             if (player == Pursuer.pursuer) Pursuer.clearAndReload();
             if (player == Thief.thief) Thief.clearAndReload();
+            if (player == PlagueDoctor.plagueDoctor) PlagueDoctor.clearAndReload();
 
             // Modifier
             if (!ignoreModifier)
@@ -1893,6 +1926,18 @@ namespace TheOtherRolesEdited
                     break;
                 case (byte)CustomRPC.LawyerPromotesToPursuer:
                     RPCProcedure.lawyerPromotesToPursuer();
+                    break;
+                case (byte)CustomRPC.PlagueDoctorWin:
+                    RPCProcedure.plagueDoctorWin();
+                    break;
+                case (byte)CustomRPC.PlagueDoctorSetInfected:
+                    RPCProcedure.plagueDoctorInfected(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.PlagueDoctorUpdateProgress:
+                    byte progressTarget = reader.ReadByte();
+                    byte[] progressByte = reader.ReadBytes(4);
+                    float progress = System.BitConverter.ToSingle(progressByte, 0);
+                    RPCProcedure.plagueDoctorProgress(progressTarget, progress);
                     break;
                 case (byte)CustomRPC.SetBlanked:
                     var pid = reader.ReadByte();

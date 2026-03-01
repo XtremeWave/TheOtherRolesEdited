@@ -369,7 +369,7 @@ namespace TheOtherRolesEdited
 
         public static bool hasFakeTasks(this PlayerControl player)
         {
-            return (player == Jester.jester || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Any(x => x == player));
+            return (player == Jester.jester || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Any(x => x == player) || player == PlagueDoctor.plagueDoctor);
         }
 
         public static bool canBeErased(this PlayerControl player)
@@ -760,6 +760,26 @@ namespace TheOtherRolesEdited
                 return MurderAttemptResult.SuppressKill;
             return MurderAttemptResult.PerformKill;
         }
+       
+        public static void HandleRoleFlashOnDeath(PlayerControl target)
+        {
+            if (PlagueDoctor.plagueDoctor != null && (PlagueDoctor.canWinDead || !PlagueDoctor.plagueDoctor.Data.IsDead)) PlagueDoctor.checkWinStatus();
+        }
+
+        public static bool checkSuspendAction(PlayerControl player, PlayerControl target)
+        {
+            if (player == null || target == null) return false;
+            if (Veteran.veteran != null && target == Veteran.veteran && Veteran.alertActive)
+            {
+                if (isEvil(player))
+                {
+                    _ = checkMuderAttempt(player, target);  // Gives the Veteran the achievement
+                    checkMurderAttemptAndKill(target, player);
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public static void MurderPlayer(PlayerControl killer, PlayerControl target, bool showAnimation)
         {
@@ -874,6 +894,7 @@ namespace TheOtherRolesEdited
                 player != Arsonist.arsonist &&
                 player != Vulture.vulture &&
                 player != Lawyer.lawyer &&
+                player != PlagueDoctor.plagueDoctor &&
                 player != Pursuer.pursuer);
 
         }

@@ -262,6 +262,15 @@ namespace TheOtherRolesEdited
         public static CustomOption thiefCanUseVents;
         public static CustomOption thiefCanKillSheriff;
         public static CustomOption thiefCanStealWithGuess;
+       
+        public static CustomOption plagueDoctorSpawnRate;
+        public static CustomOption plagueDoctorInfectCooldown;
+        public static CustomOption plagueDoctorNumInfections;
+        public static CustomOption plagueDoctorDistance;
+        public static CustomOption plagueDoctorDuration;
+        public static CustomOption plagueDoctorImmunityTime;
+        public static CustomOption plagueDoctorInfectKiller;
+        public static CustomOption plagueDoctorWinDead;
 
         public static CustomOption trapperSpawnRate;
         public static CustomOption trapperCooldown;
@@ -625,6 +634,15 @@ namespace TheOtherRolesEdited
             lawyerTargetCanBeJester = CustomOption.Create(Types.Neutral, "律师/检察官的客户可以是小丑", false, lawyerSpawnRate);
             pursuerCooldown = CustomOption.Create(Types.Neutral, "起诉人空包弹技能冷却时间", 30f, 5f, 60f, 2.5f, lawyerSpawnRate);
             pursuerBlanksNumber = CustomOption.Create(Types.Neutral, "起诉人空包弹的数量", 5f, 1f, 20f, 1f, lawyerSpawnRate);
+      
+            plagueDoctorSpawnRate = CustomOption.Create(Types.Neutral, cs(PlagueDoctor.color, "疫医"), rates, null, true);
+            plagueDoctorInfectCooldown = CustomOption.Create(Types.Neutral, "疫医感染冷却时间", 10f, 2.5f, 60f, 2.5f, plagueDoctorSpawnRate, false);
+            plagueDoctorNumInfections = CustomOption.Create(Types.Neutral, "疫医可以感染的玩家数", 1f, 1f, 3f, 1f, plagueDoctorSpawnRate, false);
+            plagueDoctorDistance = CustomOption.Create(Types.Neutral, "玩家可被感染的最大距离", 1f, 0.25f, 5f, 0.25f, plagueDoctorSpawnRate, false);
+            plagueDoctorDuration = CustomOption.Create(Types.Neutral, "玩家被感染所需时间", 5f, 1f, 30f, 1f, plagueDoctorSpawnRate, false);
+            plagueDoctorImmunityTime = CustomOption.Create(Types.Neutral, "会议结束后玩家疫病免疫力持续时间", 10f, 1f, 30f, 1f, plagueDoctorSpawnRate, false);
+            plagueDoctorInfectKiller = CustomOption.Create(Types.Neutral, "疫医可以感染杀死疫医的凶手", true, plagueDoctorSpawnRate);
+            plagueDoctorWinDead = CustomOption.Create(Types.Neutral, "疫医死亡仍可获胜", true, plagueDoctorSpawnRate);
 
             mayorSpawnRate = CustomOption.Create(Types.Crewmate, cs(Mayor.color, "市长"), rates, null, true);
             mayorCanSeeVoteColors = CustomOption.Create(Types.Crewmate, "市长可以看见投票者的颜色", false, mayorSpawnRate);

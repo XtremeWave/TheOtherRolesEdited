@@ -13,11 +13,14 @@ using System.Text;
 using InnerNet;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils;
-using TheOtherRolesEdited.Patches;
-using Reactor.Utilities.Extensions;
 using TheOtherRolesEdited.Modules;
+using Reactor.Utilities.Extensions;
+using TheOtherRolesEdited.Patches;
 using static TheOtherRolesEdited.Patches.CredentialsPatch;
 using Il2CppSystem.Security.Cryptography;
+using static UnityEngine.UI.Button;
+using UnityEngine.Networking;
+using Il2CppSystem.CodeDom.Compiler;
 
 namespace TheOtherRolesEdited.Modules;
 
@@ -41,8 +44,10 @@ internal class TitleLogoPatch
     private static Sprite logoSprite2;
     private static SpriteRenderer logoRenderer;
     private static bool isShowingSprite1 = true;
-    public static float switchInterval = 4f;    // 切换间隔（秒）
-    public static float fadeDuration = 0.8f;    // 渐变时长（秒，越大越慢）
+    public static float switchInterval = 4f;
+    public static float fadeDuration = 0.8f;
+
+    private static int _bugButtonClickCount = 0;
 
     public static float GetResolutionOffset()
     {
@@ -63,12 +68,169 @@ internal class TitleLogoPatch
         Color originalColorfriendsButton = friendsButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
         friendsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorfriendsButton * 0.6f;
         friendsButton.activeSprites.GetComponent<SpriteRenderer>().color = originalColorfriendsButton * 0.75f;
-        
+
         Background = new GameObject("TORE Background");
         Background.transform.position = new Vector3(0, 0, 520f);
         Background.transform.localScale = new Vector3(Mathf.Max(GetResolutionOffset(), 1), Mathf.Max(GetResolutionOffset(), 1), 1);
         var bgRenderer = Background.AddComponent<SpriteRenderer>();
         bgRenderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-BG.png", 150f);
+
+        var UI = GameObject.Find("MainUI");
+        var asp = UI.transform.GetChild(1);
+        var DoNotPress = asp.GetChild(6);
+        DoNotPress.gameObject.SetActive(true);
+        DoNotPress.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = LoadSprite("TheOtherRolesEdited.Resources.BugButton_activeSprites.png", 150f);
+        DoNotPress.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = LoadSprite("TheOtherRolesEdited.Resources.BugButton_inactiveSprites.png", 150f);
+        DoNotPress.transform.GetChild(0).transform.localPosition += new Vector3(-0.01f, 0.35f, 0);
+        DoNotPress.transform.GetChild(1).transform.localPosition += new Vector3(-0.01f, 0.35f, 0);
+        SpriteRenderer pedestalSprite = DoNotPress.GetComponent<SpriteRenderer>();
+        SpriteRenderer pressedSprite = DoNotPress.GetChild(0).GetComponent<SpriteRenderer>();
+        SpriteRenderer unpressedSprite = DoNotPress.GetChild(1).GetComponent<SpriteRenderer>();
+        PassiveButton bugButton = DoNotPress.GetComponent<PassiveButton>();
+        pedestalSprite.gameObject.SetActive(true);
+        pressedSprite.gameObject.SetActive(true);
+        unpressedSprite.gameObject.SetActive(true);
+        unpressedSprite.enabled = true;
+        pressedSprite.enabled = false;
+
+        bugButton.OnClick.RemoveAllListeners();
+        bugButton.OnMouseOver.RemoveAllListeners();
+        bugButton.OnMouseOut.RemoveAllListeners();
+
+        bugButton.OnMouseOver.AddListener((Action)(() =>
+        {
+            pressedSprite.enabled = true;
+            unpressedSprite.enabled = false;
+        }));
+
+        bugButton.OnMouseOut.AddListener((Action)(() =>
+        {
+            pressedSprite.enabled = false;
+            unpressedSprite.enabled = true;
+        }));
+
+        bugButton.OnClick.AddListener(new Action(() =>
+        {
+            _bugButtonClickCount++; 
+
+            var oldBugScreen = AccountManager.Instance.transform.Find("BUGSCREEN");
+            if (oldBugScreen != null) Object.Destroy(oldBugScreen.gameObject);
+            var oldScreen = AccountManager.Instance.transform.Find("SCREEN");
+            if (oldScreen != null) Object.Destroy(oldScreen.gameObject);
+
+            var template = AccountManager.Instance.transform.Find("PremissionRequestWindow");
+            if (template == null) return;
+
+            if (_bugButtonClickCount == 1)
+            {
+                GameObject sliderTemplate = Object.Instantiate(template.gameObject, AccountManager.Instance.transform);
+                sliderTemplate.name = "BUGSCREEN";
+                sliderTemplate.SetActive(true);
+
+                sliderTemplate.transform.Find("TitleText_TMP").GetComponent<TextMeshPro>().text = "BUG反馈";
+                Object.Destroy(sliderTemplate.transform.Find("TitleText_TMP").GetComponent<TextTranslatorTMP>());
+
+                sliderTemplate.transform.Find("InfoText_TMP").GetComponent<TextMeshPro>().text = "如果您在游戏中遇到任何问题您都可以在下方，并请发送";
+                Object.Destroy(sliderTemplate.transform.Find("InfoText_TMP").GetComponent<TextTranslatorTMP>());
+                sliderTemplate.transform.Find("InfoText_TMP").localPosition = new Vector3(-0.7f, 1.2f, 0f);
+
+                sliderTemplate.transform.Find("GuardianEmailTitle_TMP").GetComponent<TextMeshPro>().text = "请在下方输入遇到BUG的时间";
+                Object.Destroy(sliderTemplate.transform.Find("GuardianEmailTitle_TMP").GetComponent<TextTranslatorTMP>());
+                sliderTemplate.transform.Find("GuardianEmailTitle_TMP").localPosition = new Vector3(-2.3f, 1.3f, 0f);
+
+                sliderTemplate.transform.Find("GuardianEmailConfirm").localPosition = new Vector3(0f, 0.67f, 0f);
+                Object.Destroy(sliderTemplate.transform.Find("GuardianEmailConfirm").GetComponent<EmailTextBehaviour>());
+
+                sliderTemplate.transform.Find("GuardianEmailConfirmTitle_TMP").GetComponent<TextMeshPro>().text = "请在下方输入您遇到的BUG";
+                Object.Destroy(sliderTemplate.transform.Find("GuardianEmailConfirmTitle_TMP").GetComponent<TextTranslatorTMP>());
+                sliderTemplate.transform.Find("GuardianEmailConfirmTitle_TMP").localPosition = new Vector3(-2.3f, 0f, 0f);
+
+                var emailInput = sliderTemplate.transform.Find("GuardianEmail");
+                emailInput.GetChild(0).GetComponent<SpriteRenderer>().size = new Vector2(6.8f, 1.35f);
+                Object.Destroy(emailInput.GetComponent<EmailTextBehaviour>());
+                emailInput.localPosition = new Vector3(0f, -0.98f, 0f);
+                emailInput.GetComponent<BoxCollider2D>().size = new Vector2(6.8f, 1.35f);
+                emailInput.GetChild(1).localPosition = new Vector3(-3.3f, 0.45f, 0f);
+
+                sliderTemplate.transform.GetChild(9).gameObject.SetActive(false);
+
+                var submitBtn = sliderTemplate.transform.Find("SubmitButton").GetComponent<PassiveButton>();
+                submitBtn.OnClick = new ButtonClickedEvent();
+                submitBtn.OnClick.AddListener((System.Action)(() =>
+                {
+                    var timeText = emailInput.GetChild(1).GetComponent<TextMeshPro>();
+                    var bugText = sliderTemplate.transform.Find("GuardianEmailConfirm").GetChild(1).GetComponent<TextMeshPro>();
+                    var timeBg = emailInput.GetChild(0).GetComponent<SpriteRenderer>();
+                    var bugBg = sliderTemplate.transform.Find("GuardianEmailConfirm").GetChild(0).GetComponent<SpriteRenderer>();
+
+                    bool timeEmpty = string.IsNullOrWhiteSpace(timeText.text);
+                    bool bugEmpty = string.IsNullOrWhiteSpace(bugText.text);
+
+                    if (timeEmpty || bugEmpty)
+                    {
+                        if (timeEmpty) timeBg.color = Color.red;
+                        if (bugEmpty) bugBg.color = Color.red;
+                        return;
+                    }
+
+                    Object.Destroy(sliderTemplate.gameObject);
+                    ShowSuccessUI(template);
+                }));
+             
+                var logErrorButton = Object.Instantiate(submitBtn, submitBtn.transform.parent);
+                logErrorButton.gameObject.name = "LogErrorButton";
+                logErrorButton.transform.Find("Text_TMP").GetComponent<TextMeshPro>().text = "LogOutput.log";
+                Object.Destroy(logErrorButton.transform.Find("Text_TMP").GetComponent<TextTranslatorTMP>());
+                logErrorButton.transform.Find("Text_TMP").GetComponent<TextMeshPro>().color = Color.green;
+                logErrorButton.OnMouseOver.AddListener((System.Action)(() =>
+                {
+                    logErrorButton.transform.Find("Text_TMP").GetComponent<TextMeshPro>().color = Color.green + Color.gray;
+                }));
+                logErrorButton.OnMouseOut.AddListener((System.Action)(() =>
+                {
+                    logErrorButton.transform.Find("Text_TMP").GetComponent<TextMeshPro>().color = Color.green;
+                }));
+                logErrorButton.transform.GetChild(0).gameObject.SetActive(false);
+                logErrorButton.transform.localPosition = new Vector3(2.77f, 1.69f, 0);
+                logErrorButton.transform.localScale = new Vector3(0.9f, 0.9f, 0);
+                logErrorButton.OnClick = new ButtonClickedEvent();
+                logErrorButton.OnClick.AddListener((System.Action)(() =>
+                {
+                    sliderTemplate.SetActive(false);
+
+                    var template2 = AccountManager.Instance.transform.Find("PremissionRequestWindow");
+                    if (template2 == null) return;
+
+                    GameObject Templates = Object.Instantiate(template2.gameObject, AccountManager.Instance.transform);
+                    Templates.name = "SCREEN";
+                    Templates.SetActive(true);
+
+                    for (int i = 4; i <= 7; i++)
+                        Templates.transform.GetChild(i).gameObject.SetActive(false);
+                    Templates.transform.GetChild(9).gameObject.SetActive(false);
+
+                    Templates.transform.Find("TitleText_TMP").GetComponent<TextMeshPro>().text = "LogOutput.log";
+                    Templates.transform.Find("InfoText_TMP").GetComponent<TextMeshPro>().text = "请打开您的游戏根目录找到BepInEx文件夹\n将LogOutput.log文件复制下来\n发送至我的QQ（QQ号:1500689499）";
+                    Object.Destroy(Templates.transform.Find("TitleText_TMP").GetComponent<TextTranslatorTMP>());
+                    Object.Destroy(Templates.transform.Find("InfoText_TMP").GetComponent<TextTranslatorTMP>());
+                    Templates.transform.Find("InfoText_TMP").localPosition = new Vector3(0f, 0f, 0f);
+                  
+                    var SubmitButton = Templates.transform.Find("SubmitButton").GetComponent<PassiveButton>();
+                    SubmitButton.transform.Find("Text_TMP").GetComponent<TextMeshPro>().text = "返回";
+                    Object.Destroy(SubmitButton.transform.Find("Text_TMP").GetComponent<TextTranslatorTMP>());
+                    SubmitButton.OnClick = new ButtonClickedEvent();
+                    SubmitButton.OnClick.AddListener((System.Action)(() =>
+                    {
+                        sliderTemplate.gameObject.SetActive(true);
+                        Object.Destroy(Templates.gameObject);
+                    }));
+                }));
+            }
+            else
+            {
+                ShowSuccessUI(template);
+            }
+        }));
 
         if (!(Ambience = GameObject.Find("Ambience"))) return;
         if (!(Starfield = Ambience.transform.FindChild("starfield").gameObject)) return;
@@ -95,8 +257,9 @@ internal class TitleLogoPatch
         logoSprite1 = Helpers.loadSpriteFromResources(logoPath, 150f);
         logoSprite2 = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.AmongUs-Logo.png", 150f);
         logoRenderer.sprite = logoSprite1;
-        logoRenderer.color = Color.white; __instance.StartCoroutine(GradientSwitchCoroutine());
-      
+        logoRenderer.color = Color.white;
+        __instance.StartCoroutine(GradientSwitchCoroutine());
+
         if (!(BottomButtonBounds = GameObject.Find("BottomButtonBounds"))) return;
         BottomButtonBounds.transform.localPosition += new Vector3(-0.4f, 0.58f, 0);
 
@@ -113,7 +276,7 @@ internal class TitleLogoPatch
         __instance.myAccountButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.newsButton.transform.localScale += new Vector3(0.02f, 0f, 0);
         __instance.settingsButton.transform.localScale += new Vector3(0.02f, 0f, 0);
-               
+
         if (!(RightPanel = GameObject.Find("RightPanel"))) return;
         var rpap = RightPanel.GetComponent<AspectPosition>();
         if (rpap) Object.Destroy(rpap);
@@ -135,7 +298,7 @@ internal class TitleLogoPatch
         closeRightPassiveButton.OnMouseOut.AddListener((System.Action)(() => closeRightSpriteRenderer.color = new(0f, 0.6f, 255f)));
         closeRightPassiveButton.OnMouseOver = new();
         closeRightPassiveButton.OnMouseOver.AddListener((System.Action)(() => closeRightSpriteRenderer.color = new(0f, 0f, 205f)));
-       
+
         Tint = __instance.screenTint.gameObject;
         var ttap = Tint.GetComponent<AspectPosition>();
         if (ttap) Object.Destroy(ttap);
@@ -154,8 +317,36 @@ internal class TitleLogoPatch
 
         var mainButtonsobj = GameObject.Find("Main Buttons");
         mainButtonsobj.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
-        mainButtonsobj.transform.position = new Vector3(-3.4f * GetResolutionOffset(),  mainButtonsobj.transform.position.y, mainButtonsobj.transform.position.z);
+        mainButtonsobj.transform.position = new Vector3(-3.4f * GetResolutionOffset(), mainButtonsobj.transform.position.y, mainButtonsobj.transform.position.z);
     }
+
+    private static void ShowSuccessUI(Transform template)
+    {
+        GameObject Template = Object.Instantiate(template.gameObject, AccountManager.Instance.transform);
+        Template.name = "SCREEN";
+        Template.SetActive(true);
+
+        Template.transform.Find("TitleText_TMP").GetComponent<TextMeshPro>().text = "已反馈";
+        Template.transform.Find("InfoText_TMP").GetComponent<TextMeshPro>().text = "请等待反馈结果";
+        Template.transform.Find("InfoText_TMP").localPosition = new Vector3(0f, -1.1f, 0f);
+        Template.transform.Find("InfoText_TMP").localScale = new Vector3(2.5f, 2.5f, 1f);
+        Object.Destroy(Template.transform.Find("InfoText_TMP").GetComponent<TextTranslatorTMP>());
+        Object.Destroy(Template.transform.Find("TitleText_TMP").GetComponent<TextTranslatorTMP>());
+
+        for (int i = 4; i <= 7; i++)
+            Template.transform.GetChild(i).gameObject.SetActive(false);
+        Template.transform.GetChild(9).gameObject.SetActive(false);
+
+        var SubmitButton = Template.transform.Find("SubmitButton").GetComponent<PassiveButton>();
+        SubmitButton.transform.Find("Text_TMP").GetComponent<TextMeshPro>().text = "关闭";
+        Object.Destroy(SubmitButton.transform.Find("Text_TMP").GetComponent<TextTranslatorTMP>());
+        SubmitButton.OnClick = new ButtonClickedEvent();
+        SubmitButton.OnClick.AddListener((System.Action)(() =>
+        {
+            Object.Destroy(Template.gameObject);
+        }));
+    }
+
     private static IEnumerator GradientSwitchCoroutine()
     {
         while (logoRenderer != null && AULogo != null)
@@ -196,19 +387,15 @@ internal class TitleLogoPatch
             sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
             return CachedSprites[path + pixelsPerUnit] = sprite;
         }
-        catch
-        {
-        }
+        catch { }
         return null;
     }
+
     public static Texture2D LoadTextureFromResources(string path)
     {
         try
         {
-            var texture = new Texture2D(0, 0, TextureFormat.RGBA32, false)
-            {
-                wrapMode = TextureWrapMode.Clamp
-            };
+            var texture = new Texture2D(0, 0, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
             Stream myStream = Assembly.GetCallingAssembly().GetManifestResourceStream(path);
             byte[] data = myStream.ReadFully();
             ImageConversion.LoadImage(texture, data, false);
@@ -219,20 +406,6 @@ internal class TitleLogoPatch
             System.Console.WriteLine("Error loading texture from resources: " + path);
         }
         return null;
-    }
-    [HarmonyPatch(typeof(GameSettingMenu))]
-    public class GameSettingMenuPatch
-    {
-        [HarmonyPatch(nameof(GameSettingMenu.Start)), HarmonyPrefix]
-        private static void SetDefaultButton(GameSettingMenu __instance)
-        {
-            __instance.GameSettingsButton.buttonText.color = Color.white;
-            __instance.GameSettingsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
-            __instance.GameSettingsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
-            __instance.GameSettingsButton.activeTextColor = Color.white;
-            __instance.GameSettingsButton.inactiveTextColor = Color.white;
-            __instance.GameSettingsButton.transform.localPosition = new Vector3(-2.96f, -0.857f, -2f);
-        }
     }
 
     [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
@@ -270,13 +443,10 @@ internal class TitleLogoPatch
     {
         TextMeshPro countdownText;
         if (AmongUsClient.Instance.AmHost)
-        {
             countdownText = Object.Instantiate(__instance.PlayerCounter, __instance.StartButton.transform.parent);
-        }
         else
-        {
             countdownText = Object.Instantiate(__instance.PlayerCounter, __instance.StartButtonClient.transform.parent);
-        }
+
         countdownText.fontSize = 6.2f;
         countdownText.autoSizeTextContainer = true;
         countdownText.name = "countdown";
@@ -293,8 +463,7 @@ internal class TitleLogoPatch
 
     private static IEnumerator CountdownCoroutine(TextMeshPro textElement)
     {
-        int totalSeconds = 10 * 60; 
-
+        int totalSeconds = 10 * 60;
         while (totalSeconds > 0)
         {
             int minutes = totalSeconds / 60;
@@ -303,16 +472,11 @@ internal class TitleLogoPatch
             yield return new WaitForSeconds(1f);
             totalSeconds--;
         }
-
         yield return new WaitForSeconds(2f);
-
         if (AmongUsClient.Instance != null)
-        {
-            AmongUsClient.Instance.ExitGame(DisconnectReasons.Kicked); 
-        }
+            AmongUsClient.Instance.ExitGame(DisconnectReasons.Kicked);
         SceneChanger.ChangeScene("MainMenu");
     }
-
 
     [HarmonyPatch]
     class LobbyViewSettingsPanePatch
@@ -320,8 +484,6 @@ internal class TitleLogoPatch
         [HarmonyPatch(typeof(LobbyViewSettingsPane), nameof(LobbyViewSettingsPane.Awake)), HarmonyPostfix]
         static void Awake()
         {
-            // GameObject.Find("RulesPopOutWindow").transform.localScale = new(1.3f, 1.3f, 0.0473f);
-            // GameObject.Find("RulesPopOutWindow").transform.localPosition = new(-8.2675f, -3.9114f, -300f);
             GameObject.Find("RulesPopOutWindow").transform.localPosition += new Vector3(-0.5f, 0f, 0f);
         }
     }
@@ -339,13 +501,10 @@ internal class TitleLogoPatch
     [HarmonyPatch(typeof(ModManager), nameof(ModManager.LateUpdate))]
     internal class ModManagerLateUpdatePatch
     {
-        public static void Prefix(ModManager __instance)
-        {
-            __instance.ShowModStamp();
-        }
+        public static void Prefix(ModManager __instance) => __instance.ShowModStamp();
         public static void Postfix(ModManager __instance)
         {
-            var offset_y = HudManager.InstanceExists ? 2.1f : 1.1f;
+            float offset_y = HudManager.InstanceExists ? 2.1f : 1.1f;
             __instance.ModStamp.transform.position = AspectPosition.ComputeWorldPosition(
                 __instance.localCamera, AspectPosition.EdgeAlignments.RightTop,
                 new Vector3(0.4f, offset_y, __instance.localCamera.nearClipPlane + 0.1f));
@@ -383,40 +542,39 @@ internal class TitleLogoPatch
             MaxPage = serverListButton.Count / ButtonsPerPage + 1;
             if (CurrentPage > MaxPage) CurrentPage = MaxPage;
             List<ServerListButton> currentPageButton = new();
-            var max = CurrentPage * ButtonsPerPage > serverListButton.Count ? serverListButton.Count : CurrentPage * ButtonsPerPage;
-            for (var i = (CurrentPage - 1) * ButtonsPerPage; i < max; i++) currentPageButton.Add(serverListButton[i]);
+            int max = CurrentPage * ButtonsPerPage > serverListButton.Count ? serverListButton.Count : CurrentPage * ButtonsPerPage;
+            for (int i = (CurrentPage - 1) * ButtonsPerPage; i < max; i++) currentPageButton.Add(serverListButton[i]);
 
-            foreach (ServerListButton button in serverListButton) if (!currentPageButton.Contains(button)) button.gameObject.SetActive(false);
-            for (var i = 0; i < currentPageButton.Count; i++)
-            {
-                var button = currentPageButton[i];
-                button.transform.localPosition = new Vector3(0f, -1f + i * -0.5f, -1f);
-            }
+            foreach (var btn in serverListButton) btn.gameObject.SetActive(currentPageButton.Contains(btn));
+            for (int i = 0; i < currentPageButton.Count; i++)
+                currentPageButton[i].transform.localPosition = new Vector3(0f, -1f + i * -0.5f, -1f);
 
             var template = serverListButton[0];
-            if (PreviousPageButton == null || PreviousPageButton.gameObject == null) PreviousPageButton = CreateServerListButton(template, "PreviousPageButton", $"{ModTranslation.getString("PreviousPageButton")}",
-                new Vector3(0f, -0.5f, -1f), () => { if (CurrentPage > 1) { CurrentPage--; RefreshServerOptions(__instance); } });
+            if (PreviousPageButton == null || !PreviousPageButton.gameObject)
+                PreviousPageButton = CreateServerListButton(template, "PreviousPageButton", $"{ModTranslation.getString("PreviousPageButton")}",
+                    new(0f, -0.5f, -1f), () => { if (CurrentPage > 1) { CurrentPage--; RefreshServerOptions(__instance); } });
             PreviousPageButton.gameObject.SetActive(true);
 
-            if (NextPageButton == null || NextPageButton.gameObject == null) NextPageButton = CreateServerListButton(template, "NextPageButton", $"{ModTranslation.getString("NextPageButton")}",
-                new Vector3(0f, -1f + ButtonsPerPage * -0.5f, -1f), () => { if (CurrentPage < MaxPage) { CurrentPage++; RefreshServerOptions(__instance); } });
+            if (NextPageButton == null || !NextPageButton.gameObject)
+                NextPageButton = CreateServerListButton(template, "NextPageButton", $"{ModTranslation.getString("NextPageButton")}",
+                    new(0f, -1f + ButtonsPerPage * -0.5f, -1f), () => { if (CurrentPage < MaxPage) { CurrentPage++; RefreshServerOptions(__instance); } });
             NextPageButton.gameObject.SetActive(true);
         }
 
-        public static ServerListButton CreateServerListButton(ServerListButton template, string name, string text, Vector3 position, Action onclickaction)
+        public static ServerListButton CreateServerListButton(ServerListButton template, string name, string text, Vector3 pos, Action act)
         {
-            var button = Object.Instantiate(template, template.transform.parent);
-            button.name = name;
-            button.Text.text = text;
-            button.transform.localPosition = position;
-            button.Button.OnClick = new();
-            button.Button.OnClick.AddListener(onclickaction);
-            return button;
+            var btn = Object.Instantiate(template, template.transform.parent);
+            btn.name = name;
+            btn.Text.text = text;
+            btn.transform.localPosition = pos;
+            btn.Button.OnClick = new();
+            btn.Button.OnClick.AddListener(act);
+            return btn;
         }
 
         public static void RefreshServerOptions(ServerDropdown __instance)
         {
-            foreach (ServerListButton button in __instance.ButtonPool.GetComponentsInChildren<ServerListButton>()) button.gameObject.SetActive(false);
+            foreach (var btn in __instance.ButtonPool.GetComponentsInChildren<ServerListButton>()) btn.gameObject.SetActive(false);
             __instance.FillServerOptions();
         }
 
@@ -424,138 +582,80 @@ internal class TitleLogoPatch
         internal class ResolutionManagerPatch
         {
             [HarmonyPatch(nameof(ResolutionManager.SetResolution))]
-
             public static void Postfix(int width, int height)
             {
                 _ = new LateTask(() =>
                 {
                     if (!GameObject.Find("MainUI")) return;
-                    var offset = GetResolutionOffset();
-                    CloseRightButton.transform.localPosition = new Vector3(-4.78f * offset, 1.3f, 1.0f);
-                    Tint.transform.localPosition =
-                        new Vector3(-0.0824f * offset, 0.0513f, Tint.transform.localPosition.z);
-                    Sizer.transform.localPosition = new Vector3(-4.0f * offset, 1.4f, -1.0f);
-                    Background.transform.localScale = new Vector3(Mathf.Max(GetResolutionOffset(), 1),
-                        Mathf.Max(GetResolutionOffset(), 1), 1);
-#if PC
-                    var mainButtons = GameObject.Find("Main Buttons");
-                    MainMenuButtonHoverAnimation.RefreshButtons(mainButtons);
-#endif
-                    CloseRightButton.transform.localPosition =
-                        new Vector3(-4.78f * GetResolutionOffset(), 1.3f, 1f);
+                    float offset = GetResolutionOffset();
+                    CloseRightButton.transform.localPosition = new(-4.78f * offset, 1.3f, 1f);
+                    Tint.transform.localPosition = new(-0.0824f * offset, 0.0513f, Tint.transform.localPosition.z);
+                    Sizer.transform.localPosition = new(-4.0f * offset, 1.4f, -1f);
+                    Background.transform.localScale = new Vector3(Mathf.Max(offset, 1), Mathf.Max(offset, 1), 1);
+                    CloseRightButton.transform.localPosition = new(-4.78f * offset, 1.3f, 1f);
                 }, 0.01f, "RefreshMenu");
             }
         }
     }
 }
+
 [HarmonyPatch(typeof(FreeChatInputField), nameof(FreeChatInputField.UpdateCharCount))]
 internal class UpdateCharCountPatch
 {
     public static void Postfix(FreeChatInputField __instance)
     {
-        int length = __instance.textArea.text.Length;
-        __instance.charCountText.SetText(length <= 0 ? $"{ModTranslation.getString("ThankYouForPlayingTORE")}" : $"{length}/{__instance.textArea.characterLimit}");
+        int len = __instance.textArea.text.Length;
+        __instance.charCountText.SetText(len <= 0 ? $"{ModTranslation.getString("ThankYouForPlayingTORE")}" : $"{len}/{__instance.textArea.characterLimit}");
         __instance.charCountText.enableWordWrapping = false;
-        if (length < (AmongUsClient.Instance.AmHost ? 888 : 444))
-            __instance.charCountText.color = Color.black;
-        else if (length < (AmongUsClient.Instance.AmHost ? 1111 : 777))
-            __instance.charCountText.color = new Color(1f, 1f, 0f, 1f);
-        else
-            __instance.charCountText.color = Color.red;
+        int max = AmongUsClient.Instance.AmHost ? 1111 : 777;
+        int warn = AmongUsClient.Instance.AmHost ? 888 : 444;
+        __instance.charCountText.color = len >= max ? Color.red : len >= warn ? Color.yellow : Color.black;
     }
 }
+
 [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
 public static class GameStartManagerUpdatePatch
 {
     public static void Prefix(GameStartManager __instance)
     {
-        foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.ToArray())
+        foreach (ClientData c in AmongUsClient.Instance.allClients.ToArray())
         {
             try
             {
-                PlayerControl player = Helpers.playerById(GameData.Instance.GetPlayerByClient(client).PlayerId);
-                player.cosmetics.nameText.text = $"<color=#7bbfea>{client.PlayerName}</color>";
-                if (ModOption.HostName) player.cosmetics.nameText.text += $"{Helpers.GradientColorText("00BFFF", "0000FF", $" ★TORE")}";
-                player.cosmetics.nameText.text += $"\n<size=60%>{player.GetPlatform()}</size>";
+                PlayerControl p = Helpers.playerById(GameData.Instance.GetPlayerByClient(c).PlayerId);
+                p.cosmetics.nameText.text = $"<color=#7bbfea>{c.PlayerName}</color>{(ModOption.HostName ? Helpers.GradientColorText("00BFFF", "0000FF", " ★TORE") : "")}\n<size=60%>{p.GetPlatform()}</size>";
             }
-            catch
-            { }
+            catch { }
         }
     }
-    public static ClientData GetClient(this PlayerControl player)
-    {
-        try
-        {
-            var client = AmongUsClient.Instance.allClients
-                .ToArray().FirstOrDefault(cd => cd.Character.PlayerId == player.PlayerId);
-            return client;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-    public static string GetPlatform(this PlayerControl player)
-    {
-        try
-        {
-            var color = "";
-            var name = "";
-            string text;
-            switch (player.GetClient().PlatformData.Platform)
-            {
-                case Platforms.StandaloneEpicPC:
-                    color = "#905CDA";
-                    name = "Itch";
-                    break;
-                case Platforms.StandaloneSteamPC:
-                    color = "#4391CD";
-                    name = "Steam";
-                    break;
-                case Platforms.StandaloneMac:
-                    color = "#e3e3e3";
-                    name = "Mac.";
-                    break;
-                case Platforms.StandaloneWin10:
-                    color = "#FFF88D";
-                    name = "Windows";
-                    break;
-                case Platforms.StandaloneItch:
-                    color = "#E35F5F";
-                    name = "Itch";
-                    break;
-                case Platforms.IPhone:
-                    color = "#e3e3e3";
-                    name = "IPhone";
-                    break;
-                case Platforms.Android:
-                    color = "#5DE2E7";
-                    name = "Android";
-                    break;
-                case Platforms.Switch:
-                    name = "<color=#00B2FF>Nintendo</color><color=#ff0000>Switch</color>";
-                    break;
-                case Platforms.Xbox:
-                    color = "#07ff00";
-                    name = "Xbox";
-                    break;
-                case Platforms.Playstation:
-                    color = "#0014b4";
-                    name = "PlayStation";
-                    break;
-            }
 
-            if (color != "" && name != "")
-                text = $"<color={color}>{name}</color>";
-            else
-                text = name;
-            return text;
-        }
-        catch
+    public static ClientData GetClient(this PlayerControl p)
+    {
+        try { return AmongUsClient.Instance.allClients.ToArray().FirstOrDefault(c => c.Character.PlayerId == p.PlayerId); }
+        catch { return null; }
+    }
+
+    public static string GetPlatform(this PlayerControl p)
+    {
+        try
         {
-            return "";
+            var c = p.GetClient();
+            if (c == null) return "";
+            return c.PlatformData.Platform switch
+            {
+                Platforms.StandaloneEpicPC => "<color=#905CDA>Epic</color>",
+                Platforms.StandaloneSteamPC => "<color=#4391CD>Steam</color>",
+                Platforms.StandaloneMac => "<color=#e3e3e3>Mac</color>",
+                Platforms.StandaloneWin10 => "<color=#FFF88D>Windows</color>",
+                Platforms.StandaloneItch => "<color=#E35F5F>Itch</color>",
+                Platforms.IPhone => "<color=#e3e3e3>iPhone</color>",
+                Platforms.Android => "<color=#5DE2E7>Android</color>",
+                Platforms.Switch => "<color=#00B2FF>Nintendo</color><color=#ff0000>Switch</color>",
+                Platforms.Xbox => "<color=#07ff00>Xbox</color>",
+                Platforms.Playstation => "<color=#0014b4>PlayStation</color>",
+                _ => ""
+            };
         }
+        catch { return ""; }
     }
 }
-
-//copy from https://github.com/Slok7565/FinalSuspect/blob/FinalSus/FinalSuspect/Modules/Core/Game/Utils.cs#L29

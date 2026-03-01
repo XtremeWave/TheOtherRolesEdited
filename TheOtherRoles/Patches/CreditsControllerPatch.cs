@@ -25,7 +25,7 @@ internal class CreditsScreenPopUpPatch
 
         var dcIcon = followUs.FindChild("Discord-Logo-Color");
         dcIcon.GetComponent<TwitterLink>().LinkUrl = "https://space.bilibili.com/1049954492?spm_id_from=333.1007.0.0";
-        dcIcon.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.bilibililogo.png", 200f);
+        dcIcon.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.bilibililogo.png", 270f);
         dcIcon.gameObject.SetActive(true);
     }
 }

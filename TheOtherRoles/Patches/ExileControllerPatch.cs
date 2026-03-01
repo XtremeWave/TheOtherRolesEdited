@@ -270,6 +270,19 @@ namespace TheOtherRolesEdited.Patches
                         }
                     }
                 }
+                
+                if (PlagueDoctor.plagueDoctor != null)
+                {
+                    PlagueDoctor.updateDead();
+
+                    FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(PlagueDoctor.immunityTime, new Action<float>((p) =>
+                    { // 5Ãëáá¤«¤é¸ÐÈ¾é_Ê¼
+                        if (p == 1f)
+                        {
+                            PlagueDoctor.meetingFlag = false;
+                        }
+                    })));
+                }
 
                 // Deputy check Promotion, see if the sheriff still exists. The promotion will be after the meeting.
                 if (Deputy.deputy != null)

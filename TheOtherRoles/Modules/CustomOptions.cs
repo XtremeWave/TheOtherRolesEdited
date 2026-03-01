@@ -6,6 +6,7 @@ using HarmonyLib;
 using Hazel;
 using Reactor.Localization.Utilities;
 using Reactor.Utilities.Extensions;
+using Sentry.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1914,6 +1915,7 @@ GameOptionsMenuStartPatch.updateGameOptionsMenu(optionType, gom);               
         public static void Postfix(HudManager __instance)
         {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
+           
             if (!toggleSettingsButton || !toggleSettingsButtonObject)
             {
                 // add a special button for settings viewing:
@@ -1978,6 +1980,11 @@ GameOptionsMenuStartPatch.updateGameOptionsMenu(optionType, gom);               
                 SpriteRenderer renderer = toggleSummaryButtonObject.transform.Find("Inactive").GetComponent<SpriteRenderer>();
                 SpriteRenderer rendererActive = toggleSummaryButtonObject.transform.Find("Active").GetComponent<SpriteRenderer>();
                 toggleSummaryButtonObject.transform.Find("Background").localPosition = Vector3.zero;
+                toggleSummaryButtonObject.transform.Find("Background").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.BackgroundPanle.CutRightPanle_short.png", 100f);
+                toggleSummaryButtonObject.transform.Find("Background").transform.localPosition += new Vector3(-0.04f, -0.0055f, -500f);
+                toggleSummaryButtonObject.transform.Find("Background").transform.localScale += new Vector3(0f, 0.005f, 0f);
+                toggleSummaryButtonObject.transform.Find("Active").transform.localPosition += new Vector3(0, 0f, -501f);
+                toggleSummaryButtonObject.transform.Find("Inactive").transform.localPosition += new Vector3(0, 0f, -501f);
                 renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.Endscreen.png", 100f);
                 rendererActive.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.EndscreenActive.png", 100f);
                 toggleSummaryButton = toggleSummaryButtonObject.GetComponent<PassiveButton>();
@@ -1986,7 +1993,21 @@ GameOptionsMenuStartPatch.updateGameOptionsMenu(optionType, gom);               
             }
             toggleSummaryButtonObject.SetActive(__instance.SettingsButton.gameObject.active && LobbyBehaviour.Instance && !Helpers.previousEndGameSummary.IsNullOrWhiteSpace() && GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.HideNSeek
                 && AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started);
-            toggleSummaryButtonObject.transform.localPosition = __instance.SettingsButton.transform.localPosition + new Vector3(-1.45f, 0.03f, 500f);
+            toggleSummaryButtonObject.transform.localPosition = __instance.SettingsButton.transform.localPosition + new Vector3(-1.165f, 0.03f, 500f);
+        }
+    }
+    [HarmonyPatch(typeof(GameSettingMenu))]
+    public class GameSettingMenuPatch
+    {
+        [HarmonyPatch(nameof(GameSettingMenu.Start)), HarmonyPrefix]
+        private static void SetDefaultButton(GameSettingMenu __instance)
+        {
+            __instance.GameSettingsButton.buttonText.color = Color.white;
+            __instance.GameSettingsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+            __instance.GameSettingsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+            __instance.GameSettingsButton.activeTextColor = Color.white;
+            __instance.GameSettingsButton.inactiveTextColor = Color.white;
+            __instance.GameSettingsButton.transform.localPosition = new Vector3(-2.96f, -0.857f, -2f);
         }
     }
 }

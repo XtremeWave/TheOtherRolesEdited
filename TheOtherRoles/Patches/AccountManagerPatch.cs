@@ -44,6 +44,7 @@ public static class UpdateFriendCodeUIPatch
         credentialsText += versionText;
 
         var friendCode = GameObject.Find("FriendCode");
+
         if (friendCode != null && VersionShower == null)
         {
             VersionShower = Object.Instantiate(friendCode, friendCode.transform.parent);

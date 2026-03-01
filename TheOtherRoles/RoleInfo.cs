@@ -9,6 +9,7 @@ using TheOtherRolesEdited.CustomGameModes;
 using System.Threading.Tasks;
 using System.Net.Http;
 using TheOtherRolesEdited.Players;
+using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited
 {
@@ -35,77 +36,77 @@ namespace TheOtherRolesEdited
             roleInfoById.TryAdd(roleId, this);
         }
 
-        public static RoleInfo jester = new RoleInfo("小丑", Jester.color, "让他们把你投出去！", "让他们把你投出去！", RoleId.Jester, true);
-        public static RoleInfo mayor = new RoleInfo("市长", Mayor.color, "你的票比别人更有分量", "你在会议上拥有绝对的优势", RoleId.Mayor);
-        public static RoleInfo portalmaker = new RoleInfo("传送师", Portalmaker.color, "欸嘿我过来了~欸嘿我又过去了~~", "你可以创建传送门", RoleId.Portalmaker);
-        public static RoleInfo engineer = new RoleInfo("工程师", Engineer.color, "飞船没了你都运行不了", "修理飞船是强项", RoleId.Engineer);
-        public static RoleInfo sheriff = new RoleInfo("警长", Sheriff.color, "声张正义,维护飞船！", "毙了<color=#FF1919FF>内鬼</color>", RoleId.Sheriff);
-        public static RoleInfo deputy = new RoleInfo("捕快", Sheriff.color, "给<color=#FF1919FF>内鬼</color>戴上手铐", "铐住内鬼", RoleId.Deputy);
-        public static RoleInfo lighter = new RoleInfo("执灯人", Lighter.color, "你的光芒永不熄灭", "你的光芒永不熄灭", RoleId.Lighter);
-        public static RoleInfo godfather = new RoleInfo("教父", Godfather.color, "杀了所有船员", "杀了所有船员", RoleId.Godfather);
-        public static RoleInfo mafioso = new RoleInfo("小弟", Mafioso.color, "帮助<color=#FF1919FF>教父</color>做掉所有船员", "做掉所有船员", RoleId.Mafioso);
-        public static RoleInfo janitor = new RoleInfo("清洁工", Janitor.color, "帮助<color=#FF1919FF>教父</color>隐藏作案痕迹", "隐藏鸡腿", RoleId.Janitor);
-        public static RoleInfo morphling = new RoleInfo("化形者", Morphling.color, "猜猜我是谁？", "隐藏至人群之中", RoleId.Morphling);
-        public static RoleInfo camouflager = new RoleInfo("隐蔽者", Camouflager.color, "利用幻术隐匿在船员之中", "隐匿在他们之中", RoleId.Camouflager);
-        public static RoleInfo vampire = new RoleInfo("吸血鬼", Vampire.color, "今天的血液是我最喜欢的！", "咬死船员", RoleId.Vampire);
-        public static RoleInfo eraser = new RoleInfo("抹除者", Eraser.color, "让他们不知所措吧！", "擦除他们的职业", RoleId.Eraser);
-        public static RoleInfo trickster = new RoleInfo("骗术师", Trickster.color, "使用惊吓盒子搭建的管道网络", "开盲盒咯~", RoleId.Trickster);
-        public static RoleInfo cleaner = new RoleInfo("清理者", Cleaner.color, "杀人于无形之中", "清理你的作案痕迹", RoleId.Cleaner);
-        public static RoleInfo blackmailer = new RoleInfo("勒索者", Blackmailer.color, "嘘~~~~~~~~~~~", "不许说话哦~", RoleId.Blackmailer);
-        public static RoleInfo miner = new RoleInfo("矿工", Miner.color, "建立新的管道网络", "建立新的管道", RoleId.Miner);
-        public static RoleInfo undertaker = new RoleInfo("送葬者", Undertaker.color, "嘿咻嘿咻嘿咻~", "干掉船员们并藏好尸体", RoleId.Undertaker);
-        public static RoleInfo warlock = new RoleInfo("术士", Warlock.color, "画个圈圈诅咒你", "利用诅咒杀掉船员", RoleId.Warlock);
-        public static RoleInfo bountyHunter = new RoleInfo("赏金猎人", BountyHunter.color, "赏金我让欲罢不能", "无休止的获得赏金吧", RoleId.BountyHunter);
-        public static RoleInfo detective = new RoleInfo("侦探", Detective.color, "寻找<color=#FF1919FF>内鬼</color>留下的作案痕迹吧", "在脚印中寻找线索", RoleId.Detective);
-        public static RoleInfo timeMaster = new RoleInfo("时间之主", TimeMaster.color, "时间~~~倒流！！！", "用时间之盾保护自己", RoleId.TimeMaster);
-        public static RoleInfo medic = new RoleInfo("医生", Medic.color, "保护船员", "保护你应该保护的人", RoleId.Medic);
-        public static RoleInfo swapper = new RoleInfo("换票师", Swapper.color, "禁止小脑行为投出<color=#FF1919FF>小丑</color>！！", "扭转乾坤", RoleId.Swapper);
-        public static RoleInfo seer = new RoleInfo("灵媒", Seer.color, "你可以预见玩家的死亡", "你可以预见玩家的死亡", RoleId.Seer);
-        public static RoleInfo hacker = new RoleInfo("黑客", Hacker.color, "黑入设备，找出<color=#FF1919FF>内鬼</color>", "找出内鬼", RoleId.Hacker);
-        public static RoleInfo tracker = new RoleInfo("追踪者", Tracker.color, "利用GPS找出我们之中的<color=#FF1919FF>内鬼</color>", "跟踪内鬼的脚步", RoleId.Tracker);
-        public static RoleInfo snitch = new RoleInfo("告密者", Snitch.color, "观察四周,谨防<color=#FF1919FF>内鬼</color>", "完成任务，找出<color=#FF1919FF>内鬼</color>", RoleId.Snitch);
-        public static RoleInfo jackal = new RoleInfo("豺狼", Jackal.color, "杀了船员和<color=#FF1919FF>内鬼</color>来获得胜利", "击杀所有人", RoleId.Jackal, true);
-        public static RoleInfo sidekick = new RoleInfo("跟班", Sidekick.color, "帮助豺狼获得胜利", "帮助豺狼杀掉所有人", RoleId.Sidekick, true);
-        public static RoleInfo spy = new RoleInfo("卧底", Spy.color, "隐藏在<color=#FF1919FF>内鬼</color>之主", "让内鬼们相互猜疑", RoleId.Spy);
-        public static RoleInfo securityGuard = new RoleInfo("保安", SecurityGuard.color, "嘿咻嘿咻`~", "放置摄像头和封锁管道", RoleId.SecurityGuard);
-        public static RoleInfo paranoia = new RoleInfo("被害妄想症", Paranoia.color, "你要干什么啊啊啊！！！", "必要时保护自己", RoleId.Paranoia);
-        public static RoleInfo veteran = new RoleInfo("老兵", Veteran.color, "老骥伏枥,志在千里", "时刻保持警惕", RoleId.Veteran);
-        public static RoleInfo arsonist = new RoleInfo("纵火犯", Arsonist.color, "要来一起吃烤肉吗？", "我最喜欢烟花！", RoleId.Arsonist, true);
-        public static RoleInfo goodGuesser = new RoleInfo("正义的赌怪", Guesser.color, "生命即是豪赌", "生命即是豪赌", RoleId.NiceGuesser);
-        public static RoleInfo badGuesser = new RoleInfo("邪恶的赌怪", Palette.ImpostorRed, "生命即是豪赌", "生命即是豪赌", RoleId.EvilGuesser);
-        public static RoleInfo vulture = new RoleInfo("秃鹫", Vulture.color, "好饿啊~飞船上有没有好吃的鸡腿啊~", "吃掉鸡腿", RoleId.Vulture, true);
-        public static RoleInfo medium = new RoleInfo("通灵师", Medium.color, "询问幽灵获得线索", "询问幽灵", RoleId.Medium);
-        public static RoleInfo trapper = new RoleInfo("猎人", Trapper.color, "放置陷阱捉住内鬼", "放置陷阱", RoleId.Trapper);
-        public static RoleInfo lawyer = new RoleInfo("律师", Lawyer.color, "保护你的客户", "保护你的客户", RoleId.Lawyer, true);
-        public static RoleInfo prosecutor = new RoleInfo("检察官", Prosecutor.color, "投出你的客户", "投出你的客户", RoleId.Prosecutor, true);
-        public static RoleInfo pursuer = new RoleInfo("起诉人", Pursuer.color, "利用空包弹保护船员", "利用空包弹保护船员", RoleId.Pursuer);
-        public static RoleInfo impostor = new RoleInfo("内鬼", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "击杀所有人"), "击杀所有人", RoleId.Impostor);
-        public static RoleInfo crewmate = new RoleInfo("船员", Color.white, "找出内鬼", "找出内鬼", RoleId.Crewmate);
-        public static RoleInfo witch = new RoleInfo("女巫", Witch.color, "毒药为你准备好了哦~", "为所有人下咒", RoleId.Witch);
-        public static RoleInfo ninja = new RoleInfo("忍者", Ninja.color, "杀人于无形之中", "杀人于无形之中", RoleId.Ninja);
-        public static RoleInfo thief = new RoleInfo("强盗", Thief.color, "这些都是我的啦！", "先杀人再盗窃", RoleId.Thief, true);
-        public static RoleInfo bomber = new RoleInfo("爆破手", Bomber.color, "我可是比纵火犯还喜欢烟花呢~", "炸死所有船员", RoleId.Bomber);
-        public static RoleInfo yoyo = new RoleInfo("悠悠球", Yoyo.color, "欻~~~~~~~~~~~", "瞬移到你所标记的位置", RoleId.Yoyo);
-        public static RoleInfo hunter = new RoleInfo("猎人", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "找到并击杀所有人"), "找到并击杀所有人", RoleId.Impostor);
-        public static RoleInfo hunted = new RoleInfo("躲藏者", Color.white, "躲躲藏藏又是一年", "躲藏", RoleId.Crewmate);
-        public static RoleInfo prop = new RoleInfo("变形者", Color.white, "伪装成物体并生存", "伪装成物体并生存", RoleId.Crewmate);
+        public static RoleInfo jester = new RoleInfo(ModTranslation.getString("Jester"), Jester.color, ModTranslation.getString("JesterDescription1"), ModTranslation.getString("JesterDescription2"), RoleId.Jester, true);
+        public static RoleInfo mayor = new RoleInfo(ModTranslation.getString("Mayor"), Mayor.color, ModTranslation.getString("MayorDescription1"), ModTranslation.getString("MayorDescription2"), RoleId.Mayor);
+        public static RoleInfo portalmaker = new RoleInfo(ModTranslation.getString("Portalmaker"), Portalmaker.color, ModTranslation.getString("PortalmakerDescription1"), ModTranslation.getString("PortalmakerDescription2"), RoleId.Portalmaker);
+        public static RoleInfo engineer = new RoleInfo(ModTranslation.getString("Engineer"), Engineer.color, ModTranslation.getString("EngineerDescription1"), ModTranslation.getString("EngineerDescription2"), RoleId.Engineer);
+        public static RoleInfo sheriff = new RoleInfo(ModTranslation.getString("Sheriff"), Sheriff.color, ModTranslation.getString("SheriffDescription1"), ModTranslation.getString("SheriffDescription2"), RoleId.Sheriff);
+        public static RoleInfo deputy = new RoleInfo(ModTranslation.getString("Deputy"), Sheriff.color, ModTranslation.getString("DeputyDescription1"), ModTranslation.getString("DeputyDescription2"), RoleId.Deputy);
+        public static RoleInfo lighter = new RoleInfo(ModTranslation.getString("Lighter"), Lighter.color, ModTranslation.getString("LighterDescription1"), ModTranslation.getString("LighterDescription2"), RoleId.Lighter);
+        public static RoleInfo godfather = new RoleInfo(ModTranslation.getString("Godfather"), Godfather.color, ModTranslation.getString("GodfatherDescription1"), ModTranslation.getString("GodfatherDescription2"), RoleId.Godfather);
+        public static RoleInfo mafioso = new RoleInfo(ModTranslation.getString("Mafioso"), Mafioso.color, ModTranslation.getString("MafiosoDescription1"), ModTranslation.getString("MafiosoDescription2"), RoleId.Mafioso);
+        public static RoleInfo janitor = new RoleInfo(ModTranslation.getString("Janitor"), Janitor.color, ModTranslation.getString("JanitorDescription1"), ModTranslation.getString("JanitorDescription2"), RoleId.Janitor);
+        public static RoleInfo morphling = new RoleInfo(ModTranslation.getString("Morphling"), Morphling.color, ModTranslation.getString("MorphlingDescription1"), ModTranslation.getString("MorphlingDescription2"), RoleId.Morphling);
+        public static RoleInfo camouflager = new RoleInfo(ModTranslation.getString("Camouflager"), Camouflager.color, ModTranslation.getString("CamouflagerDescription1"), ModTranslation.getString("CamouflagerDescription2"), RoleId.Camouflager);
+        public static RoleInfo vampire = new RoleInfo(ModTranslation.getString("Vampire"), Vampire.color, ModTranslation.getString("VampireDescription1"), ModTranslation.getString("VampireDescription2"), RoleId.Vampire);
+        public static RoleInfo eraser = new RoleInfo(ModTranslation.getString("Eraser"), Eraser.color, ModTranslation.getString("EraserDescription1"), ModTranslation.getString("EraserDescription2"), RoleId.Eraser);
+        public static RoleInfo trickster = new RoleInfo(ModTranslation.getString("Trickster"), Trickster.color, ModTranslation.getString("TricksterDescription1"), ModTranslation.getString("TricksterDescription2"), RoleId.Trickster);
+        public static RoleInfo cleaner = new RoleInfo(ModTranslation.getString("Cleaner"), Cleaner.color, ModTranslation.getString("CleanerDescription1"), ModTranslation.getString("CleanerDescription2"), RoleId.Cleaner);
+        public static RoleInfo blackmailer = new RoleInfo(ModTranslation.getString("Blackmailer"), Blackmailer.color, ModTranslation.getString("BlackmailerDescription1"), ModTranslation.getString("BlackmailerDescription2"), RoleId.Blackmailer);
+        public static RoleInfo miner = new RoleInfo(ModTranslation.getString("Miner"), Miner.color, ModTranslation.getString("MinerDescription1"), ModTranslation.getString("MinerDescription2"), RoleId.Miner);
+        public static RoleInfo undertaker = new RoleInfo(ModTranslation.getString("Undertaker"), Undertaker.color, ModTranslation.getString("UndertakerDescription1"), ModTranslation.getString("UndertakerDescription2"), RoleId.Undertaker);
+        public static RoleInfo warlock = new RoleInfo(ModTranslation.getString("Warlock"), Warlock.color, ModTranslation.getString("WarlockDescription1"), ModTranslation.getString("WarlockDescription2"), RoleId.Warlock);
+        public static RoleInfo bountyHunter = new RoleInfo(ModTranslation.getString("BountyHunter"), BountyHunter.color, ModTranslation.getString("BountyHunterDescription1"), ModTranslation.getString("BountyHunterDescription2"), RoleId.BountyHunter);
+        public static RoleInfo detective = new RoleInfo(ModTranslation.getString("Detective"), Detective.color, ModTranslation.getString("DetectiveDescription1"), ModTranslation.getString("DetectiveDescription2"), RoleId.Detective);
+        public static RoleInfo timeMaster = new RoleInfo(ModTranslation.getString("TimeMaster"), TimeMaster.color, ModTranslation.getString("TimeMasterDescription1"), ModTranslation.getString("TimeMasterDescription2"), RoleId.TimeMaster);
+        public static RoleInfo medic = new RoleInfo(ModTranslation.getString("Medic"), Medic.color, ModTranslation.getString("MedicDescription1"), ModTranslation.getString("MedicDescription2"), RoleId.Medic);
+        public static RoleInfo swapper = new RoleInfo(ModTranslation.getString("Swapper"), Swapper.color, ModTranslation.getString("SwapperDescription1"), ModTranslation.getString("SwapperDescription2"), RoleId.Swapper);
+        public static RoleInfo seer = new RoleInfo(ModTranslation.getString("Seer"), Seer.color, ModTranslation.getString("SeerDescription1"), ModTranslation.getString("SeerDescription2"), RoleId.Seer);
+        public static RoleInfo hacker = new RoleInfo(ModTranslation.getString("Hacker"), Hacker.color, ModTranslation.getString("HackerDescription1"), ModTranslation.getString("HackerDescription2"), RoleId.Hacker);
+        public static RoleInfo tracker = new RoleInfo(ModTranslation.getString("Tracker"), Tracker.color, ModTranslation.getString("TrackerDescription1"), ModTranslation.getString("TrackerDescription2"), RoleId.Tracker);
+        public static RoleInfo snitch = new RoleInfo(ModTranslation.getString("Snitch"), Snitch.color, ModTranslation.getString("SnitchDescription1"), ModTranslation.getString("SnitchDescription2"), RoleId.Snitch);
+        public static RoleInfo jackal = new RoleInfo(ModTranslation.getString("Jackal"), Jackal.color, ModTranslation.getString("JackalDescription1"), ModTranslation.getString("JackalDescription2"), RoleId.Jackal, true);
+        public static RoleInfo sidekick = new RoleInfo(ModTranslation.getString("Sidekick"), Sidekick.color, ModTranslation.getString("SidekickDescription1"), ModTranslation.getString("SidekickDescription2"), RoleId.Sidekick, true);
+        public static RoleInfo spy = new RoleInfo(ModTranslation.getString("Spy"), Spy.color, ModTranslation.getString("SpyDescription1"), ModTranslation.getString("SpyDescription2"), RoleId.Spy);
+        public static RoleInfo securityGuard = new RoleInfo(ModTranslation.getString("SecurityGuard"), SecurityGuard.color, ModTranslation.getString("SecurityGuardDescription1"), ModTranslation.getString("SecurityGuardDescription2"), RoleId.SecurityGuard);
+        public static RoleInfo paranoia = new RoleInfo(ModTranslation.getString("Paranoia"), Paranoia.color, ModTranslation.getString("ParanoiaDescription1"), ModTranslation.getString("ParanoiaDescription2"), RoleId.Paranoia);
+        public static RoleInfo veteran = new RoleInfo(ModTranslation.getString("Veteran"), Veteran.color, ModTranslation.getString("VeteranDescription1"), ModTranslation.getString("VeteranDescription2"), RoleId.Veteran);
+        public static RoleInfo arsonist = new RoleInfo(ModTranslation.getString("Arsonist"), Arsonist.color, ModTranslation.getString("ArsonistDescription1"), ModTranslation.getString("ArsonistDescription2"), RoleId.Arsonist, true);
+        public static RoleInfo plagueDoctor = new RoleInfo(ModTranslation.getString("PlagueDoctor"), PlagueDoctor.color, ModTranslation.getString("PlagueDoctorDescription1"), ModTranslation.getString("PlagueDoctorDescription1"), RoleId.PlagueDoctor,true);
+        public static RoleInfo goodGuesser = new RoleInfo(ModTranslation.getString("Vigilante"), Guesser.color, ModTranslation.getString("VigilanteDescription1"), ModTranslation.getString("VigilanteDescription2"), RoleId.NiceGuesser);
+        public static RoleInfo badGuesser = new RoleInfo(ModTranslation.getString("Assassin"), Palette.ImpostorRed, ModTranslation.getString("AssassinDescription1"), ModTranslation.getString("AssassinDescription2"), RoleId.EvilGuesser);
+        public static RoleInfo vulture = new RoleInfo(ModTranslation.getString("Vulture"), Vulture.color, ModTranslation.getString("VultureDescription1"), ModTranslation.getString("VultureDescription2"), RoleId.Vulture, true);
+        public static RoleInfo medium = new RoleInfo(ModTranslation.getString("Medium"), Medium.color, ModTranslation.getString("MediumDescription1"), ModTranslation.getString("MediumDescription2"), RoleId.Medium);
+        public static RoleInfo trapper = new RoleInfo(ModTranslation.getString("Trapper"), Trapper.color, ModTranslation.getString("TrapperDescription1"), ModTranslation.getString("TrapperDescription2"), RoleId.Trapper);
+        public static RoleInfo lawyer = new RoleInfo(ModTranslation.getString("Lawyer"), Lawyer.color, ModTranslation.getString("LawyerDescription1"), ModTranslation.getString("LawyerDescription2"), RoleId.Lawyer, true);
+        public static RoleInfo prosecutor = new RoleInfo(ModTranslation.getString("Prosecutor"), Prosecutor.color, ModTranslation.getString("ProsecutorDescription1"), ModTranslation.getString("ProsecutorDescription2"), RoleId.Prosecutor, true);
+        public static RoleInfo pursuer = new RoleInfo(ModTranslation.getString("Pursuer"), Pursuer.color, ModTranslation.getString("PursuerDescription1"), ModTranslation.getString("PursuerDescription2"), RoleId.Pursuer);
+        public static RoleInfo impostor = new RoleInfo(ModTranslation.getString("Impostor"), Palette.ImpostorRed, ModTranslation.getString("ImpostorDescription1"), ModTranslation.getString("ImpostorDescription2"), RoleId.Impostor);
+        public static RoleInfo crewmate = new RoleInfo(ModTranslation.getString("Crewmate"), Color.white, ModTranslation.getString("CrewmateDescription1"), ModTranslation.getString("CrewmateDescription2"), RoleId.Crewmate);
+        public static RoleInfo witch = new RoleInfo(ModTranslation.getString("Witch"), Witch.color, ModTranslation.getString("WitchDescription1"), ModTranslation.getString("WitchDescription2"), RoleId.Witch);
+        public static RoleInfo ninja = new RoleInfo(ModTranslation.getString("Ninja"), Ninja.color, ModTranslation.getString("NinjaDescription1"), ModTranslation.getString("NinjaDescription2"), RoleId.Ninja);
+        public static RoleInfo thief = new RoleInfo(ModTranslation.getString("Thief"), Thief.color, ModTranslation.getString("ThiefDescription1"), ModTranslation.getString("ThiefDescription2"), RoleId.Thief, true);
+        public static RoleInfo bomber = new RoleInfo(ModTranslation.getString("Bomber"), Bomber.color, ModTranslation.getString("BomberDescription1"), ModTranslation.getString("BomberDescription2"), RoleId.Bomber);
+        public static RoleInfo yoyo = new RoleInfo(ModTranslation.getString("YoYo"), Yoyo.color, ModTranslation.getString("YoYoDescription1"), ModTranslation.getString("YoYoDescription2"), RoleId.Yoyo);
+        public static RoleInfo hunter = new RoleInfo(ModTranslation.getString("Hunter"), Palette.ImpostorRed, ModTranslation.getString("HunterDescription1"), ModTranslation.getString("HunterDescription2"), RoleId.Impostor);
+        public static RoleInfo hunted = new RoleInfo(ModTranslation.getString("Hunted"), Color.white, ModTranslation.getString("HuntedDescription1"), ModTranslation.getString("HuntedDescription2"), RoleId.Crewmate);
+        public static RoleInfo prop = new RoleInfo(ModTranslation.getString("Prop"), Color.white, ModTranslation.getString("PropDescription1"), ModTranslation.getString("PropDescription2"), RoleId.Crewmate);
 
         // Modifier
-        public static RoleInfo bloody = new RoleInfo("溅血者", Bloody.color, "杀了你的人会留下痕迹", "杀了你的人会留下痕迹", RoleId.Bloody, false, true);
-        public static RoleInfo antiTeleport = new RoleInfo("厄运儿",AntiTeleport.color, "你不会被传送", "你不会被传送", RoleId.AntiTeleport, false, true);
-        public static RoleInfo tiebreaker = new RoleInfo("破平者", Tiebreaker.color, "你打破了平局", "你有1.5票", RoleId.Tiebreaker, false, true);
-        public static RoleInfo bait = new RoleInfo("诱饵", Bait.color, "恭喜你杀了我你就中大奖了", "你敢杀我吗？", RoleId.Bait, false, true);
-        public static RoleInfo sunglasses = new RoleInfo("太阳镜", Sunglasses.color, "你戴上了太阳镜", "你的视野变得更加开阔", RoleId.Sunglasses, false, true);
-        public static RoleInfo lover = new RoleInfo("恋人", Lovers.color, $"你坠入了爱河", $"你坠入了爱河", RoleId.Lover, false, true);
-        public static RoleInfo mini = new RoleInfo("迷你船员", Mini.color, "在你长大之前没人能伤害你", "在你长大之前没人能伤害你", RoleId.Mini, false, true);
-        public static RoleInfo vip = new RoleInfo("VIP", Vip.color, "你是一个VIP", "所有人都会知道你被杀害了", RoleId.Vip, false, true);
-        public static RoleInfo invert = new RoleInfo("醉鬼", Invert.color, "向上欸~其实是向下，向左欸~其实是向右", "你的行动被颠倒了", RoleId.Invert, false, true);
-        public static RoleInfo chameleon = new RoleInfo("变色龙", Chameleon.color, "你不动的时候很难被看到", "你不动的时候很难被看到", RoleId.Chameleon, false, true);
-        public static RoleInfo shifter = new RoleInfo("窃贼", Shifter.color, "我要偷走你的职业", "你的职业归我了", RoleId.Shifter, false, true);
-        public static RoleInfo armored = new RoleInfo("装甲兵", Armored.color, "您受到保护,免于一次谋杀未遂", "您受到保护,免于一次谋杀未遂", RoleId.Armored, false, true);
-        public static RoleInfo disperser = new RoleInfo("分散者", Color.red, "分散所有船员", "分散所有船员", RoleId.Disperser, false, true);
-
-
+        public static RoleInfo bloody = new RoleInfo(ModTranslation.getString("Bloody"), Bloody.color, ModTranslation.getString("BloodyDescription1"), ModTranslation.getString("BloodyDescription2"), RoleId.Bloody, false, true);
+        public static RoleInfo antiTeleport = new RoleInfo(ModTranslation.getString("AntiTeleport"), AntiTeleport.color, ModTranslation.getString("AntiTeleportDescription1"), ModTranslation.getString("AntiTeleportDescription2"), RoleId.AntiTeleport, false, true);
+        public static RoleInfo tiebreaker = new RoleInfo(ModTranslation.getString("Tiebreaker"), Tiebreaker.color, ModTranslation.getString("TiebreakerDescription1"), ModTranslation.getString("TiebreakerDescription2"), RoleId.Tiebreaker, false, true);
+        public static RoleInfo bait = new RoleInfo(ModTranslation.getString("Bait"), Bait.color, ModTranslation.getString("BaitDescription1"), ModTranslation.getString("BaitDescription2"), RoleId.Bait, false, true);
+        public static RoleInfo sunglasses = new RoleInfo(ModTranslation.getString("Sunglasses"), Sunglasses.color, ModTranslation.getString("SunglassesDescription1"), ModTranslation.getString("SunglassesDescription2"), RoleId.Sunglasses, false, true);
+        public static RoleInfo lover = new RoleInfo(ModTranslation.getString("Lover"), Lovers.color, ModTranslation.getString("LoverDescription1"), ModTranslation.getString("LoverDescription2"), RoleId.Lover, false, true);
+        public static RoleInfo mini = new RoleInfo(ModTranslation.getString("Mini"), Mini.color, ModTranslation.getString("MiniDescription1"), ModTranslation.getString("MiniDescription2"), RoleId.Mini, false, true);
+        public static RoleInfo vip = new RoleInfo(ModTranslation.getString("VIP"), Vip.color, ModTranslation.getString("VIPDescription1"), ModTranslation.getString("VIPDescription2"), RoleId.Vip, false, true);
+        public static RoleInfo invert = new RoleInfo(ModTranslation.getString("Invert"), Invert.color, ModTranslation.getString("InvertDescription1"), ModTranslation.getString("InvertDescription2"), RoleId.Invert, false, true);
+        public static RoleInfo chameleon = new RoleInfo(ModTranslation.getString("Chameleon"), Chameleon.color, ModTranslation.getString("ChameleonDescription1"), ModTranslation.getString("ChameleonDescription2"), RoleId.Chameleon, false, true);
+        public static RoleInfo shifter = new RoleInfo(ModTranslation.getString("Shifter"), Shifter.color, ModTranslation.getString("ShifterDescription1"), ModTranslation.getString("ShifterDescription2"), RoleId.Shifter, false, true);
+        public static RoleInfo armored = new RoleInfo(ModTranslation.getString("Armored"), Armored.color, ModTranslation.getString("ArmoredDescription1"), ModTranslation.getString("ArmoredDescription2"), RoleId.Armored, false, true);
+        public static RoleInfo disperser = new RoleInfo(ModTranslation.getString("Disperser"), Color.red, ModTranslation.getString("DisperserDescription1"), ModTranslation.getString("DisperserDescription2"), RoleId.Disperser, false, true);
+       
         public static List<RoleInfo> allRoleInfos = new List<RoleInfo>() {
             impostor,
             godfather,
@@ -138,6 +139,7 @@ namespace TheOtherRolesEdited
             lawyer,
             thief,
             prosecutor,
+            plagueDoctor,
             crewmate,
             mayor,
             portalmaker,
@@ -250,6 +252,8 @@ namespace TheOtherRolesEdited
             if (p == Pursuer.pursuer) infos.Add(pursuer);
             if (p == Disperser.disperser) infos.Add(disperser);
             if (p == Thief.thief) infos.Add(thief);
+            if (p == PlagueDoctor.plagueDoctor) infos.Add(plagueDoctor);
+
 
             // Default roles (just impostor, just crewmate, or hunter / hunted for hide n seek, prop hunt prop ...
             if (infos.Count == count) {
@@ -363,23 +367,31 @@ namespace TheOtherRolesEdited
 
 
         static string ReadmePage = "";
-        public static async Task loadReadme() {
-            if (ReadmePage == "") {
+        public static async Task loadReadme()
+        {
+            if (ReadmePage == "")
+            {
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync("https://ghproxy.fangkuai.fun/https://raw.githubusercontent.com/XtremeWave/TheOtherRolesEdited/master/README.md");
+                HttpResponseMessage response = await client.GetAsync(Helpers.isChinese() ? "https://download.hayashiume.top/" : "" + "https://raw.githubusercontent.com/TheOtherRolesAU/TheOtherRoles/main/README.md");
                 response.EnsureSuccessStatusCode();
                 string httpres = await response.Content.ReadAsStringAsync();
                 ReadmePage = httpres;
             }
         }
-        public static string GetRoleDescription(RoleInfo roleInfo) {
-            while (ReadmePage == "") {
-            }
-                
+        public static string GetRoleDescription(RoleInfo roleInfo)
+        {
+            while (ReadmePage == "") { }
             int index = ReadmePage.IndexOf($"## {roleInfo.name}");
+            if (index == -1)
+            {
+                return $"未找到角色 {roleInfo.name} 的描述";
+            }
             int endindex = ReadmePage.Substring(index).IndexOf("### Game Options");
+            if (endindex == -1)
+            {
+                return ReadmePage.Substring(index);
+            }
             return ReadmePage.Substring(index, endindex);
-
         }
     }
 }

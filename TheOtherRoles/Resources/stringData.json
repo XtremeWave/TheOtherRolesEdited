@@ -16,10 +16,6 @@
         "0": "Thank You For Playing TORE!",
         "13": "感谢您使用TORE!"
     },
-    "Politics": {
-        "0": "【The content of the message contains politically sensitive information and has been rejected】",
-        "13": "【发送内容包含政治敏感信息,已驳回】"
-    },
     "Credentials": {
         "0": "Translate by:<color=#FCCE03FF>farewell</color>",
         "13": "中文翻译:<color=#FCCE03FF>farewell</color> & <color=#FCCE03FF>FangKuaiYa</color>"
@@ -73,7 +69,7 @@
         "13": "美工"
     },
     "Translate": {
-        "0": "English translation",
+        "0": "English translater",
         "13": "中文翻译"
     },
     "UpdateWay1": {
@@ -132,7 +128,6 @@
         "0": "<color=#FFFF33>Modifier</color>\n This is a modifier you've got—you need to make good use of it to contribute to the victory.",
         "13": "<color=#FFFF33>附加职业</color>\n 这是你额外获得的技能，你需要利用好这项技能为胜利做出努力"
     },
-
     //游戏模式
     "Guesser": {
         "0": "Guesser",
@@ -332,13 +327,71 @@
         "0": "In <color=#0772FF>PORPHUNT MODE</color>, each player must transform into any object on the map within the given time to avoid being discovered by the hunter.",
         "13": "在<color=#0772FF>变形狩猎模式</color>下每个躲藏者要在规定时间内变为地图中的任意物品以保证不会被猎人发现。"
     },
-
     //轮抽选角
+    "playerPicks": {
+        "0": "Player's Picks:",
+        "13": "玩家的选择："
+    },
+    "welcomeText": {
+        "0": "Welcome to the Role Draft!",
+        "13": "欢迎来到轮选角色！"
+    },
+    "playerYouText": {
+        "0": "<size=80%>Player {0} (You!)</size>",
+        "13": "<size=80%>玩家 {0} (你！)</size>"
+    },
+    "randomButtonText": {
+        "0": "Random",
+        "13": "随机"
+    },
     "playerText": {
-        "0": "player {0}",
+        "0": "Player {0}",
         "13": "玩家 {0}"
     },
-    
+    "currentlyPicking": {
+        "0": "<size=80%>Currently Picking:</size>",
+        "13": "<size=80%>当前正在选择的玩家：</size>"
+    },
+    "roundUntilText": {
+        "0": "({0} rounds until your turn)",
+        "13": "(还有{0}位玩家到你)"
+    },
+    "selectionInText": {
+        "0": "Random Selection In...",
+        "13": "正在随机挑选..."
+    },
+    "randomizingOrder": {
+        "0": "Randomizing Order...",
+        "13": "正在随机轮抽顺序..."
+    },
+    "pickOrderText": {
+        "0": "Your Pick Order",
+        "13": "你的轮抽顺序是"
+    },
+    "unknownRoleText": {
+        "0": "Unknown Role",
+        "13": "未知职业"
+    },
+    "impostorRoleText": {
+        "0": "Impostor Role",
+        "13": "伪装者职业"
+    },
+    "neutralRoleText": {
+        "0": "Neutral Role",
+        "13": "中立职业"
+    },
+    "crewmateRoleText": {
+        "0": "Crewmate Role",
+        "13": "船员职业"
+    },
+    "youText": {
+        "0": "You",
+        "13": "你"
+    },
+    "waitforPicking": {
+        "0": "Waiting For Picking...",
+        "13": "等待选择中..."
+    },
     //版本检测
     "gameStartTextDiferentVersion": {
         "0": "<color=#ff0305> {0} used different versions of The Other Roles Edited\n",
@@ -467,8 +520,8 @@
         "13": "愚人节快乐!"
     },
     "Loading": {
-        "0": "Loading...",
-        "13": "正在加载..."
+        "0": "Begin to Load...",
+        "13": "开始加载..."
     },
     "Dev": {
         "0": "Loading Dev Tags...",
@@ -549,5 +602,810 @@
     "LoadingComplete": {
         "0": "Loading Complete!",
         "13": "加载完成!"
+    },
+    //职业名称(RoleInfo)
+    "Jester": {
+        "0": "Jester",
+        "13": "小丑"
+    },
+    "JesterDescription1": {
+        "0": "Get voted out",
+        "13": "让他们把你投出去！"
+    },
+    "JesterDescription2": {
+        "0": "Get voted out",
+        "13": "让他们把你投出去！"
+    },
+    "Mayor": {
+        "0": "Mayor",
+        "13": "市长"
+    },
+    "MayorDescription1": {
+        "0": "Your vote counts twice",
+        "13": "你的票比别人更有分量"
+    },
+    "MayorDescription2": {
+        "0": "Your vote counts twice",
+        "13": "你在会议上拥有绝对的优势"
+    },
+    "Portalmaker": {
+        "0": "Portalmaker",
+        "13": "传送师"
+    },
+    "PortalmakerDescription1": {
+        "0": "You can create portals",
+        "13": "欸嘿我过来了~欸嘿我又过去了~~"
+    },
+    "PortalmakerDescription2": {
+        "0": "You can create portals",
+        "13": "你可以创建传送门"
+    },
+    "Engineer": {
+        "0": "Engineer",
+        "13": "工程师"
+    },
+    "EngineerDescription1": {
+        "0": "Maintain important systems on the ship",
+        "13": "飞船没了你都运行不了"
+    },
+    "EngineerDescription2": {
+        "0": "Repair the ship",
+        "13": "修理飞船是强项"
+    },
+    "Sheriff": {
+        "0": "Sheriff",
+        "13": "警长"
+    },
+    "SheriffDescription1": {
+        "0": "Shoot the <color=#FF1919FF>Impostors</color>",
+        "13": "声张正义,维护飞船！"
+    },
+    "SheriffDescription2": {
+        "0": "Shoot the Impostors",
+        "13": "毙了<color=#FF1919FF>内鬼</color>"
+    },
+    "Deputy": {
+        "0": "Deputy",
+        "13": "捕快"
+    },
+    "DeputyDescription1": {
+        "0": "Handcuff the <color=#FF1919FF>Impostors</color>",
+        "13": "给<color=#FF1919FF>内鬼</color>戴上手铐"
+    },
+    "DeputyDescription2": {
+        "0": "Handcuff the Impostors",
+        "13": "铐住内鬼"
+    },
+    "Lighter": {
+        "0": "Lighter",
+        "13": "执灯人"
+    },
+    "LighterDescription1": {
+        "0": "Your light never goes out",
+        "13": "你的光芒永不熄灭"
+    },
+    "LighterDescription2": {
+        "0": "Your light never goes out",
+        "13": "你的光芒永不熄灭"
+    },
+    "Godfather": {
+        "0": "Godfather",
+        "13": "教父"
+    },
+    "GodfatherDescription1": {
+        "0": "Kill all Crewmates",
+        "13": "杀了所有船员"
+    },
+    "GodfatherDescription2": {
+        "0": "Kill all Crewmates",
+        "13": "杀了所有船员"
+    },
+    "Mafioso": {
+        "0": "Mafioso",
+        "13": "小弟"
+    },
+    "MafiosoDescription1": {
+        "0": "Work with the <color=#FF1919FF>Mafia</color> to kill the Crewmates",
+        "13": "帮助<color=#FF1919FF>教父</color>做掉所有船员"
+    },
+    "MafiosoDescription2": {
+        "0": "Kill all Crewmates",
+        "13": "做掉所有船员"
+    },
+    "Janitor": {
+        "0": "Janitor",
+        "13": "清洁工"
+    },
+    "JanitorDescription1": {
+        "0": "Work with the <color=#FF1919FF>Mafia</color> by hiding dead bodies",
+        "13": "帮助<color=#FF1919FF>教父</color>隐藏作案痕迹"
+    },
+    "JanitorDescription2": {
+        "0": "Hide dead bodies",
+        "13": "隐藏鸡腿"
+    },
+    "Morphling": {
+        "0": "Morphling",
+        "13": "化形者"
+    },
+    "MorphlingDescription1": {
+        "0": "Change your look to not get caught",
+        "13": "猜猜我是谁？"
+    },
+    "MorphlingDescription2": {
+        "0": "Change your look",
+        "13": "隐藏至人群之中"
+    },
+    "Camouflager": {
+        "0": "Camouflager",
+        "13": "隐蔽者"
+    },
+    "CamouflagerDescription1": {
+        "0": "Camouflage and kill the Crewmates",
+        "13": "利用幻术隐匿在船员之中"
+    },
+    "CamouflagerDescription2": {
+        "0": "Hide among others",
+        "13": "隐匿在他们之中"
+    },
+    "Vampire": {
+        "0": "Vampire",
+        "13": "吸血鬼"
+    },
+    "VampireDescription1": {
+        "0": "Kill the Crewmates with your bites",
+        "13": "今天的血液是我最喜欢的！"
+    },
+    "VampireDescription2": {
+        "0": "Bite your enemies",
+        "13": "咬死船员"
+    },
+    "Eraser": {
+        "0": "Eraser",
+        "13": "抹除者"
+    },
+    "EraserDescription1": {
+        "0": "Kill the Crewmates and erase their roles",
+        "13": "让他们不知所措吧！"
+    },
+    "EraserDescription2": {
+        "0": "Erase the roles of your enemies",
+        "13": "擦除他们的职业"
+    },
+    "Trickster": {
+        "0": "Trickster",
+        "13": "骗术师"
+    },
+    "TricksterDescription1": {
+        "0": "Use your jack-in-the-boxes to surprise others",
+        "13": "使用惊吓盒子搭建的管道网络"
+    },
+    "TricksterDescription2": {
+        "0": "Surprise your enemies",
+        "13": "开盲盒咯~"
+    },
+    "Cleaner": {
+        "0": "Cleaner",
+        "13": "清理者"
+    },
+    "CleanerDescription1": {
+        "0": "Kill everyone and leave no traces",
+        "13": "杀人于无形之中"
+    },
+    "CleanerDescription2": {
+        "0": "Clean up dead bodies",
+        "13": "清理你的作案痕迹"
+    },
+    "Blackmailer": {
+        "0": "Blackmailer",
+        "13": "勒索者"
+    },
+    "BlackmailerDescription1": {
+        "0": "Blackmail those who seek to hurt you",
+        "13": "嘘~~~~~~~~~~~"
+    },
+    "BlackmailerDescription2": {
+        "0": "Blackmail those who seek to hurt you",
+        "13": "不许说话哦~"
+    },
+    "Miner": {
+        "0": "Miner",
+        "13": "矿工"
+    },
+    "MinerDescription1": {
+        "0": "Make new Vents",
+        "13": "建立新的管道网络"
+    },
+    "MinerDescription2": {
+        "0": "Create Vents",
+        "13": "建立新的管道"
+    },
+    "Undertaker": {
+        "0": "Undertaker",
+        "13": "送葬者"
+    },
+    "UndertakerDescription1": {
+        "0": "Kill everyone and leave no traces",
+        "13": "嘿咻嘿咻嘿咻~"
+    },
+    "UndertakerDescription2": {
+        "0": "Drag up dead bodies to hide them",
+        "13": "干掉船员们并藏好尸体"
+    },
+    "Warlock": {
+        "0": "Warlock",
+        "13": "术士"
+    },
+    "WarlockDescription1": {
+        "0": "Curse other players and kill everyone",
+        "13": "画个圈圈诅咒你"
+    },
+    "WarlockDescription2": {
+        "0": "Curse and kill everyone",
+        "13": "利用诅咒杀掉船员"
+    },
+    "BountyHunter": {
+        "0": "BountyHunter",
+        "13": "赏金猎人"
+    },
+    "BountyHunterDescription1": {
+        "0": "Hunt your bounty down",
+        "13": "赏金我让欲罢不能"
+    },
+    "BountyHunterDescription2": {
+        "0": "Hunt your bounty down",
+        "13": "无休止的获得赏金吧"
+    },
+    "Detective": {
+        "0": "Detective",
+        "13": "侦探"
+    },
+    "DetectiveDescription1": {
+        "0": "Find the <color=#FF1919FF>Impostors</color> by examining footprints",
+        "13": "寻找<color=#FF1919FF>内鬼</color>留下的作案痕迹吧"
+    },
+    "DetectiveDescription2": {
+        "0": "Examine footprints",
+        "13": "在脚印中寻找线索"
+    },
+    "TimeMaster": {
+        "0": "TimeMaster",
+        "13": "时间之主"
+    },
+    "TimeMasterDescription1": {
+        "0": "Save yourself with your time shield",
+        "13": "时间~~~倒流！！！"
+    },
+    "TimeMasterDescription2": {
+        "0": "Use your time shield",
+        "13": "用时间之盾保护自己"
+    },
+    "Medic": {
+        "0": "Medic",
+        "13": "医生"
+    },
+    "MedicDescription1": {
+        "0": "Protect someone with your shield",
+        "13": "保护船员"
+    },
+    "MedicDescription2": {
+        "0": "Protect other players",
+        "13": "保护你应该保护的人"
+    },
+    "Swapper": {
+        "0": "Swapper",
+        "13": "换票师"
+    },
+    "SwapperDescription1": {
+        "0": "Swap votes to exile the <color=#FF1919FF>Impostors</color>",
+        "13": "禁止小脑行为投出<color=#FF1919FF>小丑</color>！！"
+    },
+    "SwapperDescription2": {
+        "0": "Swap votes",
+        "13": "扭转乾坤"
+    },
+    "Seer": {
+        "0": "Seer",
+        "13": "灵媒"
+    },
+    "SeerDescription1": {
+        "0": "You will see players die",
+        "13": "你可以预见玩家的死亡"
+    },
+    "SeerDescription2": {
+        "0": "You will see players die",
+        "13": "你可以预见玩家的死亡"
+    },
+    "Hacker": {
+        "0": "Hacker",
+        "13": "黑客"
+    },
+    "HackerDescription1": {
+        "0": "Hack systems to find the <color=#FF1919FF>Impostors</color>",
+        "13": "黑入设备，找出<color=#FF1919FF>内鬼</color>"
+    },
+    "HackerDescription2": {
+        "0": "Hack to find the Impostors",
+        "13": "找出内鬼"
+    },
+    "Tracker": {
+        "0": "Tracker",
+        "13": "追踪者"
+    },
+    "TrackerDescription1": {
+        "0": "Track the <color=#FF1919FF>Impostors</color> down",
+        "13": "利用GPS找出我们之中的<color=#FF1919FF>内鬼</color>"
+    },
+    "TrackerDescription2": {
+        "0": "Track the Impostors down",
+        "13": "跟踪内鬼的脚步"
+    },
+    "Snitch": {
+        "0": "Snitch",
+        "13": "告密者"
+    },
+    "SnitchDescription1": {
+        "0": "Finish your tasks to find the <color=#FF1919FF>Impostors</color>",
+        "13": "观察四周,谨防<color=#FF1919FF>内鬼</color>"
+    },
+    "SnitchDescription2": {
+        "0": "Finish your tasks",
+        "13": "完成任务，找出<color=#FF1919FF>内鬼</color>"
+    },
+    "Jackal": {
+        "0": "Jackal",
+        "13": "豺狼"
+    },
+    "JackalDescription1": {
+        "0": "Kill all Crewmates and <color=#FF1919FF>Impostors</color> to win",
+        "13": "杀了船员和<color=#FF1919FF>内鬼</color>来获得胜利"
+    },
+    "JackalDescription2": {
+        "0": "Kill everyone",
+        "13": "击杀所有人"
+    },
+    "Sidekick": {
+        "0": "Sidekick",
+        "13": "跟班"
+    },
+    "SidekickDescription1": {
+        "0": "Help your Jackal to kill everyone",
+        "13": "帮助豺狼获得胜利"
+    },
+    "SidekickDescription2": {
+        "0": "Help your Jackal to kill everyone",
+        "13": "帮助豺狼杀掉所有人"
+    },
+    "Spy": {
+        "0": "Spy",
+        "13": "卧底"
+    },
+    "SpyDescription1": {
+        "0": "Confuse the <color=#FF1919FF>Impostors</color>",
+        "13": "隐藏在<color=#FF1919FF>内鬼</color>之主"
+    },
+    "SpyDescription2": {
+        "0": "Confuse the Impostors",
+        "13": "让内鬼们相互猜疑"
+    },
+    "SecurityGuard": {
+        "0": "SecurityGuard",
+        "13": "保安"
+    },
+    "SecurityGuardDescription1": {
+        "0": "Seal vents and place cameras",
+        "13": "防止摄像头并封锁管道"
+    },
+    "SecurityGuardDescription2": {
+        "0": "Seal vents and place cameras",
+        "13": "放置摄像头和封锁管道"
+    },
+    "Veteran": {
+        "0": "Veteran",
+        "13": "老兵"
+    },
+    "VeteranDescription1": {
+        "0": "Protect yourself from other",
+        "13": "老骥伏枥,志在千里"
+    },
+    "VeteranDescription2": {
+        "0": "Protect yourself from others",
+        "13": "时刻保持警惕"
+    },
+    "PlagueDoctor": {
+        "0": "Plague Doctor",
+        "13": "疫医"
+    },
+    "PlagueDoctorDescription1": {
+        "0": "Spread disease to wipe out the crew",
+        "13": "传播病毒"
+    },
+    "PlagueDoctorDescription2": {
+        "0": "Spread disease to wipe out the crew",
+        "13": "传播病毒"
+    },
+    "Arsonist": {
+        "0": "Arsonist",
+        "13": "纵火犯"
+    },
+    "ArsonistDescription1": {
+        "0": "Let them burn",
+        "13": "要来一起吃烤肉吗？"
+    },
+    "ArsonistDescription2": {
+        "0": "Let them burn",
+        "13": "我最喜欢烟花！"
+    },
+    "Vigilante": {
+        "0": "Vigilante",
+        "13": "正义的赌怪"
+    },
+    "VigilanteDescription1": {
+        "0": "Guess and shoot",
+        "13": "生命即是豪赌"
+    },
+    "VigilanteDescription2": {
+        "0": "Guess and shoot",
+        "13": "生命即是豪赌"
+    },
+    "Assassin": {
+        "0": "Assassin",
+        "13": "邪恶的赌怪"
+    },
+    "AssassinDescription1": {
+        "0": "Guess and shoot",
+        "13": "生命即是豪赌"
+    },
+    "AssassinDescription2": {
+        "0": "Guess and shoot",
+        "13": "生命即是豪赌"
+    },
+    "Vulture": {
+        "0": "Vulture",
+        "13": "秃鹫"
+    },
+    "VultureDescription1": {
+        "0": "Eat corpses to win",
+        "13": "好饿啊~飞船上有没有好吃的鸡腿啊~"
+    },
+    "VultureDescription2": {
+        "0": "Eat dead bodies",
+        "13": "吃掉鸡腿"
+    },
+    "Medium": {
+        "0": "Medium",
+        "13": "通灵师"
+    },
+    "MediumDescription1": {
+        "0": "Question the souls of the dead to gain information",
+        "13": "询问幽灵获得线索"
+    },
+    "MediumDescription2": {
+        "0": "Question the souls",
+        "13": "询问幽灵"
+    },
+    "Trapper": {
+        "0": "Trapper",
+        "13": "猎人"
+    },
+    "TrapperDescription1": {
+        "0": "Place traps to find the Impostors",
+        "13": "放置陷阱捉住内鬼"
+    },
+    "TrapperDescription2": {
+        "0": "Place traps",
+        "13": "放置陷阱"
+    },
+    "Lawyer": {
+        "0": "Lawyer",
+        "13": "律师"
+    },
+    "LawyerDescription1": {
+        "0": "Defend your client",
+        "13": "保护你的客户"
+    },
+    "LawyerDescription2": {
+        "0": "Defend your client",
+        "13": "保护你的客户"
+    },
+    "Prosecutor": {
+        "0": "Prosecutor",
+        "13": "检察官"
+    },
+    "ProsecutorDescription1": {
+        "0": "Vote out your target",
+        "13": "投出你的客户"
+    },
+    "ProsecutorDescription2": {
+        "0": "Vote out your target",
+        "13": "投出你的客户"
+    },
+    "Pursuer": {
+        "0": "Pursuer",
+        "13": "起诉人"
+    },
+    "PursuerDescription1": {
+        "0": "Blank the Impostors",
+        "13": "利用空包弹保护船员"
+    },
+    "PursuerDescription2": {
+        "0": "Blank the Impostors",
+        "13": "利用空包弹保护船员"
+    },
+    "Impostor": {
+        "0": "Impostor",
+        "13": "内鬼"
+    },
+    "ImpostorDescription1": {
+        "0": "Sabotage and kill everyone",
+        "13": "击杀所有人"
+    },
+    "ImpostorDescription2": {
+        "0": "Sabotage and kill everyone",
+        "13": "击杀所有人"
+    },
+    "Crewmate": {
+        "0": "Crewmate",
+        "13": "船员"
+    },
+    "CrewmateDescription1": {
+        "0": "Find the Impostors",
+        "13": "找出内鬼"
+    },
+    "CrewmateDescription2": {
+        "0": "Find the Impostors",
+        "13": "找出内鬼"
+    },
+    "Witch": {
+        "0": "Witch",
+        "13": "女巫"
+    },
+    "WitchDescription1": {
+        "0": "Cast a spell upon your foes",
+        "13": "毒药为你准备好了哦~"
+    },
+    "WitchDescription2": {
+        "0": "Cast a spell upon your foes",
+        "13": "为所有人下咒"
+    },
+    "Ninja": {
+        "0": "Ninja",
+        "13": "忍者"
+    },
+    "NinjaDescription1": {
+        "0": "Surprise and assassinate your foes",
+        "13": "杀人于无形之中"
+    },
+    "NinjaDescription2": {
+        "0": "Surprise and assassinate your foes",
+        "13": "杀人于无形之中"
+    },
+    "Thief": {
+        "0": "Thief",
+        "13": "强盗"
+    },
+    "ThiefDescription1": {
+        "0": "Steal a killers role by killing them",
+        "13": "这些都是我的啦！"
+    },
+    "ThiefDescription2": {
+        "0": "Steal a killers role",
+        "13": "先杀人再盗窃"
+    },
+    "Bomber": {
+        "0": "Bomber",
+        "13": "爆破手"
+    },
+    "BomberDescription1": {
+        "0": "Bomb all Crewmates",
+        "13": "我可是比纵火犯还喜欢烟花呢~"
+    },
+    "BomberDescription2": {
+        "0": "Bomb all Crewmates",
+        "13": "炸死所有船员"
+    },
+    "YoYo": {
+        "0": "YoYo",
+        "13": "悠悠球"
+    },
+    "YoYoDescription1": {
+        "0": "",
+        "13": "欻~~~~~~~~~~~"
+    },
+    "YoYoDescription2": {
+        "0": "",
+        "13": "瞬移到你所标记的位置"
+    },
+    "Hunter": {
+        "0": "Hunter",
+        "13": "猎人"
+    },
+    "HunterDescription1": {
+        "0": "Seek and kill everyone",
+        "13": "找到并击杀所有人"
+    },
+    "HunterDescription2": {
+        "0": "Seek and kill everyone",
+        "13": "找到并击杀所有人"
+    },
+    "Hunted": {
+        "0": "Hunted",
+        "13": "躲藏者"
+    },
+    "HuntedDescription1": {
+        "0": "Hide",
+        "13": "躲躲藏藏又是一年"
+    },
+    "HuntedDescription2": {
+        "0": "Hide",
+        "13": "躲藏"
+    },
+    "Prop": {
+        "0": "Prop",
+        "13": "变形者"
+    },
+    "PropDescription1": {
+        "0": "Disguise As An Object and Survive",
+        "13": "伪装成物体并生存"
+    },
+    "PropDescription2": {
+        "0": "Disguise As An Object",
+        "13": "伪装成物体并生存"
+    },
+    "Bloody": {
+        "0": "Bloody",
+        "13": "溅血者"
+    },
+    "BloodyDescription1": {
+        "0": "Your killer leaves a bloody trail",
+        "13": "杀了你的人会留下痕迹"
+    },
+    "BloodyDescription2": {
+        "0": "Your killer leaves a bloody trail",
+        "13": "杀了你的人会留下痕迹"
+    },
+    "AntiTeleport": {
+        "0": "AntiTeleport",
+        "13": "厄运儿"
+    },
+    "AntiTeleportDescription1": {
+        "0": "You will not get teleported",
+        "13": "你不会被传送"
+    },
+    "AntiTeleportDescription2": {
+        "0": "You will not get teleported",
+        "13": "你不会被传送"
+    },
+    "Tiebreaker": {
+        "0": "Tiebreaker",
+        "13": "破平者"
+    },
+    "TiebreakerDescription1": {
+        "0": "Your vote breaks the tie",
+        "13": "你打破了平局"
+    },
+    "TiebreakerDescription2": {
+        "0": "Break the tie",
+        "13": "你有1.5票"
+    },
+    "Bait": {
+        "0": "Bait",
+        "13": "诱饵"
+    },
+    "BaitDescription1": {
+        "0": "Bait your enemies",
+        "13": "恭喜你杀了我你就中大奖了"
+    },
+    "BaitDescription2": {
+        "0": "Bait your enemies",
+        "13": "你敢杀我吗？"
+    },
+    "Sunglasses": {
+        "0": "Sunglasses",
+        "13": "太阳镜"
+    },
+    "SunglassesDescription1": {
+        "0": "You got the sunglasses",
+        "13": "你戴上了太阳镜"
+    },
+    "SunglassesDescription2": {
+        "0": "Your vision is reduced",
+        "13": "你的视野变得更加开阔"
+    },
+    "Lover": {
+        "0": "Lover",
+        "13": "恋人"
+    },
+    "LoverDescription1": {
+        "0": "You are in love",
+        "13": "你坠入了爱河"
+    },
+    "LoverDescription2": {
+        "0": "You are in love",
+        "13": "你坠入了爱河"
+    },
+    "Mini": {
+        "0": "Mini",
+        "13": "迷你船员"
+    },
+    "MiniDescription1": {
+        "0": "No one will harm you until you grow up",
+        "13": "在你长大之前没人能伤害你"
+    },
+    "MiniDescription2": {
+        "0": "No one will harm you",
+        "13": "在你长大之前没人能伤害你"
+    },
+    "VIP": {
+        "0": "VIP",
+        "13": "VIP"
+    },
+    "VIPDescription1": {
+        "0": "You are the VIP",
+        "13": "你是一个VIP"
+    },
+    "VIPDescription2": {
+        "0": "Everyone is notified when you die",
+        "13": "所有人都会知道你被杀害了"
+    },
+    "Invert": {
+        "0": "Invert",
+        "13": "醉鬼"
+    },
+    "InvertDescription1": {
+        "0": "Your movement is inverted",
+        "13": "向上欸~其实是向下，向左欸~其实是向右"
+    },
+    "InvertDescription2": {
+        "0": "Your movement is inverted",
+        "13": "你的行动被颠倒了"
+    },
+    "Chameleon": {
+        "0": "Chameleon",
+        "13": "变色龙"
+    },
+    "ChameleonDescription1": {
+        "0": "You're hard to see when not moving",
+        "13": "你不动的时候很难被看到"
+    },
+    "ChameleonDescription2": {
+        "0": "You're hard to see when not moving",
+        "13": "你不动的时候很难被看到"
+    },
+    "Shifter": {
+        "0": "Shifter",
+        "13": "窃贼"
+    },
+    "ShifterDescription1": {
+        "0": "Shift your role",
+        "13": "我要偷走你的职业"
+    },
+    "ShifterDescription2": {
+        "0": "Shift your role",
+        "13": "你的职业归我了"
+    },
+    "Disperser": {
+        "0": "Disperser",
+        "13": "分散者"
+    },
+    "DisperserDescription1": {
+        "0": "Separate the Crew",
+        "13": "分散所有船员"
+    },
+    "DisperserDescription2": {
+        "0": "Separate the Crew",
+        "13": "分散所有船员"
+    },
+    "Armored": {
+        "0": "Armored",
+        "13": "装甲兵"
+    },
+    "ArmoredDescription1": {
+        "0": "You are protected and immune to one attempted murder by others",
+        "13": "你受到了保护,免于一次别人的谋害"
+    },
+    "ArmoredDescription2": {
+        "0": "You are protected and immune to one attempted murder by others.",
+        "13": "你受到了保护,免于一次别人的谋害"
     }
 }

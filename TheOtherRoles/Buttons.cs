@@ -23,6 +23,7 @@ namespace TheOtherRolesEdited
         private static CustomButton janitorCleanButton;
         public static CustomButton sheriffKillButton;
         private static CustomButton deputyHandcuffButton;
+        public static CustomButton plagueDoctorButton;
         private static CustomButton timeMasterShieldButton;
         private static CustomButton medicShieldButton;
         private static CustomButton shifterShiftButton;
@@ -99,6 +100,7 @@ namespace TheOtherRolesEdited
         public static TMPro.TMP_Text portalmakerButtonText2;
         public static TMPro.TMP_Text huntedShieldCountText;
         public static TMPro.TMP_Text paranoiaButtonProtectionText;
+        public static TMPro.TMP_Text plagueDoctornumInfectionsText;
 
         public static void setCustomButtonCooldowns() {
             if (!initialized) {
@@ -198,6 +200,8 @@ namespace TheOtherRolesEdited
             propHuntSpeedboostButton.EffectDuration = PropHunt.speedboostDuration;
             propHuntAdminButton.EffectDuration = PropHunt.adminDuration;
             propHuntFindButton.EffectDuration = PropHunt.findDuration;
+            plagueDoctorButton.MaxTimer = PlagueDoctor.infectCooldown;
+
             // Already set the timer to the max, as the button is enabled during the game and not available at the start
             lightsOutButton.Timer = lightsOutButton.MaxTimer;
             zoomOutButton.MaxTimer = 0f;
@@ -411,6 +415,45 @@ namespace TheOtherRolesEdited
                 __instance,
                 KeyCode.F
             );
+            
+            //plagueDoctorButton
+            plagueDoctorButton = new CustomButton(
+                () =>
+                {
+                    if (Helpers.checkSuspendAction(PlagueDoctor.plagueDoctor, PlagueDoctor.currentTarget)) return;
+
+                    byte targetId = PlagueDoctor.currentTarget.PlayerId;
+
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlagueDoctorSetInfected, Hazel.SendOption.Reliable, -1);
+                    writer.Write(targetId);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.plagueDoctorInfected(targetId);
+                    PlagueDoctor.numInfections--;
+
+                    plagueDoctorButton.Timer = plagueDoctorButton.MaxTimer;
+                    PlagueDoctor.currentTarget = null;
+                    SoundEffectsManager.play("plagueDoctorSyringe");
+                },
+                () => { return PlagueDoctor.plagueDoctor != null && PlayerControl.LocalPlayer == PlagueDoctor.plagueDoctor && PlagueDoctor.numInfections > 0 && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => {
+                    if (plagueDoctornumInfectionsText != null)
+                    {
+                        if (PlagueDoctor.numInfections > 0)
+                            plagueDoctornumInfectionsText.text = $"{PlagueDoctor.numInfections}";
+                        else
+                            plagueDoctornumInfectionsText.text = "";
+                    }
+                    return PlagueDoctor.currentTarget != null && PlagueDoctor.numInfections > 0 && PlayerControl.LocalPlayer.CanMove;
+                },
+                () => { plagueDoctorButton.Timer = plagueDoctorButton.MaxTimer; },
+                PlagueDoctor.getSyringeIcon(),
+                CustomButton.ButtonPositions.lowerRowRight,
+                __instance,
+                KeyCode.F,
+                buttonText: "¸ÐÈ¾",
+                abilityTexture: CustomButton.ButtonLabelType.UseButton
+            );
+            plagueDoctornumInfectionsText = plagueDoctorButton.ShowUsesIcon(2);
 
             // Sheriff Kill
             sheriffKillButton = new CustomButton(

@@ -16,6 +16,7 @@ namespace TheOtherRolesEdited {
             LoverSuicide, // not necessary
             WitchExile,
             Bomb,
+            Disease,
             Arson,
         };
 

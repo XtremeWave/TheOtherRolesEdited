@@ -694,6 +694,8 @@ namespace TheOtherRolesEdited.Patches {
                 if (meetingTarget == null) meetingsCount++;
                 // Save the meeting target
                 target = meetingTarget;
+             
+                PlagueDoctor.meetingFlag = true;
 
                 // Blackmail target
                 if (Blackmailer.blackmailed != null && Blackmailer.blackmailed == PlayerControl.LocalPlayer)

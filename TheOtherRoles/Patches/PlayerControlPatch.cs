@@ -169,6 +169,138 @@ namespace TheOtherRolesEdited.Patches {
             Shifter.currentTarget = setTarget();
             if (Shifter.futureShift == null) setPlayerOutline(Shifter.currentTarget, Color.yellow);
         }
+        static void plagueDoctorSetTarget()
+        {
+            if (PlagueDoctor.plagueDoctor == null || PlayerControl.LocalPlayer != PlagueDoctor.plagueDoctor) return;
+            if (!PlagueDoctor.plagueDoctor.Data.IsDead && PlagueDoctor.numInfections > 0)
+            {
+                PlagueDoctor.currentTarget = setTarget(untargetablePlayers: PlagueDoctor.infected.Values.ToList());
+                setPlayerOutline(PlagueDoctor.currentTarget, PlagueDoctor.color);
+            }
+        }
+        public static void plagueDoctorUpdate()
+        {
+            if (MeetingHud.Instance != null)
+            {
+                if (PlagueDoctor.statusText != null)
+                {
+                    PlagueDoctor.statusText.gameObject.SetActive(false);
+                }
+            }
+
+            if (PlagueDoctor.plagueDoctor != null && (PlayerControl.LocalPlayer == PlagueDoctor.plagueDoctor || (PlayerControl.LocalPlayer.Data.IsDead)))
+            {
+                if (PlagueDoctor.statusText == null)
+                {
+                    GameObject gameObject = UnityEngine.Object.Instantiate(FastDestroyableSingleton<HudManager>.Instance?.roomTracker.gameObject);
+                    gameObject.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform);
+                    gameObject.SetActive(true);
+                    UnityEngine.Object.DestroyImmediate(gameObject.GetComponent<RoomTracker>());
+                    PlagueDoctor.statusText = gameObject.GetComponent<TMPro.TMP_Text>();
+                    gameObject.transform.localPosition = new Vector3(-2.7f, -0.1f - PlayerControl.AllPlayerControls.ToArray().Select(x => !PlagueDoctor.dead.ContainsKey(x.PlayerId)).Count() * 0.07f, gameObject.transform.localPosition.z);
+
+                    PlagueDoctor.statusText.transform.localScale = new Vector3(1f, 1f, 1f);
+                    PlagueDoctor.statusText.fontSize = 1.5f;
+                    PlagueDoctor.statusText.fontSizeMin = 1.5f;
+                    PlagueDoctor.statusText.fontSizeMax = 1.5f;
+                    PlagueDoctor.statusText.alignment = TMPro.TextAlignmentOptions.BottomLeft;
+                    PlagueDoctor.statusText.alpha = byte.MaxValue;
+                }
+
+                PlagueDoctor.statusText.gameObject.SetActive(true);
+                string text = $"[感染进度]\n";
+
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls)
+                {
+                    if (p == PlagueDoctor.plagueDoctor) continue;
+                    if (PlagueDoctor.dead.ContainsKey(p.PlayerId) && PlagueDoctor.dead[p.PlayerId]) continue;
+                    text += $"{p.Data.PlayerName}: ";
+                    if (PlagueDoctor.infected.ContainsKey(p.PlayerId))
+                    {
+                        text += Helpers.cs(Color.red, "已感染");
+                    }
+                    else
+                    {
+                        // データが無い場合は作成する
+                        if (!PlagueDoctor.progress.ContainsKey(p.PlayerId))
+                        {
+                            PlagueDoctor.progress[p.PlayerId] = 0f;
+                        }
+                        text += PlagueDoctor.getProgressString(PlagueDoctor.progress[p.PlayerId]);
+                    }
+                    text += "\n";
+                }
+
+                PlagueDoctor.statusText.text = text;
+            }
+
+            if (PlagueDoctor.plagueDoctor != null && PlayerControl.LocalPlayer == PlagueDoctor.plagueDoctor)
+            {
+                if (!PlagueDoctor.meetingFlag && (PlagueDoctor.canWinDead || !PlagueDoctor.plagueDoctor.Data.IsDead))
+                {
+                    List<PlayerControl> newInfected = new();
+                    foreach (PlayerControl target in PlayerControl.AllPlayerControls)
+                    {
+                        if (target == PlagueDoctor.plagueDoctor || target.Data.IsDead || PlagueDoctor.infected.ContainsKey(target.PlayerId) || target.inVent) continue;
+                        if (!PlagueDoctor.progress.ContainsKey(target.PlayerId)) PlagueDoctor.progress[target.PlayerId] = 0f;
+
+                        foreach (PlayerControl source in PlagueDoctor.infected.Values.ToList())
+                        {
+                            if (source.Data.IsDead) continue;
+                            float distance = Vector3.Distance(source.transform.position, target.transform.position);
+                            bool anythingBetween = PhysicsHelpers.AnythingBetween(source.GetTruePosition(), target.GetTruePosition(), Constants.ShipAndObjectsMask, false);
+
+                            if (distance <= PlagueDoctor.infectDistance && !anythingBetween)
+                            {
+                                PlagueDoctor.progress[target.PlayerId] += Time.fixedDeltaTime;
+
+                                // 他のクライアントに進行状況を通知する
+                                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlagueDoctorUpdateProgress, Hazel.SendOption.Reliable, -1);
+                                writer.Write(target.PlayerId);
+                                writer.Write(PlagueDoctor.progress[target.PlayerId]);
+                                AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+                                // Only update a player's infection once per FixedUpdate
+                                break;
+                            }
+                        }
+
+                        if (PlagueDoctor.progress[target.PlayerId] > PlagueDoctor.infectDuration)
+                        {
+                            newInfected.Add(target);
+                        }
+
+                        foreach (PlayerControl p in newInfected)
+                        {
+                            byte targetId = p.PlayerId;
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlagueDoctorSetInfected, Hazel.SendOption.Reliable, -1);
+                            writer.Write(targetId);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                            RPCProcedure.plagueDoctorInfected(targetId);
+                        }
+
+                        bool winFlag = true;
+                        foreach (PlayerControl p in PlayerControl.AllPlayerControls)
+                        {
+                            if (p.Data.IsDead) continue;
+                            if (p == PlagueDoctor.plagueDoctor) continue;
+                            if (!PlagueDoctor.infected.ContainsKey(p.PlayerId))
+                            {
+                                winFlag = false;
+                                break;
+                            }
+                        }
+
+                        if (winFlag)
+                        {
+                            MessageWriter winWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlagueDoctorWin, Hazel.SendOption.Reliable, -1);
+                            AmongUsClient.Instance.FinishRpcImmediately(winWriter);
+                            RPCProcedure.plagueDoctorWin();
+                        }
+                    }
+                }
+            }
+        }
 
 
         static void morphlingSetTarget() {
@@ -1086,6 +1218,9 @@ namespace TheOtherRolesEdited.Patches {
                 sidekickSetTarget();
                 // Impostor
                 impostorSetTarget();
+                // Plague Doctor
+                plagueDoctorSetTarget();
+                plagueDoctorUpdate();
                 // Blackmailer
                 blackmailerSetTarget();
                 // Warlock

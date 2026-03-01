@@ -10,6 +10,7 @@ using System.Text;
 using TheOtherRolesEdited.Utilities;
 using TheOtherRolesEdited.CustomGameModes;
 using LibCpp2IL.Elf;
+using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches {
     enum CustomGameOverReason {
@@ -19,7 +20,8 @@ namespace TheOtherRolesEdited.Patches {
         JesterWin = 13,
         ArsonistWin = 14,
         VultureWin = 15,
-        ProsecutorWin = 16
+        ProsecutorWin = 16,
+        PlagueDoctorWin = 17
     }
 
     enum WinCondition {
@@ -33,6 +35,7 @@ namespace TheOtherRolesEdited.Patches {
         VultureWin,
         AdditionalLawyerBonusWin,
         AdditionalAlivePursuerWin,
+        PlagueDoctorWin,
         ProsecutorWin
     }
 
@@ -41,6 +44,8 @@ namespace TheOtherRolesEdited.Patches {
         public static WinCondition winCondition = WinCondition.Default;
         public static List<WinCondition> additionalWinConditions = new List<WinCondition>();
         public static List<PlayerRoleInfo> playerRoles = new List<PlayerRoleInfo>();
+        public static Dictionary<int, PlayerControl> plagueDoctorInfected = new();
+        public static Dictionary<int, float> plagueDoctorProgress = new();
         public static float timer = 0;
 
         public static void clear() {
@@ -59,6 +64,7 @@ namespace TheOtherRolesEdited.Patches {
             public bool IsGuesser {get; set;}
             public int? Kills {get; set;}
             public bool IsAlive { get; set; }
+            public byte PlayerId { get; set; }
         }
     }
 
@@ -88,6 +94,8 @@ namespace TheOtherRolesEdited.Patches {
                 string roleString = RoleInfo.GetRolesString(playerControl, true, true, false);
                 AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() { PlayerName = playerControl.Data.PlayerName, Roles = roles, RoleNames = roleString, TasksTotal = tasksTotal, TasksCompleted = tasksCompleted, IsGuesser = isGuesser, Kills = killCount, IsAlive = !playerControl.Data.IsDead });
             }
+            AdditionalTempData.plagueDoctorInfected = PlagueDoctor.infected;
+            AdditionalTempData.plagueDoctorProgress = PlagueDoctor.progress;
 
             // Remove Jester, Arsonist, Vulture, Jackal, former Jackals and Sidekick from winners (if they win, they'll be readded)
             List<PlayerControl> notWinners = new List<PlayerControl>();
@@ -99,6 +107,7 @@ namespace TheOtherRolesEdited.Patches {
             if (Lawyer.lawyer != null) notWinners.Add(Lawyer.lawyer);
             if (Pursuer.pursuer != null) notWinners.Add(Pursuer.pursuer);
             if (Thief.thief != null) notWinners.Add(Thief.thief);
+            if (PlagueDoctor.plagueDoctor != null) notWinners.Add(PlagueDoctor.plagueDoctor);
 
             notWinners.AddRange(Jackal.formerJackals);
 
@@ -115,6 +124,7 @@ namespace TheOtherRolesEdited.Patches {
             bool teamJackalWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamJackalWin && ((Jackal.jackal != null && !Jackal.jackal.Data.IsDead) || (Sidekick.sidekick != null && !Sidekick.sidekick.Data.IsDead));
             bool vultureWin = Vulture.vulture != null && gameOverReason == (GameOverReason)CustomGameOverReason.VultureWin;
             bool prosecutorWin = Lawyer.lawyer != null && gameOverReason == (GameOverReason)CustomGameOverReason.ProsecutorWin;
+            bool plagueDoctorWin = PlagueDoctor.plagueDoctor != null && gameOverReason == (GameOverReason)CustomGameOverReason.PlagueDoctorWin;
 
             bool isPursurerLose = jesterWin || arsonistWin || miniLose || vultureWin || teamJackalWin;
 
@@ -171,7 +181,7 @@ namespace TheOtherRolesEdited.Patches {
                             EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                         else if (p == Pursuer.pursuer && !Pursuer.pursuer.Data.IsDead)
                             EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
-                        else if (p != Jester.jester && p != Jackal.jackal && p != Sidekick.sidekick && p != Arsonist.arsonist && p != Vulture.vulture && !Jackal.formerJackals.Contains(p) && !p.Data.Role.IsImpostor)
+                        else if (p != Jester.jester && p != Jackal.jackal && p != Sidekick.sidekick && p != Arsonist.arsonist && p != Vulture.vulture && !Jackal.formerJackals.Contains(p) && !p.Data.Role.IsImpostor && p != PlagueDoctor.plagueDoctor)
                             EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                     }
                 }
@@ -182,6 +192,14 @@ namespace TheOtherRolesEdited.Patches {
                     EndGameResult.CachedWinners.Add(new CachedPlayerData(Lovers.lover1.Data));
                     EndGameResult.CachedWinners.Add(new CachedPlayerData(Lovers.lover2.Data));
                 }
+            }
+            else if (plagueDoctorWin)
+            {
+                if (PlayerControl.LocalPlayer == PlagueDoctor.plagueDoctor)
+                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new(PlagueDoctor.plagueDoctor.Data);
+                EndGameResult.CachedWinners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.PlagueDoctorWin;
             }
 
             // Jackal win condition (should be implemented using a proper GameOverReason in the future)
@@ -290,34 +308,64 @@ namespace TheOtherRolesEdited.Patches {
             TMPro.TMP_Text textRenderer = bonusText.GetComponent<TMPro.TMP_Text>();
             textRenderer.text = "";
 
-            if (AdditionalTempData.winCondition == WinCondition.JesterWin) {
+            if (AdditionalTempData.winCondition == WinCondition.JesterWin)
+            {
                 textRenderer.text = "被我耍了吧？";
                 textRenderer.color = Jester.color;
-            } else if (AdditionalTempData.winCondition == WinCondition.ArsonistWin) {
+                __instance.BackgroundBar.material.SetColor("_Color", Jester.color);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.ArsonistWin)
+            {
                 textRenderer.text = "燃烧吧！";
                 textRenderer.color = Arsonist.color;
-            } else if (AdditionalTempData.winCondition == WinCondition.VultureWin) {
+                __instance.BackgroundBar.material.SetColor("_Color", Arsonist.color);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.VultureWin)
+            {
                 textRenderer.text = "多谢款待！";
                 textRenderer.color = Vulture.color;
-            } else if (AdditionalTempData.winCondition == WinCondition.ProsecutorWin) {
+                __instance.BackgroundBar.material.SetColor("_Color", Vulture.color);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.ProsecutorWin)
+            {
                 textRenderer.text = "起诉人胜利";
                 textRenderer.color = Lawyer.color;
-            } else if (AdditionalTempData.winCondition == WinCondition.LoversTeamWin) {
+                __instance.BackgroundBar.material.SetColor("_Color", Lawyer.color);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.LoversTeamWin)
+            {
                 textRenderer.text = "你们这群单身狗(doge";
                 textRenderer.color = Lovers.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Lovers.color);
-            } else if (AdditionalTempData.winCondition == WinCondition.LoversSoloWin) {
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.LoversSoloWin)
+            {
                 textRenderer.text = "爱死你了,我的宝！";
                 textRenderer.color = Lovers.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Lovers.color);
-            } else if (AdditionalTempData.winCondition == WinCondition.JackalWin) {
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.JackalWin)
+            {
                 textRenderer.text = "豺狼の全家福.jpg";
                 textRenderer.color = Jackal.color;
-            } else if (AdditionalTempData.winCondition == WinCondition.MiniLose) {
+                __instance.BackgroundBar.material.SetColor("_Color", Jackal.color);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.MiniLose)
+            {
                 textRenderer.text = "他还只是个孩子啊！";
                 textRenderer.color = Mini.color;
-            } else if (AdditionalTempData.winCondition == WinCondition.Default) {
-                switch (OnGameEndPatch.gameOverReason) {
+                __instance.BackgroundBar.material.SetColor("_Color", Mini.color);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.PlagueDoctorWin)
+            {
+                textRenderer.text = "黑死病";
+                textRenderer.color = PlagueDoctor.color;
+                __instance.BackgroundBar.material.SetColor("_Color", PlagueDoctor.color);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.Default)
+            {
+                switch (OnGameEndPatch.gameOverReason)
+                {
                     case GameOverReason.ImpostorDisconnect:
                         textRenderer.text = "最后一名船员断开连接";
                         textRenderer.color = Color.red;
@@ -353,7 +401,7 @@ namespace TheOtherRolesEdited.Patches {
                 if (cond == WinCondition.AdditionalLawyerBonusWin) {
                     textRenderer.text += $"\n{Helpers.cs(Lawyer.color, "律师与客户共赢")}";
                 } else if (cond == WinCondition.AdditionalAlivePursuerWin) {
-                    textRenderer.text += $"\n{Helpers.cs(Pursuer.color, "起诉人幸存下来了")}";
+                    textRenderer.text += $"\n{Helpers.cs(Pursuer.color, "检察官幸存下来了")}";
                 }
             }
 
@@ -370,12 +418,26 @@ namespace TheOtherRolesEdited.Patches {
                     roleSummaryText.AppendLine($"<color=#FAD934FF>时间: {minutes:00}:{seconds:00}</color> \n");
                 }
                 roleSummaryText.AppendLine("游戏结束时玩家的职业:");
-                foreach(var data in AdditionalTempData.playerRoles) {
+                bool plagueExists = AdditionalTempData.playerRoles.Any(x => x.Roles.Contains(RoleInfo.plagueDoctor));
+                foreach (var data in AdditionalTempData.playerRoles) {
                     //var roles = string.Join(" ", data.Roles.Select(x => Helpers.cs(x.color, x.name)));
                     string roles = data.RoleNames;
                     //if (data.IsGuesser) roles += " (Guesser)";
                     var taskInfo = data.TasksTotal > 0 ? $" - <color=#FAD934FF>({data.TasksCompleted}/{data.TasksTotal})</color>" : "";
                     if (data.Kills != null) taskInfo += $" - <color=#FF0000FF>(击杀数: {data.Kills})</color>";
+                    string infectionInfo = "";
+                    if (plagueExists && !data.Roles.Contains(RoleInfo.plagueDoctor))
+                    {
+                        if (AdditionalTempData.plagueDoctorInfected.ContainsKey(data.PlayerId))
+                        {
+                            infectionInfo += " - " + Helpers.cs(Color.red, "已感染");
+                        }
+                        else
+                        {
+                            float progress = AdditionalTempData.plagueDoctorProgress.ContainsKey(data.PlayerId) ? AdditionalTempData.plagueDoctorProgress[data.PlayerId] : 0f;
+                            infectionInfo += " - " + PlagueDoctor.getProgressString(progress);
+                        }
+                    }
                     roleSummaryText.AppendLine($"{Helpers.cs(data.IsAlive ? Color.white : new Color(.7f,.7f,.7f), data.PlayerName)} - {roles}{taskInfo}"); 
                 }
                 TMPro.TMP_Text roleSummaryTextMesh = roleSummary.GetComponent<TMPro.TMP_Text>();
@@ -413,6 +475,7 @@ namespace TheOtherRolesEdited.Patches {
             if (CheckAndEndGameForJackalWin(__instance, statistics)) return false;
             if (CheckAndEndGameForImpostorWin(__instance, statistics)) return false;
             if (CheckAndEndGameForCrewmateWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForPlagueDoctorWin(__instance)) return false;
             return false;
         }
 
@@ -451,7 +514,15 @@ namespace TheOtherRolesEdited.Patches {
             }
             return false;
         }
-
+        private static bool CheckAndEndGameForPlagueDoctorWin(ShipStatus __instance)
+        {
+            if (PlagueDoctor.triggerPlagueDoctorWin)
+            {
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.PlagueDoctorWin, false);
+                return true;
+            }
+            return false;
+        }
         private static bool CheckAndEndGameForSabotageWin(ShipStatus __instance) {
             if (MapUtilities.Systems == null) return false;
             var systemType = MapUtilities.Systems.ContainsKey(SystemTypes.LifeSupp) ? MapUtilities.Systems[SystemTypes.LifeSupp] : null;

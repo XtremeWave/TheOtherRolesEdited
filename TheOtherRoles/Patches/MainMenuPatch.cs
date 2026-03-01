@@ -24,6 +24,8 @@ public class MainMenuPatch
     public static GameObject modScreen = null;
     internal static TMP_FontAsset fontAssetVersionShower;
     internal static TMP_FontAsset fontAsset;
+    public static GameObject Slider { get; private set; }
+
     private static void ForceSetButtonText(GameObject button, string text)
     {
         var translator = button.GetComponentInChildren<TextTranslatorTMP>();
@@ -41,14 +43,16 @@ public class MainMenuPatch
     private static void Prefix(MainMenuManager __instance)
     {
         SoundEffectsManager.Load();
+        
+        //clone
         var template = GameObject.Find("CreditsButton");
         var websiteButton = UnityEngine.Object.Instantiate(template, template.transform.parent);
         var githubButton = UnityEngine.Object.Instantiate(template, template.transform.parent);
-      
+
         //position
         websiteButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.586f, 0.36f);
         githubButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.36f);
-        
+
         //scale
         var scalerList = __instance.mainMenuUI.GetComponent<SlicedAspectScaler>();
         scalerList.objectsToScale.Add(websiteButton.GetComponent<AspectScaledAsset>());
@@ -97,11 +101,12 @@ public class MainMenuPatch
 
         passiveCreditsButton.OnClick.AddListener((System.Action)delegate
         {
+
             MainMenuManagerPatch.HideRightPanel();
             void ShowPopup(string text)
             {
                 var popup = GameObject.Instantiate(DiscordManager.Instance.discordPopup, Camera.main!.transform);
-
+              
                 var background = popup.transform.Find("Background").GetComponent<SpriteRenderer>();
                 var size = background.size;
                 size.x *= 2.5f;
@@ -137,6 +142,7 @@ public class MainMenuPatch
                         buttonText.SetText($"");
                         buttonText.font = fontAsset;
                     })));
+
                 }
             }
 

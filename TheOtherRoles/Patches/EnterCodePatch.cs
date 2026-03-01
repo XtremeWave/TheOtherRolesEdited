@@ -38,7 +38,7 @@ public class EnterCodePatch
             sprite.transform.localPosition = text_tmp.localPosition;
             sprite.transform.localRotation = text_tmp.localRotation;
             sprite.transform.localScale = text_tmp.localScale;
-            sprite.transform.localScale -= new Vector3(0.35f, 0.2f, 0f);
+            sprite.transform.localScale -= new Vector3(0.26f, 0.26f, 0f);
             // sprite.gameObject.AddComponent<SpriteRenderer>();
             sprite.name = "Sprite";
             sprite.GetComponent<SpriteRenderer>().sortingOrder = background.gameObject.GetComponent<SpriteRenderer>().sortingOrder + 1;
