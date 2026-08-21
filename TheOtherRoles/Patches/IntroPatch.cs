@@ -419,14 +419,14 @@ namespace TheOtherRolesEdited.Patches
             {
                 if (RoleDraft.isEnabled && CustomOptionHolder.neutralRolesCountMax.getSelection() > 0)
                 {
-                    __instance.TeamTitle.text = "<size=60%>船员" + Helpers.cs(Color.white, " / ") + Helpers.cs(neutralColor, "中立") + "</size>";
+                    __instance.TeamTitle.text = $"<size=60%>{ModTranslation.getString("Crewmate")}" + Helpers.cs(Color.white, " / ") + Helpers.cs(neutralColor, ModTranslation.getString("Neutral")) + "</size>";
                 }
                 return;
             }
             if (roleInfo.isNeutral)
             {
                 __instance.BackgroundBar.material.color = neutralColor;
-                __instance.TeamTitle.text = "中立";
+                __instance.TeamTitle.text = ModTranslation.getString("Neutral");
                 __instance.TeamTitle.color = neutralColor;
             }
         }
@@ -463,10 +463,10 @@ namespace TheOtherRolesEdited.Patches
 
 
 #if PC
-        [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__41), nameof(IntroCutscene._ShowRole_d__41.MoveNext))]
+        [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__41), "MoveNext")]
 #endif
 #if ANDROID
-        [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__40), nameof(IntroCutscene._ShowRole_d__40.MoveNext))]
+        [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__40), "MoveNext")]
 #endif
         class SetUpRoleTextPatch
         {
@@ -507,15 +507,15 @@ namespace TheOtherRolesEdited.Patches
                     else
                     {
                         PlayerControl otherLover = PlayerControl.LocalPlayer == Lovers.lover1 ? Lovers.lover2 : Lovers.lover1;
-                        __instance.RoleBlurbText.text += Helpers.cs(Lovers.color, $"\n♥ 你与{otherLover?.Data?.PlayerName ?? ""}坠入了爱河 ♥");
+                        __instance.RoleBlurbText.text += Helpers.cs(Lovers.color, $"\n♥ {string.Format(ModTranslation.getString("Lovers"), otherLover?.Data?.PlayerName ?? "")} ♥");
                     }
                 }
                 if (Deputy.knowsSheriff && Deputy.deputy != null && Sheriff.sheriff != null)
                 {
                     if (infos.Any(info => info.roleId == RoleId.Sheriff))
-                        __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color, $"\n 你的捕快是 {Deputy.deputy?.Data?.PlayerName ?? ""}");
+                        __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color, $"\n {string.Format(ModTranslation.getString("Deputys"), Deputy.deputy?.Data?.PlayerName ?? "")}");
                     else if (infos.Any(info => info.roleId == RoleId.Deputy))
-                        __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color, $"\n 你的警长是 {Sheriff.sheriff?.Data?.PlayerName ?? ""}");
+                        __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color, $"\n {string.Format(ModTranslation.getString("Sheriffs"), Sheriff.sheriff?.Data?.PlayerName ?? "")}");
                 }
             }
 #if PC
@@ -588,6 +588,5 @@ namespace TheOtherRolesEdited.Patches
         }
     }
 }
-
 
 

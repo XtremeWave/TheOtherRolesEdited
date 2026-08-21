@@ -20,12 +20,12 @@ internal class CreditsScreenPopUpPatch
 
         var qqIcon = followUs.FindChild("FacebookIcon");
         qqIcon.GetComponent<TwitterLink>().LinkUrl = "https://qm.qq.com/q/roXbwr7R2S";
-        qqIcon.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.qqlogo.png", 1000f);
+        qqIcon.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.qqlogo.png", 230f);
         qqIcon.gameObject.SetActive(true);
 
         var dcIcon = followUs.FindChild("Discord-Logo-Color");
         dcIcon.GetComponent<TwitterLink>().LinkUrl = "https://space.bilibili.com/1049954492?spm_id_from=333.1007.0.0";
-        dcIcon.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.bilibililogo.png", 270f);
+        dcIcon.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.bilibililogo.png", 65f);
         dcIcon.gameObject.SetActive(true);
     }
 }
@@ -95,7 +95,7 @@ public class CreditsControllerPatch
             };
 
         var credits = new List<CreditsController.CreditStruct>();
-        AddTitleToCredits($" <size=500%>★<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>★</size>");
+        AddTitleToCredits($" <size=300%>★<color=#cdfffd>{TheOtherRolesEditedPlugin.Team}</color>★</size>");
         AddPersonToCredits(TeamList);
         AddSpcaeToCredits();
 

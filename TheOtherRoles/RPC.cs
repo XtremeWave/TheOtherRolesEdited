@@ -70,7 +70,6 @@ namespace TheOtherRolesEdited
         Bomber,
         Yoyo,
         Miner,
-        Paranoia,
         Veteran,
         Blackmailer,
         Crewmate,
@@ -110,7 +109,6 @@ namespace TheOtherRolesEdited
         ShareGamemode,
         StopStart,
         RevivePlayer,
-        ParanoiaProtection,
         DragBody,
         DropBody,
 
@@ -191,6 +189,7 @@ namespace TheOtherRolesEdited
         BlackmailPlayer,
         UnblackmailPlayer,
         EventKick,
+        HostSay,
     }
 
     public static class RPCProcedure {
@@ -263,7 +262,7 @@ namespace TheOtherRolesEdited
             SoundManager.Instance.StopSound(GameStartManager.Instance.gameStartSound);
             if (AmongUsClient.Instance.AmHost && CustomOptionHolder.anyPlayerCanStopStart.getBool()) {
                 GameStartManager.Instance.ResetStartState();
-                PlayerControl.LocalPlayer.RpcSendChat($"{Helpers.playerById(playerId).Data.PlayerName} 取消了游戏的开始!");
+                PlayerControl.LocalPlayer.RpcSendChat($"{Helpers.playerById(playerId).Data.PlayerName} {ModTranslation.getString("StopTheGameStart")}!");
             }
         }
 
@@ -408,13 +407,6 @@ namespace TheOtherRolesEdited
                         break;
                     case RoleId.Lawyer:
                         Lawyer.lawyer = player;
-                        break;
-                    case RoleId.Paranoia:
-                        Paranoia.paranoia = player;
-                        break;
-                    case RoleId.Prosecutor:
-                        Lawyer.lawyer = player;
-                        Lawyer.isProsecutor = true;
                         break;
                     case RoleId.Pursuer:
                         Pursuer.pursuer = player;
@@ -631,6 +623,15 @@ namespace TheOtherRolesEdited
 
             if (isShieldedAndShow || isMedicAndShow || Helpers.shouldShowGhostInfo()) Helpers.showFlash(Palette.ImpostorRed, duration: 0.5f, "Failed Murder Attempt on Shielded Player");
         }
+        public static void hostSay(string message)
+        {
+            if (PlayerControl.LocalPlayer.AmOwner)
+            {
+                TheOtherRolesEditedPlugin.Logger.LogMessage($"Host Say: {message}");
+                HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
+
+            }
+        }
 
         public static void shifterShift(byte targetId) {
             PlayerControl oldShifter = Shifter.shifter;
@@ -819,7 +820,6 @@ namespace TheOtherRolesEdited
             if (player == SecurityGuard.securityGuard) SecurityGuard.clearAndReload();
             if (player == Medium.medium) Medium.clearAndReload();
             if (player == Trapper.trapper) Trapper.clearAndReload();
-            if (player == Paranoia.paranoia) Paranoia.clearAndReload();
             if (player == Veteran.veteran) Veteran.clearAndReload();
 
             // Impostor roles
@@ -1172,16 +1172,8 @@ namespace TheOtherRolesEdited
             Trickster.lightsOutTimer = Trickster.lightsOutDuration;
             // If the local player is impostor indicate lights out
             if(Helpers.hasImpVision(GameData.Instance.GetPlayerById(PlayerControl.LocalPlayer.PlayerId))) {
-                new CustomMessage("灯灭了!", Trickster.lightsOutDuration);
+                new CustomMessage(ModTranslation.getString("Lights"), Trickster.lightsOutDuration);
             }
-        }
-
-        public static void paranoiaProtection()
-        {
-            Paranoia.ProtectionActive = true;
-            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Paranoia.ProtectionDuration, new Action<float>((p) => {
-                if (p == 1f) Paranoia.ProtectionActive = false;
-            })));
         }
         public static void veteranAlert()
         {
@@ -1327,18 +1319,18 @@ namespace TheOtherRolesEdited
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(dyingTarget.KillSfx, false, 0.8f);
             if (MeetingHud.Instance) {
                 foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates) {
-                    if (pva.TargetPlayerId == dyingTargetId || pva.TargetPlayerId == partnerId || lawyerDiedAdditionally && Lawyer.lawyer.PlayerId == pva.TargetPlayerId) {
-                        pva.SetDead(pva.DidReport, true);
+                    if (pva.PlayerId == dyingTargetId || pva.PlayerId == partnerId || lawyerDiedAdditionally && Lawyer.lawyer.PlayerId == pva.PlayerId) {
+                        pva.SetDead(true);
                         pva.Overlay.gameObject.SetActive(true);
-                        MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, pva.TargetPlayerId);
+                        MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, pva.PlayerId);
                     }
 
                     //Give players back their vote if target is shot dead
-                    if (pva.VotedFor != dyingTargetId && pva.VotedFor != partnerId && (!lawyerDiedAdditionally || Lawyer.lawyer.PlayerId != pva.VotedFor)) continue;
+                    if (pva.VotedForId != dyingTargetId && pva.VotedForId != partnerId && (!lawyerDiedAdditionally || Lawyer.lawyer.PlayerId != pva.VotedForId)) continue;
                     pva.UnsetVote();
-                    var voteAreaPlayer = Helpers.playerById(pva.TargetPlayerId);
+                    var voteAreaPlayer = Helpers.playerById(pva.PlayerId);
                     if (!voteAreaPlayer.AmOwner) continue;
-                    MeetingHud.Instance.ClearVote();
+                    MeetingHud.Instance.ClearVote(pva.PlayerId, true);
 
                 }
                 if (AmongUsClient.Instance.AmHost) 
@@ -1355,9 +1347,9 @@ namespace TheOtherRolesEdited
 
             // remove shoot button from targets for all guessers and close their guesserUI
             if (GuesserGM.isGuesser(PlayerControl.LocalPlayer.PlayerId) && PlayerControl.LocalPlayer != guesser && !PlayerControl.LocalPlayer.Data.IsDead && GuesserGM.remainingShots(PlayerControl.LocalPlayer.PlayerId) > 0 && MeetingHud.Instance) {
-                MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+                MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.PlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
                 if (dyingLoverPartner != null)
-                    MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingLoverPartner.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+                    MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.PlayerId == dyingLoverPartner.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
 
                 if (MeetingHudPatch.guesserUI != null && MeetingHudPatch.guesserUIExitButton != null) {
                     if (MeetingHudPatch.guesserCurrentTarget == dyingTarget.PlayerId)
@@ -1959,6 +1951,9 @@ namespace TheOtherRolesEdited
                 case (byte)CustomRPC.SetTiebreak:
                     RPCProcedure.setTiebreak();
                     break;
+                case (byte)CustomRPC.HostSay:
+                    RPCProcedure.hostSay(reader.ReadString());
+                    break;
                 case (byte)CustomRPC.SetInvisible:
                     byte invisiblePlayer = reader.ReadByte();
                     byte invisibleFlag = reader.ReadByte();
@@ -1967,9 +1962,6 @@ namespace TheOtherRolesEdited
                 case (byte)CustomRPC.ThiefStealsRole:
                     byte thiefTargetId = reader.ReadByte();
                     RPCProcedure.thiefStealsRole(thiefTargetId);
-                    break;
-                case (byte)CustomRPC.ParanoiaProtection:
-                    RPCProcedure.paranoiaProtection();
                     break;
                 case (byte)CustomRPC.VeteranAlert:
                     RPCProcedure.veteranAlert();

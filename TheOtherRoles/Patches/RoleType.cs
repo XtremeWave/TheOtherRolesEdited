@@ -5,6 +5,6 @@
         Crewmate,
         Impostor,
         Neutral,
-        Modifier,
+        Modifier
     }
 }

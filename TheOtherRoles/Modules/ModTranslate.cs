@@ -81,6 +81,21 @@ public class ModTranslation
     {
         throw new NotImplementedException();
     }
+
+    public static int GetCurrentLanguage()
+    {
+        return (int)DataManager.Settings.Language.CurrentLanguage;
+    }
+
+    public static bool IsChinese()
+    {
+        return (int)DataManager.Settings.Language.CurrentLanguage == 13;
+    }
+
+    public static bool IsEnglish()
+    {
+        return (int)DataManager.Settings.Language.CurrentLanguage == 0;
+    }
 }
 
 internal static class LanguageExtension

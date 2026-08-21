@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Version>2.0.0</Version>
+		<Version>2.1.0</Version>
 		<Description>TheOtherRolesEdited</Description>
 		<DebugType>embedded</DebugType>
 		<Authors>XtremeWave</Authors>
@@ -12,41 +12,45 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<Platforms>AnyCPU</Platforms>
 		<Configurations>PC;Android</Configurations>
+ </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <LangVersion>preview</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <LangVersion>preview</LangVersion>
+    </PropertyGroup>
+	<PropertyGroup>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Resources\**" Exclude="Resources\SoundEffects\toraudio_Android;&#xD;&#xA;                            Resources\IntroAnimation\intro_Android;&#xD;&#xA;                            Resources\torxresources_Android" Condition="'$(Configuration)' == 'PC'" />
+		<EmbeddedResource Include="Resources\**" Exclude="Resources\AssetsBundle\assetsbundle-Android" Condition="'$(Configuration)' == 'PC'" />
 
-		<EmbeddedResource Include="Resources\**" Exclude="Resources\SoundEffects\toraudio_Win;&#xD;&#xA;                            Resources\IntroAnimation\intro_Win;&#xD;&#xA;                            Resources\torxresources_Win" Condition="'$(Configuration)' == 'Android'" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2025.11.18" Condition="'$(Configuration)' == 'PC'" />
-		<PackageReference Include="AmongUs.GameLibs.Android" Version="2025.9.9" Condition="'$(Configuration)' == 'Android'" />
-		<PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" />
-		<PackageReference Include="Reactor" Version="2.5.0-ci.371" />
-	    <PackageReference Include="YamlDotNet" Version="16.3.0" />
+		<EmbeddedResource Include="Resources\**" Exclude="Resources\AssetsBundle\assetsbundle-Windows" Condition="'$(Configuration)' == 'Android'" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Folder Include="Players\" />
 	</ItemGroup>
 
-	<Target Name="Date" BeforeTargets="BeforeBuild">
-		<!--Will make the compile time available s.t. we can let betas expire-->
-		<WriteLinesToFile File="$(IntermediateOutputPath)gen.cs" Lines="static partial class Builtin { public static long CompileTime = $([System.DateTime]::UtcNow.Ticks) %3B }" Overwrite="true" />
-		<ItemGroup>
-			<Compile Include="$(IntermediateOutputPath)gen.cs" />
-		</ItemGroup>
-	</Target>
-
-	<Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="Exists('$(AmongUsLatest)/BepInEx/plugins/')">
-		<Message Text="Second occurrence" />
-		<Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheOtherRolesEdited.dll" DestinationFolder="$(AmongUsLatest)/BepInEx/plugins/" />
-	</Target>
-
+	<ItemGroup>
+		<PackageReference Include="AmongUs.GameLibs.Android" Version="2026.3.17" Condition="'$(Configuration)' == 'Android'" />
+		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" Condition="'$(Configuration)' == 'PC'" />
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" />
+		<PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" />
+        <PackageReference Include="Reactor" Version="2.5.1-ci.384" />
+    </ItemGroup>
+   
+    <Target Name="Date" BeforeTargets="BeforeBuild">  <!--Will make the compile time available s.t. we can let betas expire-->
+    <WriteLinesToFile File="$(IntermediateOutputPath)gen.cs" Lines="static partial class Builtin { public static long CompileTime = $([System.DateTime]::UtcNow.Ticks) %3B }" Overwrite="true" />
+    <ItemGroup>
+        <Compile Include="$(IntermediateOutputPath)gen.cs" />
+    </ItemGroup>
+    </Target>
+		
+    <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="Exists('$(AmongUsLatest)/BepInEx/plugins/')">
+        <Message Text="Second occurrence" />
+        <Copy SourceFiles="$(ProjectDir)\bin\PC\net6.0\TheOtherRolesEdited.dll" DestinationFolder="E:\STEAM\steamapps\common\Among Us\BepInEx\plugins" />
+    </Target>
 </Project>

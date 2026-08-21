@@ -5,19 +5,7 @@ using Il2CppSystem;
 using System.Linq;
 using static UnityEngine.UI.Button;
 using TMPro;
-using UnityEngine.UI;
-using UnityEngine.Networking;
-using System.Collections;
-using System;
-using BepInEx.Unity.IL2CPP.Utils;
-using UnityEngine.TextCore.Text;
-using System.Text.Json;
-using Version = System.Version;
 using System.Collections.Generic;
-using Reactor.Utilities.Extensions;
-using System.Text.RegularExpressions;
-using System.Text;
-using TheOtherRolesEdited.Utilities;
 
 namespace TheOtherRolesEdited.Modules;
 
@@ -28,16 +16,19 @@ internal static class MainMenuSetUpPatch
     public static GameObject modScreen = null;
     internal static GameObject credentialObject;
     internal static GameObject BackButton;
+    public static GameObject aboutScreen = null;
+    internal static PassiveButton modPassiveButton; 
+
     internal static TMP_FontAsset fontAssetVersionShower;
 
     public static void Postfix(MainMenuManager __instance)
     {
         loadSprite();
-      
+
         var scalerList = __instance.mainMenuUI.GetComponent<SlicedAspectScaler>();
         var modButton = Object.Instantiate(__instance.settingsButton, __instance.settingsButton.transform.parent);
         modButton.transform.localPosition = new Vector3(-0.3894f, -0.875f, 0f);
-        modButton.transform.localScale += new Vector3(0.02f, 0f, 0f);
+        modButton.transform.localScale += new Vector3(0.02f, -0.02f, 0f);
         modButton.gameObject.name = "TOREButton";
         modButton.gameObject.ForEachChild((Il2CppSystem.Action<GameObject>)((obj) =>
         {
@@ -50,12 +41,8 @@ internal static class MainMenuSetUpPatch
         }));
         scalerList.objectsToScale.Add(modButton.GetComponent<AspectScaledAsset>());
 
-        var modPassiveButton = modButton.GetComponent<PassiveButton>();
+        modPassiveButton = modButton.GetComponent<PassiveButton>();
         modPassiveButton.buttonText.color = Color.white;
-        modPassiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.255f, 0.482f, 1f);
-        modPassiveButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.255f, 0.482f, 2f, 0.8f);
-        Color originalColormodPassiveButton = modPassiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
-        modPassiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColormodPassiveButton * 0.6f;
         modPassiveButton.activeTextColor = Color.white;
         modPassiveButton.inactiveTextColor = Color.white;
         modPassiveButton.OnClick = new ButtonClickedEvent();
@@ -109,38 +96,7 @@ internal static class MainMenuSetUpPatch
         __instance.mainButtons.Add(modButton);
 
         Object.Destroy(modScreen.transform.GetChild(4).gameObject);
-#if ANDROID
-        foreach (var button in __instance.mainButtons.GetFastEnumerator())
-        {
-            if (button.activeSprites)
-            {
-                var name = button.name;
-                bool shouldRotate = name != "TOREButton" && name != "Inventory Button";
-                bool shouldMove = name != "TOREButton";
-                var rendererTransform = button.activeSprites.transform.FindChild("Icon");
-                if (rendererTransform)
-                {
 
-                    if (shouldRotate) rendererTransform.localEulerAngles -= new Vector3(0f, 0f, 10f);
-                    rendererTransform.localScale += new Vector3(0.12f, 0.12f, 0f);
-
-                    if (shouldMove)
-                    {
-                        var aspectPos = rendererTransform.GetComponent<AspectPosition>();
-                        if (aspectPos)
-                        {
-                            aspectPos.DistanceFromEdge += new Vector3(-0.02f, 0.1f, 0f);
-                            aspectPos.AdjustPosition();
-                        }
-                        else
-                        {
-                            rendererTransform.localPosition += new Vector3(-0.02f, 0.1f, 0f);
-                        }
-                    }
-                }
-            }
-        }
-#endif
         foreach (var asset in modScreen.GetComponentsInChildren<AspectScaledAsset>()) scalerList.objectsToScale.Add(asset);
 
         var temp = modScreen.transform.GetChild(3);
@@ -199,7 +155,7 @@ internal static class MainMenuSetUpPatch
             if (BackButton == null)
             {
                 var backButton = __instance.onlineButtons.transform.GetChild(1).GetChild(1);
-                BackButton = Object.Instantiate(backButton, backButton.transform.parent).gameObject;
+                BackButton = Object.Instantiate(backButton).gameObject;
                 BackButton.transform.SetParent(rightPanel.transform, false);
                 BackButton.GetComponent<AspectPosition>().anchorPoint += new Vector2(-0.1f, 0.34f);
                 BackButton.transform.localScale = new Vector3(1f, 1f, 1f);
@@ -213,171 +169,12 @@ internal static class MainMenuSetUpPatch
             }
             BackButton.gameObject.SetActive(true);
         });
-        SetUpButton(ModTranslation.getString("modUpdate"), () =>
-        {
-            Transform closeBtn = null;
-
-            void CreateCheckPopup(string displayText = "")
-            {
-                var popup = GameObject.Instantiate(DiscordManager.Instance.discordPopup, Camera.main!.transform);
-
-                var background = popup.transform.Find("Background");
-                if (background != null)
-                    UnityEngine.Object.Destroy(background.gameObject);
-
-                var textArea = popup.TextAreaTMP;
-                if (textArea != null)
-                {
-                    textArea.alignment = TextAlignmentOptions.Left;
-                    textArea.fontSizeMin = 1.2f;
-                    textArea.font = fontAssetVersionShower;
-                    textArea.richText = true;
-                    textArea.SetText(displayText);
-                }
-
-                closeBtn = popup.transform.Find("ExitGame");
-                if (closeBtn != null)
-                {
-                    var btnSpriteRenderer = closeBtn.GetComponent<SpriteRenderer>();
-                    if (btnSpriteRenderer != null)
-                    {
-                        Sprite customBgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Button.png", 100f);
-                        if (customBgSprite != null)
-                        {
-                            btnSpriteRenderer.sprite = customBgSprite;
-                        }
-                    }
-                    closeBtn.localScale = new Vector3(0.7f, 0.7f, 1f);
-                    closeBtn.localPosition = new Vector3(0, -2.6f, closeBtn.localPosition.z);
-                    var buttonText = closeBtn.transform.GetComponentInChildren<TMPro.TMP_Text>();
-                    if (buttonText != null && __instance != null)
-                    {
-                        __instance.StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) =>
-                        {
-                            buttonText.SetText($"{ModTranslation.getString("Close")}");
-                            buttonText.font = fontAssetVersionShower;
-                        })));
-                    }
-                }
-
-                popup.Show(displayText);
-            }
-
-            string ExtractChineseSection(string releaseBody)
-            {
-                const string startMarker = "★【更新内容】★";
-                const string endMarker = "★【适配】★";
-
-                int startIndex = releaseBody.IndexOf(startMarker, System.StringComparison.Ordinal);
-                if (startIndex == -1)
-                    return "未找到中文更新说明";
-
-                startIndex += startMarker.Length;
-
-                int endIndex = releaseBody.IndexOf(endMarker, startIndex, System.StringComparison.Ordinal);
-                if (endIndex == -1)
-                    return releaseBody.Substring(startIndex).Trim();
-
-                return releaseBody.Substring(startIndex, endIndex - startIndex).Trim();
-            }
-
-            string ConvertMarkdown(string input)
-            {
-                if (string.IsNullOrEmpty(input))
-                    return input;
-
-                string result = input;
-                result = Regex.Replace(result, @"\*\*(.*?)\*\*", "<b>$1</b>", RegexOptions.Singleline);
-                result = Regex.Replace(result, @"_(.*?)_", "<i>$1</i>", RegexOptions.Singleline);
-                result = Regex.Replace(result, @"-(.*?)", "$1", RegexOptions.Singleline);
-
-                return result;
-            }
-
-            IEnumerator SimpleCheckUpdateCoroutine()
-            {
-                string apiUrl = "https://api.github.com/repos/XtremeWave/TheOtherRolesEdited/releases";
-                UnityWebRequest webRequest = UnityWebRequest.Get(apiUrl);
-                webRequest.SetRequestHeader("User-Agent", "ModUpdateCheck");
-                yield return webRequest.SendWebRequest();
-
-                bool hasNewUpdate = false;
-                string displayText = "";
-
-                try
-                {
-                    if (webRequest.result != UnityWebRequest.Result.Success)
-                    {
-                        displayText = $"无法检测更新: {webRequest.error}";
-                    }
-                    else if (string.IsNullOrEmpty(webRequest.downloadHandler.text))
-                    {
-                        displayText = "更新信息为空";
-                    }
-                    else
-                    {
-                        var releases = JsonSerializer.Deserialize<List<GithubRelease>>(webRequest.downloadHandler.text);
-
-                        if (releases == null || releases.Count == 0)
-                        {
-                            displayText = "未获取到版本信息";
-                        }
-                        else
-                        {
-                            var latest = releases[0];
-                            Version latestVersion;
-
-                            if (!Version.TryParse(latest.tag_name?.TrimStart('v', 'V'), out latestVersion))
-                            {
-                                displayText = $"最新版本号解析失败: {latest.tag_name}";
-                            }
-                            else
-                            {
-                                Version currentVersion = TheOtherRolesEditedPlugin.Version is Version v
-                                    ? v
-                                    : new Version(TheOtherRolesEditedPlugin.Version.ToString());
-
-                                hasNewUpdate = latestVersion > currentVersion;
-
-                                string chineseContent = ExtractChineseSection(latest.body);
-                                string formattedContent = ConvertMarkdown(chineseContent);
-
-                                if (hasNewUpdate)
-                                {
-                                    displayText = $"<size=150%>{string.Format(ModTranslation.getString("PleaseUpdate"), latest.tag_name)}</size>\n\n{formattedContent}";
-                                }
-                                else
-                                {
-                                    displayText = $"<size=150%> 没有可更新版本 (当前版本: {currentVersion}, 最新版本: {latestVersion})</size>";
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    displayText = $"加载更新信息失败: {ex.Message}";
-                    Debug.LogError($"[UpdateChecker] 版本检查异常: {ex}");
-                }
-
-                CreateCheckPopup(displayText);
-                webRequest.Dispose();
-            }
-
-            __instance.StartCoroutine(SimpleCheckUpdateCoroutine());
-        });
     }
 
-    private class GithubRelease
-    {
-        public string tag_name { get; set; }
-        public string body { get; set; }
-    }
-
-    public static void loadSprite()
+public static void loadSprite()
     {
         if (sprite == null)
-            sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Icon.png", 100f);
+            sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.Icon.png", 100f);
     }
 
 }

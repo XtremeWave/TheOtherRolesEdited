@@ -58,7 +58,7 @@ public static class MainMenuManagerPatch
                 ? TitleLogoPatch.RightPanel.transform.localPosition.x > pos3.x + 0.03f
                 : TitleLogoPatch.RightPanel.transform.localPosition.x < TitleLogoPatch.RightPanelOp.x + 29f
            ) TitleLogoPatch.RightPanel.transform.localPosition = lerp1;
-
+       
         if (ShowedBak) return;
         var bak = GameObject.Find("BackgroundTexture");
         if (bak == null || !bak.active) return;
@@ -66,12 +66,5 @@ public static class MainMenuManagerPatch
         Vector3 lerp2 = Vector3.Lerp(pos2, new Vector3(pos2.x, 7.1f, pos2.z), Time.deltaTime * 1.4f);
         bak.transform.position = lerp2;
         if (pos2.y > 7f) ShowedBak = true;
-
     } 
-    //∑¿÷π ˜¿¡§Œsbº‡ª§»ÀºÏ≤‚
-    [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.LateUpdate))]
-    public static void Prefix(MainMenuManager __instance)
-    {
-        GameObject.Find("AccountManager/UpdateGuardianEmail")?.SetActive(false);
-    }
 }

@@ -20,7 +20,7 @@ namespace TheOtherRolesEdited.Modules
         internal static TMP_FontAsset fontAsset;
         internal static TMP_FontAsset fontAssetVersionShower;
         private static bool hasShownPopup = false;
-        private static readonly string AnnouncementUrl = Helpers.isChinese() ? "https://tore.amongusclub.cn/Announcement.json": "https://github.com/XtremeWave/MOTD/blob/main/Announcement.txt";
+        private static readonly string AnnouncementUrl = Helpers.isChinese() ? "https://tore.amongusclub.cn/Announcement.json" : "https://download.hayashiume.top/https://raw.githubusercontent.com/XtremeWave/MOTD/main/Announcement.txt";
         private static readonly string githubApiUrl = "https://api.github.com/repos/XtremeWave/TheOtherRolesEdited/releases";
 
         private const float MinYOffset = 2.5f;    // 最低减少值
@@ -66,7 +66,7 @@ namespace TheOtherRolesEdited.Modules
                 var btnSpriteRenderer = exitBtn.GetComponent<SpriteRenderer>();
                 if (btnSpriteRenderer != null)
                 {
-                    Sprite customBgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Button.png", 100f);
+                    Sprite customBgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.Button.png", 100f);
                     if (customBgSprite != null)
                     {
                         btnSpriteRenderer.sprite = customBgSprite;
@@ -190,11 +190,7 @@ namespace TheOtherRolesEdited.Modules
 
             if (latestVersion > currentVersion)
             {
-                string content = @$"<size=120%>请更新至 {latest.tag_name} 最新版本
-如果您想知道更新内容可以在<b>TORE按钮</b>中查看<b>更新日志</b>
-如果您想快速更新模组建议您使用 <b>[一键更新]</b> 按钮（境内）
-如果您无法更新的话建议使用 <b>[手动更新]</b> 按钮（境内/境外）
-如果您在境外无法打开模组官网建议使用 <b>[Github]</b> 按钮手动更新（仅境外）</size>";
+                string content = string.Format(ModTranslation.getString("Update"), latest.tag_name);
                 showPopup(content, true, __instance);
             }
             else

@@ -208,7 +208,7 @@ namespace TheOtherRolesEdited.Patches {
                 }
 
                 PlagueDoctor.statusText.gameObject.SetActive(true);
-                string text = $"[感染进度]\n";
+                string text = $"[{ModTranslation.getString("Infection")}]\n";
 
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls)
                 {
@@ -217,7 +217,7 @@ namespace TheOtherRolesEdited.Patches {
                     text += $"{p.Data.PlayerName}: ";
                     if (PlagueDoctor.infected.ContainsKey(p.PlayerId))
                     {
-                        text += Helpers.cs(Color.red, "已感染");
+                        text += Helpers.cs(Color.red, ModTranslation.getString("Infected"));
                     }
                     else
                     {
@@ -643,7 +643,7 @@ namespace TheOtherRolesEdited.Patches {
             foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                 
                 // Colorblind Text in Meeting
-                PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
+                PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.PlayerId == p.PlayerId);
                 if (playerVoteArea != null && playerVoteArea.ColorBlindName.gameObject.active) {
                     playerVoteArea.ColorBlindName.transform.localPosition = colorBlindTextMeetingInitialLocalPos + new Vector3(0f, 0.4f, 0f);
                     playerVoteArea.ColorBlindName.transform.localScale = colorBlindTextMeetingInitialLocalScale * 0.8f;
@@ -695,7 +695,7 @@ namespace TheOtherRolesEdited.Patches {
                         if (p == Swapper.swapper) playerInfoText = $"{roleNames}" + Helpers.cs(Swapper.color, $" ({Swapper.charges})");
                         if (HudManager.Instance.TaskPanel != null) {
                             TMPro.TextMeshPro tabText = HudManager.Instance.TaskPanel.tab.transform.FindChild("TabText_TMP").GetComponent<TMPro.TextMeshPro>();
-                            tabText.SetText($"任务 {taskInfo}");
+                            tabText.SetText($"{ModTranslation.getString("Task")} {taskInfo}");
                         }
                         meetingInfoText = $"{roleNames} {taskInfo}".Trim();
                     }
@@ -714,7 +714,7 @@ namespace TheOtherRolesEdited.Patches {
 
                     playerInfo.text = playerInfoText;
                     playerInfo.gameObject.SetActive(p.Visible);
-                    if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : meetingInfoText;
+                    if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.MeetingStates.Results ? "" : meetingInfoText;
                 }                
             }
         }
@@ -1538,17 +1538,17 @@ namespace TheOtherRolesEdited.Patches {
     }
 
 
-    [HarmonyPatch(typeof(KillAnimation._CoPerformKill_d__2), nameof(KillAnimation._CoPerformKill_d__2.MoveNext))] class KillAnimationCoPerformKillPatch 
-    { 
-        public static bool hideNextAnimation = false; 
-        public static void Prefix(KillAnimation._CoPerformKill_d__2 __instance) 
+    [HarmonyPatch(typeof(KillAnimation._CoPerformKill_d__2), "MoveNext")]
+    class KillAnimationCoPerformKillPatch
+    {
+        public static bool hideNextAnimation = false;
+        public static void Prefix(KillAnimation._CoPerformKill_d__2 __instance)
         {
-            if (hideNextAnimation) 
-            __instance.source = __instance.target; 
-            hideNextAnimation = false; 
-        } 
+            if (hideNextAnimation)
+                __instance.source = __instance.target;
+            hideNextAnimation = false;
+        }
     }
-
     [HarmonyPatch(typeof(KillAnimation), nameof(KillAnimation.SetMovement))]
     class KillAnimationSetMovementPatch {
         private static int? colorId = null;

@@ -16,6 +16,7 @@ using Assets.InnerNet;
 using Twitch;
 using static StarGen;
 using static Rewired.Glyphs.UnityUI.UnityUITextMeshProGlyphHelper;
+using static UnityEngine.UI.Button;
 
 namespace TheOtherRolesEdited.Modules
 {
@@ -24,6 +25,8 @@ namespace TheOtherRolesEdited.Modules
         public const string RepositoryOwner = "XtremeWave";
         public const string RepositoryName = "TheOtherRolesEdited";
         public static ModUpdater Instance { get; private set; }
+        internal static PassiveButton passiveButton;
+        internal static PassiveButton passivebutton2;
 
         public ModUpdater(IntPtr ptr) : base(ptr) { }
 
@@ -116,12 +119,11 @@ namespace TheOtherRolesEdited.Modules
             var popup = Instantiate(TwitchManager.Instance.TwitchPopup);
             popup.TextAreaTMP.fontSize *= 0.7f;
             popup.TextAreaTMP.enableAutoSizing = false;
-
             popup.Show();
-
+            popup.TextAreaTMP.text = $"更新TORE中\n请等待...";
+     
             var button = popup.transform.GetChild(2).gameObject;
             button.SetActive(false);
-            popup.TextAreaTMP.text = $"更新TORE中\n请等待...";
 
             var asset = release.Assets.Find(FilterPluginAsset);
             var www = new UnityWebRequest();
@@ -207,90 +209,87 @@ namespace TheOtherRolesEdited.Modules
             //手动更新
             var button2 = Instantiate(template, null);
             var buttonTransform2 = button2.transform;
-            button2.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.925f, 0.1f);
-            PassiveButton passivebutton2 = button2.GetComponent<PassiveButton>();
+            button2.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.425f, 0.1f);
+            passivebutton2 = button2.GetComponent<PassiveButton>();
             passivebutton2.OnClick = new Button.ButtonClickedEvent();
             passivebutton2.OnClick.AddListener((Action)(() =>
             {
-                Application.OpenURL("https://tore.amongusclub.cn/#download");
+                Constants.OpenURL("https://tore.amongusclub.cn/#download");
             }));
+            var text1 = button2.transform.GetComponentInChildren<TMPro.TMP_Text>();
+            StartCoroutine(Effects.Lerp(0.1f, (System.Action<float>)(p => text1.SetText(ModTranslation.getString("UpdateWay2")))));
             passivebutton2.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
             passivebutton2.activeSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
             Color originalColorpassivebutton2 = passivebutton2.inactiveSprites.GetComponent<SpriteRenderer>().color;
             passivebutton2.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassivebutton2 * 0.6f;
-            var text2 = button2.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            StartCoroutine(Effects.Lerp(0.5f, new System.Action<float>((p) => {
-                text2.SetText($"{ModTranslation.getString("UpdateWay2")}");
-            })));
 
 #if PC
             //一键更新
             var button = Instantiate(template, null);
             var buttonTransform = button.transform;
-            button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.925f, 0.03f);
-            PassiveButton passiveButton = button.GetComponent<PassiveButton>();
+            button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.425f, 0.03f);
+            passiveButton = button.GetComponent<PassiveButton>();
             passiveButton.OnClick = new Button.ButtonClickedEvent();
             passiveButton.OnClick.AddListener((Action)(() =>
             {
                 StartDownloadRelease(latestRelease);
                 button.SetActive(false);
             }));
-
+            var text = button.transform.GetComponentInChildren<TMPro.TMP_Text>();
+            StartCoroutine(Effects.Lerp(0.1f, (System.Action<float>)(p => text.SetText(ModTranslation.getString("UpdateWay1")))));
             passiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
             passiveButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
-            Color originalColorfreePlayButton = passiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
-            passiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorfreePlayButton * 0.6f;
-            var text = button.transform.GetComponentInChildren<TMPro.TMP_Text>();
-            string t = $"{ModTranslation.getString("UpdateWay1")}";
-            StartCoroutine(Effects.Lerp(0.1f, (System.Action<float>)(p => text.SetText(t))));
+            Color originalColorpassiveButton = passiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
+            passiveButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveButton * 0.6f;
+
 #endif
-          /*  var announcement = $"<size=150%>请更新至TheOtherRolesEdited{latestRelease.Tag}的最新版本</size>\n{latestRelease.Description}";
-            var mgr = FindObjectOfType<MainMenuManager>(true);
-            if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "更新TORE", date: latestRelease.PublishedAt));
-            showPopUp = false;*/
+            /*  var announcement = $"<size=150%>请更新至TheOtherRolesEdited{latestRelease.Tag}的最新版本</size>\n{latestRelease.Description}";
+              var mgr = FindObjectOfType<MainMenuManager>(true);
+              if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "更新TORE", date: latestRelease.PublishedAt));
+              showPopUp = false;*/
 
         }
 
-      /*  [HideFromIl2Cpp]
-        public IEnumerator CoShowAnnouncement(string announcement, bool show = true, string shortTitle = "更新TORE", string title = "", string date = "")
-        {
-            var mgr = FindObjectOfType<MainMenuManager>(true);
-            var popUpTemplate = UnityEngine.Object.FindObjectOfType<AnnouncementPopUp>(true);
-            if (popUpTemplate == null)
-            {
-                TheOtherRolesEditedPlugin.Logger.LogError("couldnt show credits, popUp is null");
-                yield return null;
-            }
-            var popUp = UnityEngine.Object.Instantiate(popUpTemplate);
+        /*  [HideFromIl2Cpp]
+          public IEnumerator CoShowAnnouncement(string announcement, bool show = true, string shortTitle = "更新TORE", string title = "", string date = "")
+          {
+              var mgr = FindObjectOfType<MainMenuManager>(true);
+              var popUpTemplate = UnityEngine.Object.FindObjectOfType<AnnouncementPopUp>(true);
+              if (popUpTemplate == null)
+              {
+                  TheOtherRolesEditedPlugin.Logger.LogError("couldnt show credits, popUp is null");
+                  yield return null;
+              }
+              var popUp = UnityEngine.Object.Instantiate(popUpTemplate);
 
-            popUp.gameObject.SetActive(true);
+              popUp.gameObject.SetActive(true);
 
-            Assets.InnerNet.Announcement creditsAnnouncement = new()
-            {
-                Id = "torAnnouncement",
-                Language = 0,
-                Number = 6969,
-                Title = title == "" ? "TheOtherRolesEdited公告" : title,
-                ShortTitle = shortTitle,
-                SubTitle = "",
-                PinState = false,
-                Date = date == "" ? DateTime.Now.Date.ToString() : date,
-                Text = announcement,
-            };
-            mgr.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
-                if (p == 1)
-                {
-                    var backup = DataManager.Player.Announcements.allAnnouncements;
-                    DataManager.Player.Announcements.allAnnouncements = new();
-                    popUp.Init(false);
-                    DataManager.Player.Announcements.SetAnnouncements(new Announcement[] { creditsAnnouncement });
-                    popUp.CreateAnnouncementList();
-                    popUp.UpdateAnnouncementText(creditsAnnouncement.Number);
-                    popUp.visibleAnnouncements[0].PassiveButton.OnClick.RemoveAllListeners();
-                    DataManager.Player.Announcements.allAnnouncements = backup;
-                }
-            })));
-        }*/
+              Assets.InnerNet.Announcement creditsAnnouncement = new()
+              {
+                  Id = "torAnnouncement",
+                  Language = 0,
+                  Number = 6969,
+                  Title = title == "" ? "TheOtherRolesEdited公告" : title,
+                  ShortTitle = shortTitle,
+                  SubTitle = "",
+                  PinState = false,
+                  Date = date == "" ? DateTime.Now.Date.ToString() : date,
+                  Text = announcement,
+              };
+              mgr.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
+                  if (p == 1)
+                  {
+                      var backup = DataManager.Player.Announcements.allAnnouncements;
+                      DataManager.Player.Announcements.allAnnouncements = new();
+                      popUp.Init(false);
+                      DataManager.Player.Announcements.SetAnnouncements(new Announcement[] { creditsAnnouncement });
+                      popUp.CreateAnnouncementList();
+                      popUp.UpdateAnnouncementText(creditsAnnouncement.Number);
+                      popUp.visibleAnnouncements[0].PassiveButton.OnClick.RemoveAllListeners();
+                      DataManager.Player.Announcements.allAnnouncements = backup;
+                  }
+              })));
+          }*/
     }
 
     public class GithubRelease

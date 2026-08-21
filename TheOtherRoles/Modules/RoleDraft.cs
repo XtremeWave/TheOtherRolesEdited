@@ -47,7 +47,7 @@ namespace TheOtherRolesEdited.Modules
 
             bool playedAlert = false;
             __instance.TeamTitle.transform.localPosition = __instance.TeamTitle.transform.localPosition + new Vector3(1f, 0f);
-            __instance.TeamTitle.text = $"{Helpers.cs(Color.red, "<size=300%>欢迎来到轮抽选角!</size>")}";
+            __instance.TeamTitle.text = $"{Helpers.cs(Color.red, $"<size=300%>{ModTranslation.getString("welcomeText")}</size>")}";
             __instance.BackgroundBar.enabled = false;
             __instance.TeamTitle.transform.localScale = new Vector3(0.25f, 0.25f, 1f);
             __instance.TeamTitle.autoSizeTextContainer = true;
@@ -153,7 +153,7 @@ namespace TheOtherRolesEdited.Modules
 
                         // enable pick, wait for pick
                         Color youColor = timer - (int)timer > 0.5 ? Color.red : Color.yellow;
-                        playerText = $"玩家 {currentPlayerNumber}(你！)";
+                        playerText = string.Format(ModTranslation.getString("playerYouText"), currentPlayerNumber);
                         // Available Roles:
                         List<RoleInfo> availableRoles = new();
                         foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos)
@@ -399,7 +399,7 @@ namespace TheOtherRolesEdited.Modules
 
                             var randomTextHolder = new GameObject("randomTextHolder");
                             var randomText = randomTextHolder.AddComponent<TextMeshPro>();
-                            randomText.text = "<b>随机</b>";
+                            randomText.text = ModTranslation.getString("randomButtonText"); 
                             randomText.horizontalAlignment = HorizontalAlignmentOptions.Center;
                             randomText.fontSize = 4;
                             randomTextHolder.layer = randomButton.gameObject.layer;
@@ -434,17 +434,17 @@ namespace TheOtherRolesEdited.Modules
                     }
                     else
                     {
-                        playerText = $"玩家 {currentPlayerNumber}";
+                        playerText = string.Format(ModTranslation.getString("playerText"), currentPlayerNumber);
                         HudManager.Instance.FullScreen.color = Color.black;
                     }
-                    __instance.TeamTitle.text = $"{Helpers.cs(Color.red, "<size=300%>欢迎来到轮抽选角!</size>")}\n\n\n<color=#FFFFFF> <size=200%>当前正在选择的玩家:</size>\n\n<size=250%>{playerText}</size>";
+                    __instance.TeamTitle.text = $"{Helpers.cs(Color.red, $"<size=300%>{ModTranslation.getString("welcomeText")}!</size>")}\n\n\n<color=#FFFFFF> <size=200%>{ModTranslation.getString("currentlyPicking")}</size>\n\n<size=250%>{playerText}</size>";
                     int waitMore = pickOrder.IndexOf(PlayerControl.LocalPlayer.PlayerId);
                     string waitMoreText = "";
                     if (waitMore > 0)
                     {
-                        waitMoreText = $" (再等 {waitMore} 个回合到你的回合)";
+                        waitMoreText = string.Format(ModTranslation.getString("roundUntilText"), waitMore);
                     }
-                    __instance.TeamTitle.text += $"\n\n{waitMoreText}\n正在选择中... {(int)(maxTimer + 1 - timer)}\n {(SoundManager.MusicVolume > -80 ? "♫ 音乐: Ultimate Superhero 3 - Kenët & Rez ♫" : "")}</color>";
+                    __instance.TeamTitle.text += $"\n\n{waitMoreText}\n{ModTranslation.getString("selectionInText")}{(int)(maxTimer + 1 - timer)}\n {(SoundManager.MusicVolume > -80 ? $"♫ {ModTranslation.getString("Music")}: Ultimate Superhero 3 - Kenët & Rez ♫" : "")}</color>";
                     yield return null;
                 }
             }
@@ -480,8 +480,8 @@ namespace TheOtherRolesEdited.Modules
         private static void UpdateFeedText()
         {
             if (feedText == null) return;
-
-            string newText = $"<size=200%>玩家的选择:</size>\n\n";
+           
+            string newText = $"<size=180%>{ModTranslation.getString("playerPicks")}</size>\n\n";
             int playerNumber = 1;
 
             var pickedPlayers = playerPicks
@@ -497,7 +497,7 @@ namespace TheOtherRolesEdited.Modules
                 string statusText;
                 if (disconnected)
                 {
-                    statusText = Helpers.cs(Color.gray, "断连");
+                    statusText = Helpers.cs(Color.gray, ModTranslation.getString("Disconnect"));
                 }
                 else
                 {
@@ -508,12 +508,11 @@ namespace TheOtherRolesEdited.Modules
                     }
                     else
                     {
-                        statusText = Helpers.cs(Color.white, "未知");
+                        statusText = Helpers.cs(Color.white, ModTranslation.getString("Unknow"));
                     }
                 }
-
                 string playerPrefix = playerId == PlayerControl.LocalPlayer.PlayerId ?
-                    Helpers.cs(Color.yellow, "你") :
+                    Helpers.cs(Color.yellow, $"{ModTranslation.getString("youText")}") :
                     $"{playerNumber}";
 
                 newText += $"{string.Format(ModTranslation.getString("playerText"), playerPrefix)}: {statusText}\n"; playerNumber++;
@@ -521,10 +520,10 @@ namespace TheOtherRolesEdited.Modules
 
             foreach (var playerId in pickOrder)
             {
-                string statusText = Helpers.cs(Color.yellow, "等待选择中...");
+                string statusText = Helpers.cs(Color.yellow, $"{ModTranslation.getString("selectionInText")}");
 
                 string playerPrefix = playerId == PlayerControl.LocalPlayer.PlayerId ?
-                    Helpers.cs(Color.yellow, "你") :
+                    Helpers.cs(Color.yellow, $"{ModTranslation.getString("youText")}") :
                     $"{playerNumber}";
 
                 newText += $"{string.Format(ModTranslation.getString("playerText"), playerPrefix)}: {statusText}\n";
@@ -538,27 +537,27 @@ namespace TheOtherRolesEdited.Modules
         {
             if (!CustomOptionHolder.draftModeShowRoles.getBool())
             {
-                return Helpers.cs(Color.white, "未知职业");
+                return Helpers.cs(Color.white, ModTranslation.getString("unknownRoleText"));
             }
 
             if (CustomOptionHolder.draftModeHideRandomRoles.getBool() && isRandom)
             {
-                return Helpers.cs(Color.green, "随机职业");
+                return Helpers.cs(Color.green, ModTranslation.getString("randomButtonText"));
             }
 
             if (CustomOptionHolder.draftModeHideImpRoles.getBool() && roleInfo.isImpostor)
             {
-                return Helpers.cs(Palette.ImpostorRed, "内鬼职业");
+                return Helpers.cs(Palette.ImpostorRed, ModTranslation.getString("impostorRoleText"));
             }
 
             if (CustomOptionHolder.draftModeHideNeutralRoles.getBool() && roleInfo.isNeutral)
             {
-                return Helpers.cs(Palette.Blue, "中立职业");
+                return Helpers.cs(new Color32(76, 84, 78, 255), ModTranslation.getString("neutralRoleText"));
             }
 
             if (CustomOptionHolder.draftModeHideCrewRoles.getBool() && !roleInfo.isImpostor && !roleInfo.isNeutral)
             {
-                return Helpers.cs(Color.white, "船员职业");
+                return Helpers.cs(Color.white, ModTranslation.getString("crewmateRoleText"));
             }
 
             return Helpers.cs(roleInfo.color, roleInfo.name);
@@ -611,7 +610,7 @@ namespace TheOtherRolesEdited.Modules
         private static IEnumerator CoShowRandomOrderAnimation(IntroCutscene __instance)
         {
             var titleText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
-            titleText.text = "<color=red>正在随机轮抽顺序...</color>";
+            titleText.text = $"<color=red>{ModTranslation.getString("randomizingOrder")}</color>";
             titleText.transform.localPosition = new Vector3(0, 2f, -10f);
             titleText.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
             titleText.alignment = TMPro.TextAlignmentOptions.Center;
@@ -675,7 +674,7 @@ namespace TheOtherRolesEdited.Modules
 
             numberText.text = playerNumber.ToString();
 
-            titleText.text = $"<color=red>你选择的顺序为:</color>";
+            titleText.text = $"<color=red>{ModTranslation.getString("pickOrderText")}</color>";
 
             yield return new WaitForSeconds(2f);
 
@@ -688,7 +687,7 @@ namespace TheOtherRolesEdited.Modules
             aspectPosition.DistanceFromEdge = new Vector2(1.62f, 1.2f);
             aspectPosition.AdjustPosition();
             feedText.transform.localScale = new Vector3(0.6f, 0.6f, 1);
-            feedText.text = $"<size=200%>玩家的选择</size>\n\n";
+            feedText.text = $"<size=180%>{ModTranslation.getString("playerPicks")}</size>\n\n";
             feedText.alignment = TMPro.TextAlignmentOptions.TopLeft;
             feedText.autoSizeTextContainer = true;
             feedText.fontSize = 3f;

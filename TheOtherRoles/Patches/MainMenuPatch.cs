@@ -24,6 +24,10 @@ public class MainMenuPatch
     public static GameObject modScreen = null;
     internal static TMP_FontAsset fontAssetVersionShower;
     internal static TMP_FontAsset fontAsset;
+    internal static PassiveButton PassiveWebsiteButton;
+    internal static PassiveButton passiveGithubButton;
+    internal static PassiveButton passiveCreditsButton;
+
     public static GameObject Slider { get; private set; }
 
     private static void ForceSetButtonText(GameObject button, string text)
@@ -61,26 +65,18 @@ public class MainMenuPatch
         //FK button
         websiteButton.name = "WebsiteButton";
         ForceSetButtonText(websiteButton, ModTranslation.getString("ModWebsite"));
-        PassiveButton PassiveWebsiteButton = websiteButton.GetComponent<PassiveButton>();
+        PassiveWebsiteButton = websiteButton.GetComponent<PassiveButton>();
         PassiveWebsiteButton.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
         PassiveWebsiteButton.OnClick = new Button.ButtonClickedEvent();
-        PassiveWebsiteButton.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://tore.amongusclub.cn/")));
-        PassiveWebsiteButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
-        PassiveWebsiteButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
-        Color originalColorPassiveWebsiteButton = PassiveWebsiteButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
-        PassiveWebsiteButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorPassiveWebsiteButton * 0.6f;
+        PassiveWebsiteButton.OnClick.AddListener((System.Action)(() => Constants.OpenURL("https://tore.amongusclub.cn/")));
 
         //Github button
         githubButton.name = "GithubButton";
         ForceSetButtonText(githubButton, "Github");
-        PassiveButton passiveGithubButton = githubButton.GetComponent<PassiveButton>();
+        passiveGithubButton = githubButton.GetComponent<PassiveButton>();
         passiveGithubButton.activeTextColor = new Color32(0, 191, 255, byte.MaxValue);
         passiveGithubButton.OnClick = new Button.ButtonClickedEvent();
-        passiveGithubButton.OnClick.AddListener((System.Action)(() => Application.OpenURL("https://github.com/XtremeWave/TheOtherRolesEdited")));
-        passiveGithubButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
-        passiveGithubButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
-        Color originalColorpassiveGithubButton = passiveGithubButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
-        passiveGithubButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveGithubButton * 0.6f;
+        passiveGithubButton.OnClick.AddListener((System.Action)(() => Constants.OpenURL("https://github.com/XtremeWave/TheOtherRolesEdited")));
 
         // TOR credits button
         if (template == null) return;
@@ -89,16 +85,8 @@ public class MainMenuPatch
         creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.412f, 0.43f);
         creditsButton.name = "creditsButton";
         ForceSetButtonText(creditsButton, ModTranslation.getString("TOREcredits"));
-        PassiveButton passiveCreditsButton = creditsButton.GetComponent<PassiveButton>();
+        passiveCreditsButton = creditsButton.GetComponent<PassiveButton>();
         passiveCreditsButton.OnClick = new Button.ButtonClickedEvent();
-        passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 1f);
-        passiveCreditsButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.333f, 0.255f, 2f, 0.8f);
-        Color originalColorpassiveCreditsButton = passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
-        passiveCreditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorpassiveCreditsButton * 0.6f;
-        passiveCreditsButton.activeTextColor = Color.white;
-        passiveCreditsButton.inactiveTextColor = Color.white;
-
-
         passiveCreditsButton.OnClick.AddListener((System.Action)delegate
         {
 
@@ -111,7 +99,7 @@ public class MainMenuPatch
                 var size = background.size;
                 size.x *= 2.5f;
                 background.size = size;
-                background.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Background.png", 150f);
+                background.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.Background.png", 150f);
                 background.transform.localScale = new Vector3(1.2f, 3.16f, 1f);
                 popup.TextAreaTMP.fontSizeMin = 2;
                 popup.TextAreaTMP.rectTransform.localPosition = new Vector3(-3.2f, 0.06f);
@@ -124,7 +112,7 @@ public class MainMenuPatch
                     var btnSpriteRenderer = exitBtn.GetComponent<SpriteRenderer>();
                     if (btnSpriteRenderer != null)
                     {
-                        Sprite customBgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Close.png", 100f);
+                        Sprite customBgSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.Close.png", 100f);
                         if (customBgSprite != null)
                         {
                             btnSpriteRenderer.sprite = customBgSprite;
@@ -180,20 +168,6 @@ TheEpicRoles - 首刀保护（选用部分代码）以及菜单选项的创意�
             ShowPopup(credits + creditsString);
         });
     }
-    private static void CheckAndUnpatch()
-    {
-        // 获取所有已加载的插件
-        var loadedPlugins = IL2CPPChainloader.Instance.Plugins.Values;
-        // 检查是否有目标插件
-        var targetPlugin = loadedPlugins.FirstOrDefault(plugin => plugin.Metadata.Name == "MalumMenu");
-
-        if (targetPlugin != null)
-        {
-            TheOtherRolesEditedPlugin.Logger.LogMessage("已检测到您使用了MM外挂.\n TORE将不再运行\n删除MalumMenu.dll即可恢复");
-            Harmony.UnpatchAll();//当进入MainMenu时检测加载如果有MM 就自动关闭
-        }
-    }
-
     public static void addSceneChangeCallbacks()
     {
         SceneManager.add_sceneLoaded((Action<Scene, LoadSceneMode>)((scene, _) =>

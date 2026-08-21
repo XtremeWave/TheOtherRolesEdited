@@ -41,7 +41,8 @@ internal class CreateGameOptionsPatch
             GameObject.Find("ServerOption").transform.SetLocalY(-0.86f);
             GameObject.Find("ModeOptions").transform.GetChild(2).gameObject.SetActive(false);
 
-            __instance.serverDropdown.transform.SetLocalY(-0.6f);
+            __instance.serverDropdown.transform.SetLocalY(-1.7945f);
+            __instance.serverDropdown.transform.GetChild(2).gameObject.transform.SetLocalY(0.22f);
 
             __instance.modeButtons[0].OnClick.AddListener((Action)(() =>
             {

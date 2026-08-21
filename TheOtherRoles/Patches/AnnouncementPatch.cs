@@ -5,6 +5,7 @@ using AmongUs.Data;
 using AmongUs.Data.Player;
 using Assets.InnerNet;
 using HarmonyLib;
+using UnityEngine;
 
 namespace TheOtherRolesEdited;
 
@@ -299,3 +300,5 @@ public class ModNewsHistory
         return true;
     }
 }
+
+

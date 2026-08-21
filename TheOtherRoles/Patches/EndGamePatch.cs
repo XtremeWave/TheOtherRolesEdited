@@ -1,4 +1,3 @@
-  
 using HarmonyLib;
 using static TheOtherRolesEdited.TheOtherRolesEdited;
 using System.Collections.Generic;
@@ -6,7 +5,6 @@ using UnityEngine;
 using System.Linq;
 using System;
 using System.Text;
-
 using TheOtherRolesEdited.Utilities;
 using TheOtherRolesEdited.CustomGameModes;
 using LibCpp2IL.Elf;
@@ -310,55 +308,55 @@ namespace TheOtherRolesEdited.Patches {
 
             if (AdditionalTempData.winCondition == WinCondition.JesterWin)
             {
-                textRenderer.text = "被我耍了吧？";
+                textRenderer.text = ModTranslation.getString("JesterWin");
                 textRenderer.color = Jester.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Jester.color);
             }
             else if (AdditionalTempData.winCondition == WinCondition.ArsonistWin)
             {
-                textRenderer.text = "燃烧吧！";
+                textRenderer.text = ModTranslation.getString("ArsonistWin");
                 textRenderer.color = Arsonist.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Arsonist.color);
             }
             else if (AdditionalTempData.winCondition == WinCondition.VultureWin)
             {
-                textRenderer.text = "多谢款待！";
+                textRenderer.text = ModTranslation.getString("VultureWin");
                 textRenderer.color = Vulture.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Vulture.color);
             }
             else if (AdditionalTempData.winCondition == WinCondition.ProsecutorWin)
             {
-                textRenderer.text = "起诉人胜利";
+                textRenderer.text = ModTranslation.getString("ProsecutorWin");
                 textRenderer.color = Lawyer.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Lawyer.color);
             }
             else if (AdditionalTempData.winCondition == WinCondition.LoversTeamWin)
             {
-                textRenderer.text = "你们这群单身狗(doge";
+                textRenderer.text = ModTranslation.getString("LoversTeamWin");
                 textRenderer.color = Lovers.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Lovers.color);
             }
             else if (AdditionalTempData.winCondition == WinCondition.LoversSoloWin)
             {
-                textRenderer.text = "爱死你了,我的宝！";
+                textRenderer.text = ModTranslation.getString("LoversSoloWin");
                 textRenderer.color = Lovers.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Lovers.color);
             }
             else if (AdditionalTempData.winCondition == WinCondition.JackalWin)
             {
-                textRenderer.text = "豺狼の全家福.jpg";
+                textRenderer.text = ModTranslation.getString("JackalWin");
                 textRenderer.color = Jackal.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Jackal.color);
             }
             else if (AdditionalTempData.winCondition == WinCondition.MiniLose)
             {
-                textRenderer.text = "他还只是个孩子啊！";
+                textRenderer.text = ModTranslation.getString("MiniLose");
                 textRenderer.color = Mini.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Mini.color);
             }
             else if (AdditionalTempData.winCondition == WinCondition.PlagueDoctorWin)
             {
-                textRenderer.text = "黑死病";
+                textRenderer.text = ModTranslation.getString("PlagueDoctorWin");
                 textRenderer.color = PlagueDoctor.color;
                 __instance.BackgroundBar.material.SetColor("_Color", PlagueDoctor.color);
             }
@@ -367,31 +365,31 @@ namespace TheOtherRolesEdited.Patches {
                 switch (OnGameEndPatch.gameOverReason)
                 {
                     case GameOverReason.ImpostorDisconnect:
-                        textRenderer.text = "最后一名船员断开连接";
+                        textRenderer.text = ModTranslation.getString("ImpostorDisconnect");
                         textRenderer.color = Color.red;
                         break;
                     case GameOverReason.ImpostorsByKill:
-                        textRenderer.text = "内鬼胜利 - 杀光光";
+                        textRenderer.text = ModTranslation.getString("ImpostorsByKill");
                         textRenderer.color = Color.red;
                         break;
                     case GameOverReason.ImpostorsBySabotage:
-                        textRenderer.text = "内鬼胜利 - 破坏飞船";
+                        textRenderer.text = ModTranslation.getString("ImpostorsBySabotage");
                         textRenderer.color = Color.red;
                         break;
                     case GameOverReason.ImpostorsByVote:
-                        textRenderer.text = "内鬼胜利 - 通过投票，猜测或玩家断连";
+                        textRenderer.text = ModTranslation.getString("ImpostorsByVote");
                         textRenderer.color = Color.red;
                         break;
                     case GameOverReason.CrewmatesByTask:
-                        textRenderer.text = "船员胜利 - 任务全部完成";
+                        textRenderer.text = ModTranslation.getString("CrewmatesByTask");
                         textRenderer.color = Color.white;
                         break;
                     case GameOverReason.CrewmateDisconnect:
-                        textRenderer.text = "船员胜利 - 没有内鬼(和带刀中立)了!";
+                        textRenderer.text = ModTranslation.getString("CrewmateDisconnect");
                         textRenderer.color = Color.white;
                         break;
                     case GameOverReason.CrewmatesByVote:
-                        textRenderer.text = "船员胜利 - 内鬼(和带刀中立)被投完了！";
+                        textRenderer.text = ModTranslation.getString("CrewmatesByVote");
                         textRenderer.color = Color.white;
                         break;
                 }
@@ -399,9 +397,9 @@ namespace TheOtherRolesEdited.Patches {
 
             foreach (WinCondition cond in AdditionalTempData.additionalWinConditions) {
                 if (cond == WinCondition.AdditionalLawyerBonusWin) {
-                    textRenderer.text += $"\n{Helpers.cs(Lawyer.color, "律师与客户共赢")}";
+                    textRenderer.text += $"\n{Helpers.cs(Lawyer.color, ModTranslation.getString("LawyerWin"))}";
                 } else if (cond == WinCondition.AdditionalAlivePursuerWin) {
-                    textRenderer.text += $"\n{Helpers.cs(Pursuer.color, "检察官幸存下来了")}";
+                    textRenderer.text += $"\n{Helpers.cs(Pursuer.color, ModTranslation.getString("PursuerWin"))}";
                 }
             }
 
@@ -415,22 +413,22 @@ namespace TheOtherRolesEdited.Patches {
                 if (HideNSeek.isHideNSeekGM || PropHunt.isPropHuntGM) {
                     int minutes = (int)AdditionalTempData.timer / 60;
                     int seconds = (int)AdditionalTempData.timer % 60;
-                    roleSummaryText.AppendLine($"<color=#FAD934FF>时间: {minutes:00}:{seconds:00}</color> \n");
+                    roleSummaryText.AppendLine($"<color=#FAD934FF>{ModTranslation.getString("Time")}: {minutes:00}:{seconds:00}</color> \n");
                 }
-                roleSummaryText.AppendLine("游戏结束时玩家的职业:");
+                roleSummaryText.AppendLine($"{ModTranslation.getString("GameOver")}:");
                 bool plagueExists = AdditionalTempData.playerRoles.Any(x => x.Roles.Contains(RoleInfo.plagueDoctor));
                 foreach (var data in AdditionalTempData.playerRoles) {
                     //var roles = string.Join(" ", data.Roles.Select(x => Helpers.cs(x.color, x.name)));
                     string roles = data.RoleNames;
                     //if (data.IsGuesser) roles += " (Guesser)";
                     var taskInfo = data.TasksTotal > 0 ? $" - <color=#FAD934FF>({data.TasksCompleted}/{data.TasksTotal})</color>" : "";
-                    if (data.Kills != null) taskInfo += $" - <color=#FF0000FF>(击杀数: {data.Kills})</color>";
+                    if (data.Kills != null) taskInfo += $" - <color=#FF0000FF>({ModTranslation.getString("Kills")}: {data.Kills})</color>";
                     string infectionInfo = "";
                     if (plagueExists && !data.Roles.Contains(RoleInfo.plagueDoctor))
                     {
                         if (AdditionalTempData.plagueDoctorInfected.ContainsKey(data.PlayerId))
                         {
-                            infectionInfo += " - " + Helpers.cs(Color.red, "已感染");
+                            infectionInfo += " - " + Helpers.cs(Color.red, ModTranslation.getString("Infected"));
                         }
                         else
                         {

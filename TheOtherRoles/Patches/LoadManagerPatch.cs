@@ -32,7 +32,7 @@ public class LoadingBarManagerPatch
             if (!_modLogo)
             {
                 _modLogo = Object.Instantiate(_amongUsLogo, trans.parent);
-                _modLogo.GetComponent<Image>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner.png", 150f);
+                _modLogo.GetComponent<Image>().sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.TORE-Banner.png", 150f);
             }
 
             trans.localScale = new Vector3(0.3f, 0.3f, 1);

@@ -11,7 +11,7 @@ internal class ShipStatus_CoStartMeeting
         {
             foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
             {
-                if (player.TargetPlayerId == reportedBody.PlayerId)
+                if (player.PlayerId == reportedBody.PlayerId)
                 {
                     player.Megaphone.enabled = true;
                     player.Megaphone.sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.VoteReportedButton.png", 75f);

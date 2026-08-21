@@ -20,7 +20,7 @@ namespace TheOtherRolesEdited.Patches
         private static string lobbyCodeText = "";
 
         // [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))] NOT Run in Android(Android user join in PC Room)
-        [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), nameof(PlayerPhysics._CoSpawnPlayer_d__42.MoveNext))]
+        [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), "MoveNext")]
         public class AmongUsClientCreatePlayerPatch
         {
             public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance)

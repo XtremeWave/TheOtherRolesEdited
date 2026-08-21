@@ -15,16 +15,16 @@ namespace TheOtherRolesEdited.Patches
     public static class ClientOptionsPatch
     {
         private static readonly SelectionBehaviour[] AllOptions = {
-            new($"{ModTranslation.getString("Options1")}", () => TORMapOptions.ghostsSeeInformation = TheOtherRolesEditedPlugin.GhostsSeeInformation.Value = !TheOtherRolesEditedPlugin.GhostsSeeInformation.Value, TheOtherRolesEditedPlugin.GhostsSeeInformation.Value,0),
-            new($"{ModTranslation.getString("Options2")}", () => TORMapOptions.ghostsSeeVotes = TheOtherRolesEditedPlugin.GhostsSeeVotes.Value = !TheOtherRolesEditedPlugin.GhostsSeeVotes.Value, TheOtherRolesEditedPlugin.GhostsSeeVotes.Value,0),
-            new($"{ModTranslation.getString("Options3")}", () => TORMapOptions.ghostsSeeRoles = TheOtherRolesEditedPlugin.GhostsSeeRoles.Value = !TheOtherRolesEditedPlugin.GhostsSeeRoles.Value, TheOtherRolesEditedPlugin.GhostsSeeRoles.Value,0),
-            new($"{ModTranslation.getString("Options4")}", () => TORMapOptions.ghostsSeeModifier = TheOtherRolesEditedPlugin.GhostsSeeModifier.Value = !TheOtherRolesEditedPlugin.GhostsSeeModifier.Value, TheOtherRolesEditedPlugin.GhostsSeeModifier.Value,0),
-            new($"{ModTranslation.getString("Options5")}", () => TORMapOptions.showRoleSummary = TheOtherRolesEditedPlugin.ShowRoleSummary.Value = !TheOtherRolesEditedPlugin.ShowRoleSummary.Value, TheOtherRolesEditedPlugin.ShowRoleSummary.Value,0),
-            new($"{ModTranslation.getString("Options6")}", () => TORMapOptions.showLighterDarker = TheOtherRolesEditedPlugin.ShowLighterDarker.Value = !TheOtherRolesEditedPlugin.ShowLighterDarker.Value, TheOtherRolesEditedPlugin.ShowLighterDarker.Value,0),
-            new($"{ModTranslation.getString("Options7")}", () => TORMapOptions.ShowVentsOnMap = TheOtherRolesEditedPlugin.ShowVentsOnMap.Value = !TheOtherRolesEditedPlugin.ShowVentsOnMap.Value, TheOtherRolesEditedPlugin.ShowVentsOnMap.Value,0),
-            new($"{ModTranslation.getString("Options8")}", () => TORMapOptions.ShowChatNotifications = TheOtherRolesEditedPlugin.ShowChatNotifications.Value = !TheOtherRolesEditedPlugin.ShowChatNotifications.Value, TheOtherRolesEditedPlugin.ShowChatNotifications.Value,0),
-            new($"{ModTranslation.getString("Options9")}", () => TORMapOptions.toggleCursor = TheOtherRolesEditedPlugin.ToggleCursor.Value = !TheOtherRolesEditedPlugin.ToggleCursor.Value, TheOtherRolesEditedPlugin.ToggleCursor.Value,1),
-            new($"{ModTranslation.getString("Options10")}", () =>  {
+            new($"Options1", () => TORMapOptions.ghostsSeeInformation = TheOtherRolesEditedPlugin.GhostsSeeInformation.Value = !TheOtherRolesEditedPlugin.GhostsSeeInformation.Value, TheOtherRolesEditedPlugin.GhostsSeeInformation.Value,0),
+            new($"Options2", () => TORMapOptions.ghostsSeeVotes = TheOtherRolesEditedPlugin.GhostsSeeVotes.Value = !TheOtherRolesEditedPlugin.GhostsSeeVotes.Value, TheOtherRolesEditedPlugin.GhostsSeeVotes.Value,0),
+            new($"Options3", () => TORMapOptions.ghostsSeeRoles = TheOtherRolesEditedPlugin.GhostsSeeRoles.Value = !TheOtherRolesEditedPlugin.GhostsSeeRoles.Value, TheOtherRolesEditedPlugin.GhostsSeeRoles.Value,0),
+            new($"Options4", () => TORMapOptions.ghostsSeeModifier = TheOtherRolesEditedPlugin.GhostsSeeModifier.Value = !TheOtherRolesEditedPlugin.GhostsSeeModifier.Value, TheOtherRolesEditedPlugin.GhostsSeeModifier.Value,0),
+            new($"Options5", () => TORMapOptions.showRoleSummary = TheOtherRolesEditedPlugin.ShowRoleSummary.Value = !TheOtherRolesEditedPlugin.ShowRoleSummary.Value, TheOtherRolesEditedPlugin.ShowRoleSummary.Value,0),
+            new($"Options6", () => TORMapOptions.showLighterDarker = TheOtherRolesEditedPlugin.ShowLighterDarker.Value = !TheOtherRolesEditedPlugin.ShowLighterDarker.Value, TheOtherRolesEditedPlugin.ShowLighterDarker.Value,0),
+            new($"Options7", () => TORMapOptions.ShowVentsOnMap = TheOtherRolesEditedPlugin.ShowVentsOnMap.Value = !TheOtherRolesEditedPlugin.ShowVentsOnMap.Value, TheOtherRolesEditedPlugin.ShowVentsOnMap.Value,0),
+            new($"Options8", () => TORMapOptions.ShowChatNotifications = TheOtherRolesEditedPlugin.ShowChatNotifications.Value = !TheOtherRolesEditedPlugin.ShowChatNotifications.Value, TheOtherRolesEditedPlugin.ShowChatNotifications.Value,0),
+            new($"Options9", () => TORMapOptions.toggleCursor = TheOtherRolesEditedPlugin.ToggleCursor.Value = !TheOtherRolesEditedPlugin.ToggleCursor.Value, TheOtherRolesEditedPlugin.ToggleCursor.Value,1),
+            new($"Options10", () =>  {
                 TORMapOptions.enableSoundEffects = TheOtherRolesEditedPlugin.EnableSoundEffects.Value = !TheOtherRolesEditedPlugin.EnableSoundEffects.Value;
                 if (!TORMapOptions.enableSoundEffects) SoundEffectsManager.stopAll();
                  return TORMapOptions.enableSoundEffects;

@@ -55,11 +55,13 @@ namespace TheOtherRolesEdited.Modules
         [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
         private static class SendChatPatch
         {
+
             public static List<string> ChatHistory = new();
             static bool Prefix(ChatController __instance)
             {
                 var text = __instance.freeChatField.Text;
                 var handled = false;
+                var chat = text.ToLower();
 
                 if (ChatHistory.Count == 0 || ChatHistory[^1] != text) ChatHistory.Add(text);
                 ChatControllerUpdatePatch.CurrentHistorySelection = ChatHistory.Count;
@@ -129,6 +131,20 @@ namespace TheOtherRolesEdited.Modules
                     }
                 }
 
+                if (AmongUsClient.Instance.AmHost)
+                {
+                    if (chat.StartsWith("/say "))
+                    {
+                        var message = text[5..];
+                        message = $"<b><color=red>★【房主消息】★</color></b> \n{message}";
+                        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.HostSay, Hazel.SendOption.Reliable, -1);
+                        writer.Write(message);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        __instance.AddChat(GameData.Instance.GetHost().Object, message);
+                        handled = true;
+                    }
+                }
+
                 if (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay)
                 {
                     if (text.ToLower().Equals("/murder"))
@@ -147,7 +163,7 @@ namespace TheOtherRolesEdited.Modules
                         }
                         col = Math.Clamp(col, 0, Palette.PlayerColors.Length - 1);
                         PlayerControl.LocalPlayer.SetColor(col);
-                        __instance.AddChat(PlayerControl.LocalPlayer, "Changed color succesfully"); ;
+                        __instance.AddChat(PlayerControl.LocalPlayer, "颜色已更改成功"); ;
                     }
                 }
 

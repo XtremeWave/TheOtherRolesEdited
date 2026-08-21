@@ -76,10 +76,10 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
                     else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt) gameModeText = $"{ModTranslation.getString("PropHunt")}";
                     if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText) + "\n";
                     __instance.text.text = $"{fullCredentialsVersion}" +
-                    $"<size=80%>\n{gameModeText}";
-                    if (ModOption.DebugMode) __instance.text.text += "<color=#FF0000>(测试模式)</color>\n";
-                    __instance.text.text += $"<size=75%>{Helpers.GradientColorText("FFD700", "FF0000", $"TOR")} {ModTranslation.getString("MOD")}:<color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>EndOfFile</color>\n<color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>Mallöris</color> & <color=#FCCE03FF>Gendelo</color>\n{ModTranslation.getString("Art")}:<color=#FCCE03FF>Bavari</color>" +
-                    $"\n{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Name}")} {ModTranslation.getString("MOD")}:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color> & <color=#FCCE03FF>FangKuaiYa</color>\n{ModTranslation.getString("Art")}:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color>, <color=#FCCE03FF>尤路丽丝</color> & <color=#FCCE03FF>JMS</color>\n{ModTranslation.getString("Translate")}:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color> & <color=#FCCE03FF>FangKuaiYa</color>"+
+                    $"<size=60%>\n{gameModeText}";
+                    if (ModOption.DebugMode) __instance.text.text += "<size=60%><color=#FF0000>(测试模式)</color>\n";
+                    __instance.text.text += $"<size=60%> {Helpers.GradientColorText("FFD700", "FF0000", $"TOR")} {ModTranslation.getString("MOD")}:<color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>EndOfFile</color>\n<color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>Mallöris</color> & <color=#FCCE03FF>Gendelo</color>\n{ModTranslation.getString("Art")}:<color=#FCCE03FF>Bavari</color>" +
+                    $"\n{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEditedPlugin.Name}")} {ModTranslation.getString("MOD")}:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color> & <color=#FCCE03FF>FangKuaiYa</color>\n{ModTranslation.getString("Art")}:<color=#FCCE03FF>{TheOtherRolesEditedPlugin.Dev}</color>, <color=#FCCE03FF>JMS</color> & <color=#FCCE03FF>四个憨批汉化组</color>\n{ModTranslation.getString("Translate")}{ModTranslation.getString("Translater")}" +
                     $"\n{PingTextColor}{AmongUsClient.Instance.Ping}<size=40%>ms</size></color>        <color=#01A4F4>{fps}<size=40%>fps</size></color>" +
                     $"\n<color=#FFDCB1>◈" + $"{XtremeGameData.GameStates.GetRegionName()}</color>";
 
@@ -166,7 +166,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
             public static async Task loadMOTDs()
             {
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(Helpers.isChinese() ? "https://tore.amongusclub.cn/motd-SCN.json" : "https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt");
+                HttpResponseMessage response = await client.GetAsync(Helpers.isChinese() ? "https://tore.amongusclub.cn/MOTD.json" :"https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt");
                 response.EnsureSuccessStatusCode();
                 string motds = await response.Content.ReadAsStringAsync();
                 foreach (string line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries))
@@ -178,7 +178,7 @@ $@"<size=150%>{Helpers.GradientColorText("00BFFF", "0000FF", $"{TheOtherRolesEdi
 #else
             public static Task loadMOTDs()
             {
-                string url = Helpers.isChinese() ? "https://tore.amongusclub.cn/motd-SCN.json" : "https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt";
+                string url = Helpers.isChinese() ? "https://tore.amongusclub.cn/MOTD.json" : "https://raw.githubusercontent.com/XtremeWave/MOTD/main/motd-EN.txt";
                 var request = UnityWebRequest.Get(url);
                 request.SendWebRequest();
 

@@ -5,6 +5,7 @@ global using Il2CppInterop.Runtime.InteropTypes.Arrays;
 global using Il2CppInterop.Runtime.Injection;
 
 using BepInEx;
+using System.Globalization;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
@@ -40,10 +41,10 @@ namespace TheOtherRolesEdited
         public const string Id = "me.farewell.theotherrolesedited";
         public const string Title = "TheOtherRolesEdited"; 
         public const string Name = "TORE";
-        public const string VersionString = "2.0.0";
+        public const string VersionString = "2.1.0";
         public const string Dev = "farewell";
         public const string ModColor = "#FF0000";
-        public const string Team = "XtremeWave ";
+        public const string Team = "XtremeWave";
         public static bool isChatCommand = false;
         public static bool VisibleTasksCount = false;
         public static uint betaDays = 0;  // amount of days for the build to be usable (0 for infinite!)
@@ -54,6 +55,7 @@ namespace TheOtherRolesEdited
         public static TheOtherRolesEditedPlugin Instance;
 
         public static int optionsPage = 2;
+        public static IGameOptions NormalOptions => GameOptionsManager.Instance.CurrentGameOptions;
         public static ConfigEntry<string> DebugMode { get; private set; }
         public static ConfigEntry<bool> GhostsSeeInformation { get; set; }
         public static ConfigEntry<bool> GhostsSeeRoles { get; set; }
@@ -69,51 +71,32 @@ namespace TheOtherRolesEdited
         public static ConfigEntry<ushort> Port { get; set; }
         public static ConfigEntry<string> ShowPopUpVersion { get; set; }
         public static int ModUsageCount { get; set; } = 0;
+
         public static ConfigEntry<bool> ToggleCursor { get; set; }
         public static List<PlayerControl> JoinedPlayer = new();
         public static Sprite ModStamp;
         public static IRegionInfo[] defaultRegions;
         // This is part of the Mini.RegionInstaller, Licensed under GPLv3
         // file="RegionInstallPlugin.cs" company="miniduikboot">
-        private async void SendModUsageRequest()
-        {
-            try
-            {
-                string url = "https://player.amongusclub.cn/api/modusage/register?modName=TheOtherRolesEdited";
-                var request = UnityWebRequest.Get(url);
 
-                var operation = request.SendWebRequest();
-
-                while (!operation.isDone)
-                    await Task.Delay(100);
-
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    if (int.TryParse(request.downloadHandler.text, out int count))
-                    {
-                        ModUsageCount = count;
-                        Logger.LogInfo($"Mod usage count: {count}");
-                    }
-                }
-                else
-                {
-                    Logger.LogError($"Failed to register mod: {request.error}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"Error sending mod usage request: {ex.Message}");
-            }
-        }
         public static void UpdateRegions()
         {
             ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
             var regions = new IRegionInfo[]
             {
-                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", StringNames.NoTranslation, "https://player.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[宿迁]</color>", "https://player.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
-                new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://auhk.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#00bfff>[香港]</color>", "https://auhk.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
-                new StaticHttpRegionInfo("<color=#cdfffd>XtremeWave服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://imp.xtreme.net.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#cdfffd>XtremeWave服</color> <color=#00bfff>[香港]</color>", "https://imp.xtreme.net.cn", 443, false) })).CastFast<IRegionInfo>(),
+              new StaticHttpRegionInfo("Modded NA (MNA)", StringNames.NoTranslation, "https://www.aumods.org", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Modded NA (MNA)-1", "https://www.aumods.org", 443, false) })).CastFast<IRegionInfo>(),
+              new StaticHttpRegionInfo("Modded EU (MEU)", StringNames.NoTranslation, "https://au-eu.duikbo.at", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Modded EU (MEU)-1", "https://au-eu.duikbo.at", 443, false) })).CastFast<IRegionInfo>(),
+              new StaticHttpRegionInfo("Modded Asia (MAS)", StringNames.NoTranslation, "https://au-as.duikbo.at", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Modded Asia (MAS)-1", "https://au-as.duikbo.at", 443, false) })).CastFast<IRegionInfo>(),
+              new StaticHttpRegionInfo("Voice NA (VNA)", StringNames.NoTranslation, "https://guigu.imp.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Voice NA (VNA)-1", "https://guigu.imp.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
+              new StaticHttpRegionInfo("Voice AS (VAS)", StringNames.NoTranslation, "https://imp.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Voice AS (VAS)-1", "https://imp.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
+              new StaticHttpRegionInfo("Niko233(NA)", StringNames.NoTranslation, "https://au-us.niko233.top", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Niko233(NA)-1", "https://au-us.niko233.top", 443, false) })).CastFast<IRegionInfo>(),
+              new StaticHttpRegionInfo("Niko233(EU)", StringNames.NoTranslation, "https://au-eu.niko233.top", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Niko233(EU)-1", "https://au-eu.niko233.top", 443, false) })).CastFast<IRegionInfo>(),
+              new StaticHttpRegionInfo("Niko233(AS)", StringNames.NoTranslation, "https://au-as.niko233.top", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Niko233(AS)-1", "https://au-as.niko233.top", 443, false) })).CastFast<IRegionInfo>(),
+              //new StaticHttpRegionInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[武汉]</color>", StringNames.NoTranslation, "https://wuhanimp.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#49F0FC>方块服</color> <color=#8732FF>[武汉]</color>", "https://wuhanimp.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>(),
+              //new StaticHttpRegionInfo("<color=#cdfffd>XtremeWave服</color> <color=#00bfff>[香港]</color>", StringNames.NoTranslation, "https://imp.xtreme.net.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("<color=#cdfffd>XtremeWave服</color> <color=#00bfff>[香港]</color>", "https://imp.xtreme.net.cn", 443, false) })).CastFast<IRegionInfo>(),
+
             };
+
             IRegionInfo currentRegion = serverManager.CurrentRegion;
             Logger.LogInfo($"Adding {regions.Length} regions");
             foreach (IRegionInfo region in regions)
@@ -137,7 +120,6 @@ namespace TheOtherRolesEdited
         }
         public override void Load()
         {
-            SendModUsageRequest();
             Logger = Log;
             Instance = this;
             ReactorVersionShower.TextUpdated += text =>
@@ -185,7 +167,6 @@ namespace TheOtherRolesEdited
     {
         public static int NumImpostors => GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors;
         public static bool DebugMode => CustomOptionHolder.debugMode.getBool();
-        public static bool HostName => CustomOptionHolder.HostName.getBool();
 
         public static bool DisableGameEnd => DebugMode && CustomOptionHolder.disableGameEnd.getBool();
     }
@@ -202,16 +183,16 @@ namespace TheOtherRolesEdited
 
                 if (AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
                 {
-                    name = "本地";
+                    name = ModTranslation.getString("Local");
                     return name;
                 }
 
                 if (region.PingServer.EndsWith("among.us", StringComparison.Ordinal))
                 {
                     // Official server
-                    if (name == "North America") name = "北美服";
-                    else if (name == "Europe") name = "欧服";
-                    else if (name == "Asia") name = "亚服";
+                    if (name == "North America") name = ModTranslation.getString("NorthAmerica");
+                    else if (name == "Europe") name = ModTranslation.getString("Europe");
+                    else if (name == "Asia") name = ModTranslation.getString("Asia");
 
                     return name;
                 }

@@ -19,6 +19,7 @@ using TheOtherRolesEdited.Players;
 using TheOtherRolesEdited.Utilities;
 using UnityEngine;
 using UnityEngine.Networking;
+using static TheOtherRolesEdited.Modules.ButtonEffect;
 using static TheOtherRolesEdited.TheOtherRolesEdited;
 
 namespace TheOtherRolesEdited
@@ -319,7 +320,7 @@ namespace TheOtherRolesEdited
         {
             if (initalSetCursor)
             {
-                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Cursor-Old.png", 150f);
+                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.Cursor-Old.png", 150f);
                 Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
                 return;
             }
@@ -329,7 +330,7 @@ namespace TheOtherRolesEdited
             }
             else
             {
-                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.MainPhoto.Cursor-Old.png", 150f);
+                Sprite sprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.UI.Cursor-Old.png", 150f);
                 Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
             }
         }
@@ -705,15 +706,6 @@ namespace TheOtherRolesEdited
                 return MurderAttemptResult.SuppressKill;
             }
 
-            // Kill the killer if Paranoia is on Protection
-            else if (Paranoia.paranoia != null && Paranoia.ProtectionActive && Paranoia.paranoia == target)
-            {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.ParanoiaProtection, Hazel.SendOption.Reliable, -1);
-                writer.Write(target.PlayerId);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.paranoiaProtection();
-                return MurderAttemptResult.ReverseKill;
-            }
             // Kill the killer if the Veteran is on alert
             else if (Veteran.veteran != null && target == Veteran.veteran && Veteran.alertActive)
             {
@@ -820,7 +812,80 @@ namespace TheOtherRolesEdited
                 })));
             }
             return murder;
+    }
+        public interface IDividedSpriteLoader
+        {
+            Sprite GetSprite(int index);
+            Image AsLoader(int index) => new WrapSpriteLoader(() => GetSprite(index));
+            int Length { get; }
         }
+        public class XOnlyDividedSpriteLoader : Image, IDividedSpriteLoader
+        {
+            float pixelsPerUnit;
+            Sprite[] sprites;
+            ITextureLoader texture;
+            int? division, size;
+            public Vector2 Pivot = new(0.5f, 0.5f);
+
+            public XOnlyDividedSpriteLoader(ITextureLoader textureLoader, float pixelsPerUnit, int x, bool isSize = false)
+            {
+                this.pixelsPerUnit = pixelsPerUnit;
+                if (isSize)
+                {
+                    this.size = x;
+                    this.division = null;
+                }
+                else
+                {
+                    this.division = x;
+                    this.size = null;
+                }
+                sprites = null!;
+                texture = textureLoader;
+            }
+
+            public Sprite GetSprite(int index)
+            {
+                if (!size.HasValue || !division.HasValue || sprites == null)
+                {
+                    var texture2D = texture.GetTexture();
+                    if (size == null)
+                        size = texture2D.width / division;
+                    else if (division == null)
+                        division = texture2D.width / size!;
+                    sprites = new Sprite[division!.Value];
+                }
+
+                if (!sprites[index])
+                {
+                    var texture2D = texture.GetTexture();
+                    sprites[index] = texture2D.ToSprite(new Rect(index * size!.Value, 0, size!.Value, texture2D.height), Pivot, pixelsPerUnit);
+                }
+                return sprites[index];
+            }
+
+            public Sprite GetSprite() => GetSprite(0);
+
+            public int Length
+            {
+                get
+                {
+                    if (!division.HasValue) GetSprite(0);
+                    return division!.Value;
+                }
+            }
+
+            public Image WrapLoader(int index) => new WrapSpriteLoader(() => GetSprite(index));
+
+            static public XOnlyDividedSpriteLoader FromResource(string address, float pixelsPerUnit, int x, bool isSize = false)
+                 => new(new ResourceTextureLoader(address), pixelsPerUnit, x, isSize);
+            static public XOnlyDividedSpriteLoader FromDisk(string address, float pixelsPerUnit, int x, bool isSize = false)
+                 => new(new DiskTextureLoader(address), pixelsPerUnit, x, isSize);
+
+        }
+
+        static public IDividedSpriteLoader NextButtonSprite = XOnlyDividedSpriteLoader.FromResource("TheOtherRolesEdited.Resources.HatsNextButton.png", 220f, 2);
+
         public static void SetAsUIAspectContent(this GameObject obj, AspectPosition.EdgeAlignments alignment, Vector3 distanceFromEdge)
         {
             var aspectPos = obj.AddComponent<AspectPosition>();
@@ -927,6 +992,12 @@ namespace TheOtherRolesEdited
             }
 
             ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height, Screen.fullScreen); // This will move button positions to the correct position.
+        }
+
+        public static void AddModSettingsChangeMessage(this NotificationPopper popper, StringNames key, string value, string option, bool playSound = true)
+        {
+            string str = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.LobbyChangeSettingNotification, "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + option + "</font>", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + value + "</font>");
+            popper.SettingsChangeMessageLogic(key, str, playSound);
         }
 
         private static long GetBuiltInTicks()
@@ -1119,7 +1190,17 @@ namespace TheOtherRolesEdited
 
             transitionFade.StartCoroutine(Coroutine().WrapToIl2Cpp());
         }
-
+        public static Color getTeamColor(RoleType team)
+        {
+            return team switch
+            {
+                RoleType.Crewmate => Palette.CrewmateBlue,
+                RoleType.Impostor => Palette.ImpostorRed,
+                RoleType.Neutral => Color.gray,
+                RoleType.Modifier => Color.yellow,
+                _ => Palette.White
+            };
+        }
         internal static object CreateObject<T>(string v, GameObject gameSettingsButton, Vector3 vector3)
         {
             throw new NotImplementedException();

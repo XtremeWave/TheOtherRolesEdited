@@ -65,7 +65,6 @@ namespace TheOtherRolesEdited
             Yoyo.clearAndReload();
             Miner.clearAndReload();
             Blackmailer.clearAndReload();
-            Paranoia.clearAndReload();
             Undertaker.clearAndReload();
             Veteran.clearAndReload();
             PlagueDoctor.clearAndReload();
@@ -1933,35 +1932,6 @@ public static class Medic {
             if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
             arrow = new Arrow(Color.black);
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
-        }
-    }
-    public static class Paranoia
-    {
-        public static PlayerControl paranoia;
-        public static Color color = new Color32(218, 112, 214, byte.MaxValue);
-
-        public static float ProtectionDuration = 3f;
-        public static float cooldown = 30f;
-
-        public static int remainingProtections = 5;
-
-        public static bool ProtectionActive = false;
-
-        private static Sprite buttonSprite;
-        public static Sprite getButtonSprite()
-        {
-            if (buttonSprite) return buttonSprite;
-            buttonSprite = Helpers.loadSpriteFromResources("TheOtherRolesEdited.Resources.ProtectionButton.png", 115f);
-            return buttonSprite;
-        }
-
-        public static void clearAndReload()
-        {
-            paranoia = null;
-            ProtectionActive = false;
-            ProtectionDuration = CustomOptionHolder.paranoiaProtectionDuration.getFloat();
-            cooldown = CustomOptionHolder.paranoiaCooldown.getFloat();
-            remainingProtections = Mathf.RoundToInt(CustomOptionHolder.paranoiaProtectionNumber.getFloat());
         }
     }
 

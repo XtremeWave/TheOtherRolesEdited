@@ -53,7 +53,7 @@ namespace TheOtherRolesEdited.Patches {
             {
                 foreach (PlayerVoteArea playerVoteArea in MeetingHud.Instance.playerStates)
                 {
-                    var data = dict[playerVoteArea.TargetPlayerId];
+                    var data = dict[playerVoteArea.PlayerId];
                     var text = playerVoteArea.NameText;
                     text.text = data.name;
                     text.color = data.color;
@@ -65,7 +65,7 @@ namespace TheOtherRolesEdited.Patches {
             p.cosmetics.nameText.color = color.SetAlpha(Chameleon.visibility(p.PlayerId));
             if (MeetingHud.Instance != null)
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                    if (player.NameText != null && p.PlayerId == player.TargetPlayerId)
+                    if (player.NameText != null && p.PlayerId == player.PlayerId)
                         player.NameText.color = color;
         }
 
@@ -181,11 +181,11 @@ namespace TheOtherRolesEdited.Patches {
                             player.cosmetics.nameText.text = player.Data.PlayerName + " (清)";
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                        if (Godfather.godfather != null && Godfather.godfather.PlayerId == player.TargetPlayerId)
+                        if (Godfather.godfather != null && Godfather.godfather.PlayerId == player.PlayerId)
                             player.NameText.text = Godfather.godfather.Data.PlayerName + " (教)";
-                        else if (Mafioso.mafioso != null && Mafioso.mafioso.PlayerId == player.TargetPlayerId)
+                        else if (Mafioso.mafioso != null && Mafioso.mafioso.PlayerId == player.PlayerId)
                             player.NameText.text = Mafioso.mafioso.Data.PlayerName + " (弟)";
-                        else if (Janitor.janitor != null && Janitor.janitor.PlayerId == player.TargetPlayerId)
+                        else if (Janitor.janitor != null && Janitor.janitor.PlayerId == player.PlayerId)
                             player.NameText.text = Janitor.janitor.Data.PlayerName + " (清)";
             }
 
@@ -197,7 +197,7 @@ namespace TheOtherRolesEdited.Patches {
 
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                        if (Lovers.lover1.PlayerId == player.TargetPlayerId || Lovers.lover2.PlayerId == player.TargetPlayerId)
+                        if (Lovers.lover1.PlayerId == player.PlayerId || Lovers.lover2.PlayerId == player.PlayerId)
                             player.NameText.text += suffix; 
             }
 
@@ -210,7 +210,7 @@ namespace TheOtherRolesEdited.Patches {
 
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                        if (player.TargetPlayerId == target.PlayerId)
+                        if (player.PlayerId == target.PlayerId)
                             player.NameText.text += suffix;
             }
 
@@ -220,14 +220,14 @@ namespace TheOtherRolesEdited.Patches {
                 Thief.formerThief.cosmetics.nameText.text += suffix;
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                        if (player.TargetPlayerId == Thief.formerThief.PlayerId)
+                        if (player.PlayerId == Thief.formerThief.PlayerId)
                             player.NameText.text += suffix;
             }
 
             // Display lighter / darker color for all alive players
             if (PlayerControl.LocalPlayer != null && MeetingHud.Instance != null && TORMapOptions.showLighterDarker) {
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
-                    var target = Helpers.playerById(player.TargetPlayerId);
+                    var target = Helpers.playerById(player.PlayerId);
                     if (target != null)  player.NameText.text += $" ({(Helpers.isLighterColor(target) ? "亮" : "暗")})";
                 }
             }
@@ -235,7 +235,7 @@ namespace TheOtherRolesEdited.Patches {
             // Add medic shield info:
             if (MeetingHud.Instance != null && Medic.medic != null && Medic.shielded != null && Medic.shieldVisible(Medic.shielded)) {
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                    if (player.TargetPlayerId == Medic.shielded.PlayerId) {
+                    if (player.PlayerId == Medic.shielded.PlayerId) {
                         player.NameText.text = Helpers.cs(Medic.color, "[") + player.NameText.text + Helpers.cs(Medic.color, "]");
                         // player.HighlightedFX.color = Medic.color;
                         // player.HighlightedFX.enabled = true;
@@ -276,7 +276,7 @@ namespace TheOtherRolesEdited.Patches {
             Mini.mini.cosmetics.nameText.text += suffix;
             if (MeetingHud.Instance != null) {
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                    if (player.NameText != null && Mini.mini.PlayerId == player.TargetPlayerId)
+                    if (player.NameText != null && Mini.mini.PlayerId == player.PlayerId)
                         player.NameText.text += suffix;
             }
 

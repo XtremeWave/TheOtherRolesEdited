@@ -17,31 +17,20 @@ public static class LoadPatch
     static Sprite bgSprite;
 
     static TMPro.TextMeshPro loadText = null!;
-    static TMPro.TextMeshPro aprilFoolsText = null!;
-
-    private static bool IsAprilFoolsDay => DateTime.Now.Month == 12 && DateTime.Now.Day == 27;
 
     public static string LoadingText { set { loadText.text = value; } }
-   
+
     static LoadPatch()
     {
-        string aprilFoolBgPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-Loading-BG_AprilFool.png";
-        string aprilFoolLogoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner2_AprilFool.png";
+        string bgPath = "TheOtherRolesEdited.Resources.UI.TORE-Loading-BG-2.png";
+        string logoPath = "TheOtherRolesEdited.Resources.UI.TORE-Banner2.png";
 
-        string normalBgPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-Loading-BG-2.png";
-        string normalLogoPath = "TheOtherRolesEdited.Resources.MainPhoto.TORE-Banner2.png";
-
-        bgSprite = IsAprilFoolsDay
-            ? Helpers.loadSpriteFromResources(aprilFoolBgPath, 100f)
-            : Helpers.loadSpriteFromResources(normalBgPath, 100f);
-
-        logoSprite = IsAprilFoolsDay
-            ? Helpers.loadSpriteFromResources(aprilFoolLogoPath, 140f)
-            : Helpers.loadSpriteFromResources(normalLogoPath, 140f);
+        bgSprite = Helpers.loadSpriteFromResources(bgPath, 100f);
+        logoSprite = Helpers.loadSpriteFromResources(logoPath, 140f);
     }
 
     static IEnumerator CoLoadTheOtherRoles(SplashManager __instance)
-    {       
+    {
         ModTranslation.Load();
 
         var bg = UnityHelper.CreateObject<SpriteRenderer>("TheOtherRolesEditedBG", null, new Vector3(0, 0.5f, -10f));
@@ -77,53 +66,8 @@ public static class LoadPatch
             yield return null;
         }
         logo.color = Color.white;
-        logo.transform.localScale = Vector3.one; 
+        logo.transform.localScale = Vector3.one;
         yield return new WaitForSeconds(0.5f);
-
-        if (IsAprilFoolsDay)
-        {
-            aprilFoolsText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
-            aprilFoolsText.transform.localPosition = new(0f, -0.28f, -10f);
-            aprilFoolsText.text = ModTranslation.getString("AprilFoolsDay");
-            aprilFoolsText.fontStyle = FontStyles.Bold;
-            aprilFoolsText.color = Color.clear;
-            Color aprilFoolsColor = new Color(0f, 1f, 0f);
-
-            float aprilFadeIn = 0.8f;
-            elapsedTime = 0f;
-            while (elapsedTime < aprilFadeIn)
-            {
-                elapsedTime += Time.deltaTime;
-                float alpha = Mathf.Clamp01(elapsedTime / aprilFadeIn);
-                aprilFoolsText.color = aprilFoolsColor.AlphaMultiplied(alpha);
-                yield return null;
-            }
-
-            float aprilWaitTime = 3f;
-            elapsedTime = 0f;
-            while (elapsedTime < aprilWaitTime)
-            {
-                elapsedTime += Time.deltaTime;
-                float flicker = Mathf.Sin(Time.time * 8f) * 0.1f;
-                aprilFoolsText.alpha = Mathf.Clamp01(1f + flicker);
-                yield return null;
-            }
-
-            float aprilFadeOut = 0.8f;
-            elapsedTime = 0f;
-            while (elapsedTime < aprilFadeOut)
-            {
-                elapsedTime += Time.deltaTime;
-                float alpha = 1f - Mathf.Clamp01(elapsedTime / aprilFadeOut);
-                aprilFoolsText.color = aprilFoolsColor.AlphaMultiplied(alpha);
-                yield return null;
-            }
-            UnityEngine.Object.Destroy(aprilFoolsText.gameObject);
-        }
-        else
-        {
-            yield return new WaitForSeconds(0.5f);
-        }
 
         loadText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
         loadText.transform.localPosition = new(0f, -0.28f, -10f);
@@ -137,7 +81,7 @@ public static class LoadPatch
         {
             elapsedTime += Time.deltaTime;
             float alpha = Mathf.Clamp01(elapsedTime / loadFadeIn);
-            loadText.color = Color.white.AlphaMultiplied(alpha); 
+            loadText.color = Color.white.AlphaMultiplied(alpha);
             yield return null;
         }
 
@@ -157,7 +101,7 @@ public static class LoadPatch
             yield return TextFadeTransition(ModTranslation.getString("Modcolor"));
             CustomColors.Load();
 
-            yield return TextFadeTransition(ModTranslation.getString("Modhat"));
+          /*  yield return TextFadeTransition(ModTranslation.getString("Modhat"));
             CustomHatManager.LoadHats();
 
             var hatsLoader = CustomHatManager.Loader;
@@ -203,7 +147,7 @@ public static class LoadPatch
             else
             {
                 yield return TextFadeTransition(ModTranslation.getString("Hatcomplete"));
-            }
+            }*/
 
 #if PC
             yield return TextFadeTransition(ModTranslation.getString("Modcursor"));
@@ -239,13 +183,21 @@ public static class LoadPatch
 
         yield return TextFadeTransition(ModTranslation.getString("LoadingComplete"));
 
-        for (int i = 0; i < 3; i++)
+        float colorTransitionDuration = 3f;
+        elapsedTime = 0f;
+        Color startColor = Color.white;
+        Color targetColor = Color.green;
+
+        while (elapsedTime < colorTransitionDuration)
         {
-            loadText.gameObject.SetActive(false);
-            yield return new WaitForSeconds(0.03f);
-            loadText.gameObject.SetActive(true);
-            yield return new WaitForSeconds(0.03f);
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / colorTransitionDuration);
+            loadText.color = Color.Lerp(startColor, targetColor, t);
+            yield return null;
         }
+        loadText.color = targetColor;
+
+        yield return new WaitForSeconds(0.5f);
 
         float completeFadeOut = 0.8f;
         elapsedTime = 0f;
@@ -253,7 +205,7 @@ public static class LoadPatch
         {
             elapsedTime += Time.deltaTime;
             float alpha = 1f - Mathf.Clamp01(elapsedTime / completeFadeOut);
-            loadText.color = Color.white.AlphaMultiplied(alpha);
+            loadText.color = targetColor.AlphaMultiplied(alpha);
             yield return null;
         }
         UnityEngine.Object.Destroy(loadText.gameObject);
@@ -282,7 +234,7 @@ public static class LoadPatch
         {
             elapsed += Time.deltaTime;
             float alpha = 1f - Mathf.Clamp01(elapsed / fadeOutTime);
-            loadText.color = Color.white.AlphaMultiplied(alpha); 
+            loadText.color = Color.white.AlphaMultiplied(alpha);
             yield return null;
         }
 

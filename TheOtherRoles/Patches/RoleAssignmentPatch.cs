@@ -12,7 +12,7 @@ using TheOtherRolesEdited.CustomGameModes;
 using TheOtherRolesEdited.Modules;
 
 namespace TheOtherRolesEdited.Patches {
-    [HarmonyPatch(typeof(RoleOptionsCollectionV10), nameof(RoleOptionsCollectionV10.GetNumPerGame))]
+    [HarmonyPatch(typeof(RoleOptionsCollectionV11), nameof(RoleOptionsCollectionV11.GetNumPerGame))]
     class RoleOptionsDataGetNumPerGamePatch{
 
         public static void Postfix(ref int __result) {
@@ -157,7 +157,6 @@ namespace TheOtherRolesEdited.Patches {
             crewSettings.Add((byte)RoleId.Snitch, CustomOptionHolder.snitchSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.Medium, CustomOptionHolder.mediumSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.Trapper, CustomOptionHolder.trapperSpawnRate.getSelection());
-            crewSettings.Add((byte)RoleId.Paranoia, CustomOptionHolder.paranoiaSpawnRate.getSelection());
             crewSettings.Add((byte)RoleId.Veteran, CustomOptionHolder.veteranSpawnRate.getSelection());
 
             if (impostors.Count > 1) {

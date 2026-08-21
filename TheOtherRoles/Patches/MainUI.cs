@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TheOtherRolesEdited.Modules;
+using TheOtherRolesEdited.Patches;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
@@ -53,8 +54,9 @@ public static class MainUIPatch
         Showpop.fontAsset = __instance.playButton.buttonText.font;
         LogoPatch.fontAsset = __instance.playButton.buttonText.font;
         MainMenuPatch.fontAsset = __instance.playButton.buttonText.font;
+        RoleIntroduction.fontAsset = __instance.playButton.buttonText.font;
 
-        __instance.playButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
+        /*__instance.playButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 1f);
         __instance.playButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 2f);
         Color originalColorPlayButton = __instance.playButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
         __instance.playButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorPlayButton * 0.6f;
@@ -68,7 +70,7 @@ public static class MainUIPatch
         __instance.inventoryButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 2f);
         Color originalColorInventoryButton = __instance.inventoryButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
         __instance.inventoryButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorInventoryButton * 0.6f;
-        __instance.inventoryButton.activeSprites.GetComponent<SpriteRenderer>().color = originalColorPlayButton * 0.75f;
+        __instance.inventoryButton.activeSprites.GetComponent<SpriteRenderer>().color = originalColorInventoryButton * 0.75f;
         __instance.inventoryButton.activeTextColor = Color.white;
         __instance.inventoryButton.inactiveTextColor = Color.white;
         __instance.inventoryButton.activeSprites.transform.FindChild("Shine")?.gameObject?.SetActive(false);
@@ -78,7 +80,7 @@ public static class MainUIPatch
         __instance.shopButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0.0235f, 0.6f, 2f);
         Color originalColorShopButton = __instance.shopButton.inactiveSprites.GetComponent<SpriteRenderer>().color;
         __instance.shopButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorShopButton * 0.6f;
-        __instance.shopButton.activeSprites.GetComponent<SpriteRenderer>().color = originalColorPlayButton * 0.75f;
+        __instance.shopButton.activeSprites.GetComponent<SpriteRenderer>().color = originalColorShopButton * 0.75f;
         __instance.shopButton.activeTextColor = Color.white;
         __instance.shopButton.inactiveTextColor = Color.white;
         __instance.shopButton.activeSprites.transform.FindChild("Shine")?.gameObject?.SetActive(false);
@@ -120,7 +122,7 @@ public static class MainUIPatch
         __instance.creditsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = originalColorCreditsButton * 0.6f;
         __instance.creditsButton.activeTextColor = Color.white;
         __instance.creditsButton.inactiveTextColor = Color.white;
-        __instance.creditsButton.transform.localPosition += new Vector3(-0.03f, 0f, 0);
+        __instance.creditsButton.transform.localPosition += new Vector3(-0.03f, 0f, 0);*/
 
         __instance.freePlayButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0.191f, 255f);
         __instance.freePlayButton.activeSprites.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 255f, 0.8f);
