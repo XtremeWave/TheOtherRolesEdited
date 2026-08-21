@@ -27,11 +27,20 @@ jobs:
         with:
           dotnet-version: 6.x
 
-      - name: Build
-        run: dotnet build TheOtherRoles/TheOtherRolesEdited.csproj --configuration Release
+      - name: Build Windows
+        run: dotnet build TheOtherRoles/TheOtherRolesEdited.csproj --configuration Windows
 
-      - name: Upload TheOtherRolesEdited
+      - name: Upload TheOtherRolesEdited Windows
         uses: actions/upload-artifact@v4
         with:
-          name: TheOtherRolesEdited.dll
-          path: TheOtherRoles/bin/Release/net6.0/TheOtherRolesEdited.dll
+          name: TheOtherRolesEdited-Win.dll
+          path: TheOtherRoles/bin/Windows/net6.0/TheOtherRolesEdited.dll
+
+      - name: Build Android
+        run: dotnet build TheOtherRoles/TheOtherRolesEdited.csproj --configuration Android
+
+      - name: Upload TheOtherRolesEdited Android
+        uses: actions/upload-artifact@v4
+        with:
+          name: TheOtherRolesEdited-And.dll
+          path: TheOtherRoles/bin/Android/net6.0/TheOtherRolesEdited.dll
