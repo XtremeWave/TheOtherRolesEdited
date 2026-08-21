@@ -2,11 +2,11 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
-      "AmongUs.GameLibs.Steam": {
+      "AmongUs.GameLibs.Android": {
         "type": "Direct",
         "requested": "[2026.8.18, )",
         "resolved": "2026.8.18",
-        "contentHash": "sSGu2zGYvLboOc83PzPxQ0yGsK1YrhIO/538Tfzc/5FKfEbGCtCQErcKV0wdiYZCHGpCe561RzzfrBtp46jcgQ=="
+        "contentHash": "bROxCHXlIl89GC1BsUHi/BSop7JIyvu1bVtVeOs2L1qNXmWJcmy2+wB47Oh14lJ5UqXnFdCNZFigbaRqqDn1sQ=="
       },
       "BepInEx.IL2CPP.MSBuild": {
         "type": "Direct",
