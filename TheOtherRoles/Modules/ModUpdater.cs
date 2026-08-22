@@ -25,7 +25,7 @@ namespace TheOtherRolesEdited.Modules
         public const string RepositoryOwner = "XtremeWave";
         public const string RepositoryName = "TheOtherRolesEdited";
         public static ModUpdater Instance { get; private set; }
-        internal static PassiveButton passiveButton;
+        internal static PassiveButton passiveButton = null;
         internal static PassiveButton passivebutton2;
 
         public ModUpdater(IntPtr ptr) : base(ptr) { }
@@ -207,7 +207,7 @@ namespace TheOtherRolesEdited.Modules
             if (!template) return;
 
             //手动更新
-            var button2 = Instantiate(template, null);
+            var button2 = Instantiate(template, template.transform.parent);
             var buttonTransform2 = button2.transform;
             button2.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.425f, 0.1f);
             passivebutton2 = button2.GetComponent<PassiveButton>();

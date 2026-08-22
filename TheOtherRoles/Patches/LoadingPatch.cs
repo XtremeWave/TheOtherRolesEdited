@@ -69,7 +69,7 @@ public static class LoadPatch
         logo.transform.localScale = Vector3.one;
         yield return new WaitForSeconds(0.5f);
 
-        loadText = GameObject.Instantiate(__instance.errorPopup.InfoText, null);
+        loadText = GameObject.Instantiate(__instance.errorPopup.InfoText, __instance.errorPopup.transform);
         loadText.transform.localPosition = new(0f, -0.28f, -10f);
         loadText.fontStyle = TMPro.FontStyles.Bold;
         loadText.text = ModTranslation.getString("Loading");

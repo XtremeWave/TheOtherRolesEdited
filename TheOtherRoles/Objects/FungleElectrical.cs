@@ -127,7 +127,7 @@ public class VanillaAsset
         CloseButtonSprite = Helpers.FindAsset<Sprite>("closeButton")!;
         TextButtonSprite = twitchPopUp.GetChild(2).GetComponent<SpriteRenderer>().sprite;
 
-        StandardTextPrefab = UnityEngine.Object.Instantiate(twitchPopUp.GetChild(1).GetComponent<TMPro.TextMeshPro>(), null);
+        StandardTextPrefab = UnityEngine.Object.Instantiate(twitchPopUp.GetChild(1).GetComponent<TMPro.TextMeshPro>(), twitchPopUp.GetChild(1).transform);
         StandardTextPrefab.gameObject.hideFlags = HideFlags.HideAndDontSave;
         UnityEngine.Object.Destroy(StandardTextPrefab.spriteAnimator);
         UnityEngine.Object.DontDestroyOnLoad(StandardTextPrefab.gameObject);

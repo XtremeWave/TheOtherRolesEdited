@@ -48,9 +48,4 @@
         <Compile Include="$(IntermediateOutputPath)gen.cs" />
     </ItemGroup>
     </Target>
-		
-    <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="Exists('$(AmongUsLatest)/BepInEx/plugins/')">
-        <Message Text="Second occurrence" />
-        <Copy SourceFiles="$(ProjectDir)\bin\PC\net6.0\TheOtherRolesEdited.dll" DestinationFolder="E:\STEAM\steamapps\common\Among Us\BepInEx\plugins" />
-    </Target>
 </Project>
