@@ -69,9 +69,6 @@
 # 部分代码参考来源
 
 **我们在开发过程中引用过其他模组的相关代码并在此作出感谢。**
-# 部分代码参考来源
-
-**我们在开发过程中引用过其他模组的相关代码并在此作出感谢。**
 <a href="https://github.com/TheOtherRolesAU/TheOtherRoles"><img src="./Images/TOR_logo.png" width="700"></a>
 本家模组是TORE的基础
 <a href="https://github.com/TownOfNext/TownOfNext"><img src="./Images/TownOfNext.png" width="650"></a>
