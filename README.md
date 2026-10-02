@@ -16,7 +16,7 @@
 [![QQ](./Images/TORE_QQ.png)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=1YPTXe2Sh93pAUXv1mwv4unI6J_G1FYK&authKey=%2BPzdgfi%2FpbaxyPTVU1Lx8xU69Zo1X4%2FCih0lTozAbZ0%2FsCiO%2FGe8sQ97p6jxEFlV&noverify=0&group_code=647668527)
 
 # The Other Roles Edited
-**The Other Roles Edited** 是一个为 [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加许多新职业的MOD, **The Other Roles Edited** 为  [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加了新 [Settings](#settings) 和新 [Custom Hats](#custom-hats) .
+**The Other Roles Edited** 是一个为 [Among Us](https://store.steampowered.com/app/945360/Among_Us) 添加许多新职业的MOD
 
 | 内鬼职业 | 船员职业 | 中立职业 | 附加职业 | 游戏模式 |
 |----------|-------------|-----------------|----------------|----------------|
@@ -69,9 +69,15 @@
 # 部分代码参考来源
 
 **我们在开发过程中引用过其他模组的相关代码并在此作出感谢。**
-[![TheOtherRoles](./Images/TOR_logo.png)](https://github.com/TheOtherRolesAU/TheOtherRoles)
-[![TownOfHostEdited/TownOfNext](./Images/TownOfNext.png)](https://github.com/TownOfNext/TownOfNext)
-[![FinalSuspect](./Images/FinalSuspect.png)](https://github.com/Slok7565/FinalSuspect)
-[![TheOtherRolesGMIA](./Images/TheOtherRolesGMIA.png)](https://github.com/GMIA-Nexus/TheOtherRolesGMIA)
-[![TheOtherUs](./Images/TheOtherUs.png)](https://github.com)
-[![YuEzTools](./Images/YuEzTools.png)](https://github.com/Team-YuTeam/YuEzTools)
+<a href="https://github.com/TheOtherRolesAU/TheOtherRoles"><img src="./Images/TOR_logo.png" width="120"></a>
+- 本家模组是TORE的基础
+<a href="https://github.com/TownOfNext/TownOfNext"><img src="./Images/TownOfNext.png" width="120"></a>
+- 部分UI代码引用
+<a href="https://github.com/Slok7565/FinalSuspect"><img src="./Images/FinalSuspect.png" width="120"></a>
+- 部分UI代码引用
+<a href="https://github.com/GMIA-Nexus/TheOtherRolesGMIA"><img src="./Images/TheOtherRolesGMIA.png" width="120"></a>
+- 部分职业代码引用
+<a href="https://github.com"><img src="./Images/TheOtherUs.png" width="120"></a>
+- 部分职业代码引用
+<a href="https://github.com/Team-YuTeam/YuEzTools"><img src="./Images/YuEzTools.png" width="120"></a>
+- 部分UI & 车队姬 代码引用
