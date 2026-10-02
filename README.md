@@ -82,7 +82,7 @@
 部分UI代码引用
 <br><br>
 
-<a href="https://github.com/Slok7565/FinalSuspect"><img src="./Images/FinalSuspect.png" width="650"></a>
+<a href="https://github.com/Slok7565/FinalSuspect"><img src="./Images/FinalSuspect.png" width="610"></a>
 <br>
 部分UI代码引用
 <br><br>
@@ -97,7 +97,7 @@
 部分职业代码引用
 <br><br>
 
-<a href="https://github.com/Team-YuTeam/YuEzTools"><img src="./Images/YuEzTools.png" width="580"></a>
+<a href="https://github.com/Team-YuTeam/YuEzTools"><img src="./Images/YuEzTools.png" width="530"></a>
 <br>
 部分UI & 车队姬 代码引用
 
