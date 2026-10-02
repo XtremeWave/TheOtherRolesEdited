@@ -70,8 +70,8 @@
 
 **我们在开发过程中引用过其他模组的相关代码并在此作出感谢。**
 [![TheOtherRoles](./Images/TOR_logo.png)](https://github.com/TheOtherRolesAU/TheOtherRoles)
-[![TownOfHostEdited/TownOfNext](./Images/TownOfNext)](https://github.com/TownOfNext/TownOfNext)
-[![FinalSuspect](./Images/FinalSuspect)](https://github.com/Slok7565/FinalSuspect)
-[![TheOtherRolesGMIA](./Images/TheOtherRolesGMIA)](https://github.com/GMIA-Nexus/TheOtherRolesGMIA)
-[![TheOtherUs](./Images/TheOtherUs)](https://github.com)
-[![YuEzTools](./Images/YuEzTools)](https://github.com/Team-YuTeam/YuEzTools)
+[![TownOfHostEdited/TownOfNext](./Images/TownOfNext.png)](https://github.com/TownOfNext/TownOfNext)
+[![FinalSuspect](./Images/FinalSuspect.png)](https://github.com/Slok7565/FinalSuspect)
+[![TheOtherRolesGMIA](./Images/TheOtherRolesGMIA.png)](https://github.com/GMIA-Nexus/TheOtherRolesGMIA)
+[![TheOtherUs](./Images/TheOtherUs.png)](https://github.com)
+[![YuEzTools](./Images/YuEzTools.png)](https://github.com/Team-YuTeam/YuEzTools)
