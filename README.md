@@ -69,15 +69,36 @@
 # 部分代码参考来源
 
 **我们在开发过程中引用过其他模组的相关代码并在此作出感谢。**
+
+<div align="center">
+
 <a href="https://github.com/TheOtherRolesAU/TheOtherRoles"><img src="./Images/TOR_logo.png" width="700"></a>
+<br>
 本家模组是TORE的基础
+<br><br>
+
 <a href="https://github.com/TownOfNext/TownOfNext"><img src="./Images/TownOfNext.png" width="650"></a>
+<br>
 部分UI代码引用
+<br><br>
+
 <a href="https://github.com/Slok7565/FinalSuspect"><img src="./Images/FinalSuspect.png" width="650"></a>
+<br>
 部分UI代码引用
+<br><br>
+
 <a href="https://github.com/GMIA-Nexus/TheOtherRolesGMIA"><img src="./Images/TheOtherRolesGMIA.png" width="700"></a>
+<br>
 部分职业代码引用
+<br><br>
+
 <a href="https://github.com"><img src="./Images/TheOtherUs.png" width="700"></a>
+<br>
 部分职业代码引用
-<a href="https://github.com/Team-YuTeam/YuEzTools"><img src="./Images/YuEzTools.png" width="600"></a>
+<br><br>
+
+<a href="https://github.com/Team-YuTeam/YuEzTools"><img src="./Images/YuEzTools.png" width="580"></a>
+<br>
 部分UI & 车队姬 代码引用
+
+</div>
